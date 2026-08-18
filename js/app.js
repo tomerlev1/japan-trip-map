@@ -51,6 +51,102 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 map.setView([35.5, 137.5], 6);
 const routeLayer = L.layerGroup().addTo(map);
 
+/* ---------- שכבת "אוכל בסביבה" ---------- */
+const KINDS = {
+  sushi: ["🍣", "סושי"], ramen: ["🍜", "ראמן ואודון"], meat: ["🥩", "בשר"],
+  cafe: ["☕", "קפה ומתוק"], italian: ["🍕", "איטלקי"], jp: ["🥟", "יפני"],
+  bar: ["🍸", "ברים"], fine: ["⭐", "יוקרה"], attr: ["✨", "אטרקציות"], other: ["🍽️", "עוד"],
+};
+const foodLayer = L.layerGroup().addTo(map);
+let foodOn = false, foodKind = null;
+function haversine(a, b) {
+  const R = 6371000, r = x => x * Math.PI / 180;
+  const dLat = r(b[0] - a[0]), dLng = r(b[1] - a[1]);
+  const q = Math.sin(dLat / 2) ** 2 + Math.cos(r(a[0])) * Math.cos(r(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(q));
+}
+function fmtDist(m) { return m < 1000 ? Math.round(m / 10) * 10 + " מ'" : (m / 1000).toFixed(1) + ' ק"מ'; }
+function foodScopeCities() {
+  return new Set(visibleDays().flatMap(d => Object.keys(GEO_BBOX).filter(c => d.city.includes(c))));
+}
+function foodItems() {
+  const cities = foodScopeCities();
+  return CATALOG.filter(c => c.ll && cities.has(c.city) && (!foodKind || c.k === foodKind));
+}
+function foodPopup(c) {
+  const box = el("div", "pop");
+  let h = '<div class="pop-t">' + esc(c.n) + "</div>";
+  if (c.en) h += '<div class="pop-en">' + esc(c.en) + "</div>";
+  h += '<div class="pop-chips"><span class="chip">' + (KINDS[c.k] || KINDS.other)[0] + " " + (KINDS[c.k] || KINDS.other)[1] + "</span>" +
+    '<span class="chip">' + esc(c.city) + "</span>" +
+    (c.mich ? '<span class="chip mich">⭐ מישלן</span>' : "") + "</div>";
+  if (c.note) h += '<div class="pop-d">' + esc(c.note) + "</div>";
+  h += c.book
+    ? '<div class="pop-book">📌 כדאי להזמין מראש (דרך קבלת המלון / OMAKASE.IN)</div>'
+    : '<div class="pop-walkin">🚶 הגעה ספונטנית — בלי הזמנה</div>';
+  if (gpsDot) h += '<div class="pop-dist">📏 ' + fmtDist(haversine([gpsDot.getLatLng().lat, gpsDot.getLatLng().lng], c.ll)) + " מכם</div>";
+  box.innerHTML = h;
+  const links = el("div", "pop-links");
+  links.appendChild(linkBtn("🗺️ במפות Google", "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((c.en || c.n) + ", " + (CITY_EN[c.city] || "") + " Japan")));
+  links.appendChild(linkBtn("🧭 ניווט לשם עכשיו (הליכה)", "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((c.en || c.n) + ", " + (CITY_EN[c.city] || "")) + "&travelmode=walking"));
+  box.appendChild(links);
+  const acts = el("div", "pop-acts");
+  const day = curDayObj();
+  const bAdd = el("button", "mini", day ? "＋ הוסף ליום הזה" : "＋ הוסף למסלול…");
+  bAdd.onclick = () => {
+    map.closePopup();
+    if (day) pickCatalog({ kind: "cat", n: c.n, en: c.en, city: c.city, cat: c.cat, note: c.note || "", book: !!c.book, klook: c.klook || "", src: c });
+    else toast("בחרו קודם יום בסרגל למעלה, ואז הוסיפו");
+  };
+  acts.appendChild(bAdd);
+  box.appendChild(acts);
+  return box;
+}
+function renderFood() {
+  foodLayer.clearLayers();
+  const bar = $("#foodbar");
+  bar.style.display = foodOn ? "" : "none";
+  if (!foodOn) return;
+  const items = foodItems();
+  // chips
+  bar.innerHTML = "";
+  const kindsHere = [...new Set(CATALOG.filter(c => c.ll && foodScopeCities().has(c.city)).map(c => c.k))];
+  const all = el("button", "fchip" + (!foodKind ? " on" : ""), "הכל");
+  all.onclick = () => { foodKind = null; renderFood(); };
+  bar.appendChild(all);
+  for (const k of Object.keys(KINDS)) {
+    if (!kindsHere.includes(k)) continue;
+    const b = el("button", "fchip" + (foodKind === k ? " on" : ""), KINDS[k][0] + " " + KINDS[k][1]);
+    b.onclick = () => { foodKind = foodKind === k ? null : k; renderFood(); };
+    bar.appendChild(b);
+  }
+  for (const c of items) {
+    const m = L.marker(c.ll, {
+      icon: L.divIcon({ className: "", html: '<div class="fpin">' + (KINDS[c.k] || KINDS.other)[0] + "</div>", iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -14] }),
+      zIndexOffset: -200, riseOnHover: true,
+    }).addTo(foodLayer);
+    if (!IS_TOUCH) m.bindTooltip(c.n, { direction: "top", offset: [0, -12] });
+    m.bindPopup(() => foodPopup(c), { maxWidth: 300 });
+  }
+}
+const FoodControl = L.Control.extend({
+  options: { position: "bottomleft" },
+  onAdd() {
+    const b = L.DomUtil.create("button", "gpsbtn foodbtn");
+    b.innerHTML = "🍜"; b.title = "אוכל והמלצות בסביבה";
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b, "click", e => {
+      L.DomEvent.stop(e);
+      foodOn = !foodOn;
+      b.classList.toggle("on", foodOn);
+      renderFood();
+      if (foodOn) toast("🍜 מציג המלצות אוכל באזור — אפשר לסנן לפי סגנון למעלה");
+    });
+    return b;
+  },
+});
+map.addControl(new FoodControl());
+
 /* ---------- מצב "היום" (שעון יפן) ---------- */
 function todayDayId(dateStr) {
   try {
@@ -221,6 +317,7 @@ function renderMap() {
     map.fitBounds(L.latLngBounds(allPts), fitOpts());
     lastFitKey = fitKey;
   }
+  if (foodOn) renderFood();
 }
 
 function focusStop(placeId) {
@@ -300,6 +397,13 @@ function renderPanel() {
     const h = Store.getPlace(d.hotel), meta = HOTELS[d.hotel];
     if (h) head.innerHTML += '<div class="pn-hotel">🏨 <a href="' + gmapsUrl(h) + '" target="_blank" rel="noopener">' + esc(h.n) + "</a>" +
       (meta ? ' · ' + esc(meta.nights) + (meta.booked ? ' <span class="ok">הוזמן ✔</span>' : "") : "") + "</div>";
+  }
+  for (const lug of LUGGAGE.filter(l => l.day === d.id)) {
+    const ck = Store.isChecked(lug.id);
+    const row = el("label", "pn-lug" + (ck ? " done" : ""));
+    row.innerHTML = '<input type="checkbox"' + (ck ? " checked" : "") + '><span><b>' + esc(lug.title) + "</b> — " + esc(lug.d) + "</span>";
+    row.querySelector("input").onchange = () => Store.toggleChecked(lug.id);
+    head.appendChild(row);
   }
   pn.appendChild(head);
   const idx0 = DAYS.indexOf(d);
@@ -412,14 +516,18 @@ function renderCatalog() {
   });
 }
 async function pickCatalog(it) {
-  const ctx = catalogCtx;
+  const ctx = catalogCtx && dayById(catalogCtx.dayId) ? catalogCtx : { mode: "add", dayId: (curDayObj() || DAYS[0]).id, idx: null };
+  catalogCtx = null;
   hideModal("catModal");
   let placeId;
   if (it.kind === "place") placeId = it.id;
   else {
     placeId = slug(it.en || it.n);
-    toast("מאתר את „" + it.n + "”…", 6000);
-    const geo = await geocodeClient(it.en || it.n, it.city);
+    let geo = it.src && it.src.ll ? it.src.ll : null;
+    if (!geo) {
+      toast("מאתר את „" + it.n + "”…", 6000);
+      geo = await geocodeClient(it.en || it.n, it.city);
+    }
     const place = {
       id: placeId, n: it.n, en: it.en || "", city: it.city, cat: it.cat,
       d: it.note || "", part: "", book: it.book ? "להזמין מראש" : "", site: "", klook: it.klook || "",
@@ -528,6 +636,15 @@ function renderTips() {
       '<span class="dot" style="background:' + d.color + '"></span>' +
       '<span class="bk-main"><b>' + esc(d.label || ("יום " + d.n + " · " + d.date)) + "</b> — " + esc(p.n) + ": " + esc(p.book) +
       (p.klook ? ' · <a href="' + p.klook + '" target="_blank" rel="noopener">Klook</a>' : "") + "</span></label>";
+  }
+  h += "</div><h3>🧳 שליחת מזוודות (Takkyubin)</h3><div class='booklist'>";
+  for (const lug of LUGGAGE) {
+    const d2 = dayById(lug.day);
+    const ck = Store.isChecked(lug.id);
+    h += '<label class="bookrow' + (ck ? " done" : "") + '">' +
+      '<input type="checkbox" data-pid="' + esc(lug.id) + '"' + (ck ? " checked" : "") + '>' +
+      '<span class="dot" style="background:' + d2.color + '"></span>' +
+      '<span class="bk-main"><b>יום ' + d2.n + " · " + d2.date + "</b> — " + esc(lug.title) + ": " + esc(lug.d) + "</span></label>";
   }
   h += "</div><h3>💡 טיפים</h3>";
   for (const t of TIPS) h += '<div class="tiprow"><b>' + esc(t.t) + "</b> — " + esc(t.d) + "</div>";
@@ -649,7 +766,7 @@ function renderSyncModal() {
 function render() {
   renderDaybar(); renderPanel(); renderMap();
   const items = bookingItems();
-  const left = items.filter(x => !Store.isChecked(x.p.id)).length;
+  const left = items.filter(x => !Store.isChecked(x.p.id)).length + LUGGAGE.filter(l => !Store.isChecked(l.id)).length;
   const badge = $("#bkBadge");
   if (badge) { badge.textContent = left || ""; badge.style.display = left ? "" : "none"; }
 }

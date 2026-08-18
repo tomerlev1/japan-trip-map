@@ -263,3 +263,25 @@ label.bookrow { cursor: pointer; }
 .sdot.ok { background: #12b76a; }
 .sdot.syncing { background: #f79009; }
 .sdot.error { background: #e02424; }
+
+/* ---- שכבת אוכל ---- */
+.fpin { width: 26px; height: 26px; border-radius: 50%; background: #fff; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid #d8d4ca; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.foodbtn { margin-top: 6px; }
+#foodbar { display: flex; gap: 6px; padding: 7px 12px; overflow-x: auto; background: #fffdf7;
+  border-bottom: 1px solid var(--line); scrollbar-width: none; z-index: 999; }
+#foodbar::-webkit-scrollbar { display: none; }
+.fchip { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 5px 11px;
+  font-size: 12.5px; cursor: pointer; white-space: nowrap; font-family: inherit; }
+.fchip.on { background: var(--acc); color: #fff; border-color: var(--acc); }
+.chip.mich { background: #fdf3d7; color: #8a6d00; }
+.pop-walkin { background: #e8f4e9; border-radius: 8px; padding: 5px 8px; font-size: 11.5px; color: #205c2a; margin-bottom: 6px; }
+.pop-dist { font-size: 11.5px; color: var(--mut); margin-bottom: 6px; }
+
+/* ---- מזוודות ---- */
+.pn-lug { display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; padding: 8px 10px;
+  border-radius: 9px; background: #fdf1e3; font-size: 12.5px; line-height: 1.5; cursor: pointer; }
+.pn-lug input { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--ok); }
+.pn-lug.done { background: #eef5ee; }
+.pn-lug.done span { text-decoration: line-through; color: var(--mut); }
