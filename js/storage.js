@@ -27,7 +27,7 @@ const Store = (() => {
     return m;
   }
   function freshState() {
-    return { v: TRIP.version, dayStops: defaultDayStops(), custom: {} };
+    return { v: TRIP.version, dayStops: defaultDayStops(), custom: {}, checked: {} };
   }
 
   /* --- גישה --- */
@@ -46,13 +46,13 @@ const Store = (() => {
     snapshot();
     fn(state);
     persist();
-    emit();
+    emit("local");
   }
   function undo() {
     if (!undoStack.length) return false;
     state = JSON.parse(undoStack.pop());
     persist();
-    emit();
+    emit("local");
     return true;
   }
   function canUndo() { return undoStack.length > 0; }
@@ -80,6 +80,11 @@ const Store = (() => {
       s.dayStops[toDay].push(id);
     });
   }
+  function toggleChecked(placeId) {
+    mutate(s => { if (s.checked[placeId]) delete s.checked[placeId]; else s.checked[placeId] = true; });
+  }
+  function isChecked(placeId) { return !!state.checked[placeId]; }
+
   function setCoords(placeId, lat, lng) {
     mutate(s => {
       const p = s.custom[placeId] || defaultPlace(placeId);
@@ -91,7 +96,7 @@ const Store = (() => {
     snapshot();
     state = freshState();
     persist();
-    emit();
+    emit("local");
   }
 
   /* --- התמדה --- */
@@ -107,6 +112,9 @@ const Store = (() => {
     }
     for (const [id, p] of Object.entries(s.custom)) {
       if (p && typeof p.n === "string" && isFinite(p.lat) && isFinite(p.lng)) clean.custom[id] = p;
+    }
+    if (s.checked && typeof s.checked === "object") {
+      for (const [id, v] of Object.entries(s.checked)) if (v === true) clean.checked[id] = true;
     }
     // הסר עצירות שמצביעות למקום לא קיים
     for (const d of DAYS) clean.dayStops[d.id] = clean.dayStops[d.id].filter(id => clean.custom[id] || PLACES[id]);
@@ -126,6 +134,7 @@ const Store = (() => {
   /* --- דיף לשיתוף --- */
   function diff() {
     const d = { v: TRIP.version, dayStops: {}, custom: state.custom };
+    if (Object.keys(state.checked || {}).length) d.checked = state.checked;
     const def = defaultDayStops();
     for (const day of DAYS) {
       if (JSON.stringify(state.dayStops[day.id]) !== JSON.stringify(def[day.id]))
@@ -136,17 +145,28 @@ const Store = (() => {
   function applyDiff(d) {
     const s = freshState();
     if (d.custom) s.custom = d.custom;
+    if (d.checked) s.checked = d.checked;
     if (d.dayStops) for (const [k, v] of Object.entries(d.dayStops)) if (s.dayStops[k]) s.dayStops[k] = v;
     const clean = validate(s);
     if (!clean) throw new Error("bad diff");
     snapshot();
     state = clean;
     persist();
-    emit();
+    emit("local");
   }
   function isDirty() {
     const d = diff();
-    return Object.keys(d.dayStops).length > 0 || Object.keys(d.custom).length > 0;
+    return Object.keys(d.dayStops).length > 0 || Object.keys(d.custom).length > 0 || !!d.checked;
+  }
+
+  /* --- סנכרון --- */
+  function snapshotState() { return JSON.parse(JSON.stringify(state)); }
+  function replaceState(newState) {
+    const clean = validate(newState);
+    if (!clean) throw new Error("bad remote state");
+    state = clean;
+    persist();
+    emit("remote");
   }
 
   /* --- קידוד שיתוף (gzip+base64url, נפילה ל-base64 רגיל) --- */
@@ -195,15 +215,16 @@ const Store = (() => {
     snapshot();
     state = s;
     persist();
-    emit();
+    emit("local");
   }
 
   /* --- מנויים --- */
   function onChange(fn) { listeners.push(fn); }
-  function emit() { for (const fn of listeners) fn(); }
+  function emit(source) { for (const fn of listeners) fn(source); }
 
   load();
   return { getPlace, dayStops, upsertPlace, removeStop, addStop, replaceStop, moveStop, moveStopToDay,
     setCoords, resetAll, undo, canUndo, encodeShare, decodeShare, applyDiff, isDirty,
-    exportJSON, importJSON, onChange, defaultPlace };
+    exportJSON, importJSON, onChange, defaultPlace,
+    toggleChecked, isChecked, snapshotState, replaceState };
 })();

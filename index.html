@@ -17,7 +17,8 @@
   </div>
   <div class="tools">
     <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)">↩️</button>
-    <button id="btnTips" class="tb" title="הזמנות וטיפים">📌</button>
+    <button id="btnSync" class="tb" title="סנכרון חי" hidden>☁️<span id="syncDot" class="sdot off"></span></button>
+    <button id="btnTips" class="tb" title="הזמנות וטיפים">📌<span id="bkBadge" class="badge"></span></button>
     <button id="btnMenu" class="tb" title="גיבוי ואיפוס">⋯</button>
     <button id="btnShare" class="tb main">🔗 שיתוף</button>
   </div>
@@ -77,6 +78,11 @@
   <div class="m-body" id="tipsBody"></div>
 </div>
 
+<div class="modal" id="syncModal" role="dialog">
+  <div class="m-head"><h2>☁️ סנכרון חי</h2><button class="x" data-close="syncModal">✕</button></div>
+  <div class="m-body" id="syncBody"></div>
+</div>
+
 <div class="modal" id="menuModal" role="dialog">
   <div class="m-head"><h2>גיבוי ואיפוס</h2><button class="x" data-close="menuModal">✕</button></div>
   <div class="m-body menu">
@@ -88,8 +94,10 @@
 <input type="file" id="importFile" accept="application/json" hidden>
 
 <script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/config.js"></script>
 <script src="js/data.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/sync.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -10,6 +10,7 @@ let curDay = null;          // null = כל הימים
 let lastFitKey = null;
 let dragIdx = null;
 let catalogCtx = null;      // {mode:'add'|'replace', dayId, idx}
+const TODAY_ID = todayDayId();
 
 /* ---------- עזרים ---------- */
 const $ = s => document.querySelector(s);
@@ -40,6 +41,59 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 map.setView([35.5, 137.5], 6);
 const routeLayer = L.layerGroup().addTo(map);
 
+/* ---------- מצב "היום" (שעון יפן) ---------- */
+function todayDayId(dateStr) {
+  try {
+    const s = dateStr || new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(new Date());
+    const [y, m, d] = s.split("-");
+    if (y !== "2026") return null;
+    const day = DAYS.find(x => x.date === d + "." + m);
+    return day ? day.id : null;
+  } catch (e) { return null; }
+}
+
+/* ---------- מיקום GPS ---------- */
+const gpsLayer = L.layerGroup().addTo(map);
+let gpsWatch = null, gpsDot = null, gpsRing = null, gpsFirstFix = false;
+const GpsControl = L.Control.extend({
+  options: { position: "bottomleft" },
+  onAdd() {
+    const b = L.DomUtil.create("button", "gpsbtn");
+    b.innerHTML = "📍"; b.title = "המיקום שלי על המפה"; b.setAttribute("aria-label", "המיקום שלי");
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b, "click", e => { L.DomEvent.stop(e); toggleGps(); });
+    this._btn = b;
+    return b;
+  },
+});
+const gpsCtl = new GpsControl();
+map.addControl(gpsCtl);
+function toggleGps() {
+  if (gpsWatch != null) {
+    navigator.geolocation.clearWatch(gpsWatch);
+    gpsWatch = null; gpsDot = gpsRing = null; gpsFirstFix = false;
+    gpsLayer.clearLayers();
+    gpsCtl._btn.classList.remove("on");
+    return;
+  }
+  if (!("geolocation" in navigator)) { toast("אין תמיכת מיקום בדפדפן הזה"); return; }
+  gpsCtl._btn.classList.add("on");
+  toast("מאתר אתכם… 📡");
+  gpsWatch = navigator.geolocation.watchPosition(pos => {
+    const ll = [pos.coords.latitude, pos.coords.longitude];
+    if (!gpsDot) {
+      gpsRing = L.circle(ll, { radius: pos.coords.accuracy || 30, color: "#1a73e8", weight: 1, opacity: .4, fillColor: "#1a73e8", fillOpacity: .12 }).addTo(gpsLayer);
+      gpsDot = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="gpsdot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, keyboard: false }).addTo(gpsLayer);
+    } else {
+      gpsDot.setLatLng(ll); gpsRing.setLatLng(ll); gpsRing.setRadius(pos.coords.accuracy || 30);
+    }
+    if (!gpsFirstFix) { gpsFirstFix = true; map.flyTo(ll, Math.max(map.getZoom(), 15), { duration: .8 }); }
+  }, err => {
+    toast(err.code === 1 ? "אין הרשאת מיקום — אפשרו גישה לאתר בהגדרות הדפדפן" : "לא הצלחתי לקבל מיקום, מנסה שוב…");
+    if (err.code === 1) toggleGps();
+  }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
+}
+
 function numIcon(n, color, approx) {
   return L.divIcon({
     className: "",
@@ -57,7 +111,7 @@ function popupContent(p, day, idx) {
   if (p.part) html += '<span class="chip">' + esc(p.part) + "</span>";
   html += '<span class="chip">' + esc(p.city) + "</span></div>";
   if (p.d) html += '<div class="pop-d">' + esc(p.d) + "</div>";
-  if (p.book) html += '<div class="pop-book">📌 ' + esc(p.book) + "</div>";
+  if (p.book) html += '<div class="pop-book' + (Store.isChecked(p.id) ? " done" : "") + '">' + (Store.isChecked(p.id) ? "✅ הוזמן! " : "📌 ") + esc(p.book) + "</div>";
   if (p.approx) html += '<div class="pop-approx">⚠️ מיקום משוער — קישור הניווט מדויק (לפי שם). אפשר לגרור את הסיכה למיקום הנכון.</div>';
   c.innerHTML = html;
 
@@ -73,6 +127,11 @@ function popupContent(p, day, idx) {
 
   if (day) {
     const acts = el("div", "pop-acts");
+    if (p.book) {
+      const bB = el("button", "mini book", Store.isChecked(p.id) ? "↺ בטל \"הוזמן\"" : "✓ סמן שהוזמן");
+      bB.onclick = () => { map.closePopup(); Store.toggleChecked(p.id); toast(Store.isChecked(p.id) ? "סומן שהוזמן ✅" : "הסימון בוטל"); };
+      acts.appendChild(bB);
+    }
     const bE = el("button", "mini", "✎ עריכה");
     bE.onclick = () => { map.closePopup(); openEdit(p.id, day.id, idx); };
     const bR = el("button", "mini", "⇄ החלפה");
@@ -141,8 +200,8 @@ function renderDaybar() {
   all.onclick = () => selectDay(null);
   bar.appendChild(all);
   for (const d of DAYS) {
-    const b = el("button", "dchip" + (curDay === d.id ? " on" : ""),
-      '<span class="dot" style="background:' + d.color + '"></span>יום ' + d.n + ' <span class="dt">' + d.date + "</span>");
+    const b = el("button", "dchip" + (curDay === d.id ? " on" : "") + (TODAY_ID === d.id ? " today" : ""),
+      '<span class="dot" style="background:' + d.color + '"></span>יום ' + d.n + ' <span class="dt">' + d.date + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
     b.title = d.title;
     b.onclick = () => selectDay(d.id);
     bar.appendChild(b);
@@ -211,7 +270,8 @@ function renderPanel() {
       '<span class="num" style="background:' + d.color + '">' + (i + 1) + "</span>" +
       '<span class="s-ic">' + cat.icon + "</span>" +
       '<span class="s-main"><b>' + esc(p.n) + (p.approx ? ' <span class="approx-tag" title="מיקום משוער">≈</span>' : "") + "</b>" +
-      (p.part ? '<span class="s-part">' + esc(p.part) + "</span>" : "") + "</span>" +
+      (p.part || p.book ? '<span class="s-part">' + esc(p.part || "") +
+        (p.book ? (Store.isChecked(p.id) ? ' <span class="bk done">✓ הוזמן</span>' : ' <span class="bk">📌 להזמין</span>') : "") + "</span>" : "") + "</span>" +
       '<span class="s-acts">' +
       '<button class="ib" data-a="up" title="הזז למעלה">▲</button>' +
       '<button class="ib" data-a="down" title="הזז למטה">▼</button>' +
@@ -387,19 +447,33 @@ function saveEdit() {
 }
 
 /* ---------- טיפים והזמנות ---------- */
+function bookingItems() {
+  const items = [];
+  for (const d of DAYS) for (const id of Store.dayStops(d.id)) {
+    const p = Store.getPlace(id);
+    if (p && p.book) items.push({ d, p });
+  }
+  return items;
+}
 function renderTips() {
   const box = $("#tipsBody");
-  let h = '<h3>📌 מה צריך להזמין מראש</h3><div class="booklist">';
-  for (const d of DAYS) {
-    for (const id of Store.dayStops(d.id)) {
-      const p = Store.getPlace(id);
-      if (p && p.book) h += '<div class="bookrow"><span class="dot" style="background:' + d.color + '"></span><b>יום ' + d.n + " · " + d.date + "</b> — " + esc(p.n) + ": " + esc(p.book) +
-        (p.klook ? ' · <a href="' + p.klook + '" target="_blank" rel="noopener">Klook</a>' : "") + "</div>";
-    }
+  const items = bookingItems();
+  const done = items.filter(x => Store.isChecked(x.p.id)).length;
+  let h = '<h3>📌 מה צריך להזמין מראש <span class="bkcount">' + done + "/" + items.length + ' הוזמנו</span></h3><div class="booklist">';
+  for (const { d, p } of items) {
+    const ck = Store.isChecked(p.id);
+    h += '<label class="bookrow' + (ck ? " done" : "") + '">' +
+      '<input type="checkbox" data-pid="' + esc(p.id) + '"' + (ck ? " checked" : "") + '>' +
+      '<span class="dot" style="background:' + d.color + '"></span>' +
+      '<span class="bk-main"><b>יום ' + d.n + " · " + d.date + "</b> — " + esc(p.n) + ": " + esc(p.book) +
+      (p.klook ? ' · <a href="' + p.klook + '" target="_blank" rel="noopener">Klook</a>' : "") + "</span></label>";
   }
   h += "</div><h3>💡 טיפים</h3>";
   for (const t of TIPS) h += '<div class="tiprow"><b>' + esc(t.t) + "</b> — " + esc(t.d) + "</div>";
   box.innerHTML = h;
+  box.querySelectorAll("input[data-pid]").forEach(cb => {
+    cb.onchange = () => { Store.toggleChecked(cb.dataset.pid); renderTips(); };
+  });
 }
 
 /* ---------- מודאלים ---------- */
@@ -414,7 +488,7 @@ document.addEventListener("keydown", e => {
 async function doShare() {
   try {
     const enc = await Store.encodeShare();
-    const url = location.origin + location.pathname + "#s=" + enc;
+    const url = location.origin + location.pathname + "#s=" + enc + (Sync.roomId() ? "&sync=" + Sync.roomId() : "");
     $("#shareUrl").value = url;
     showModal("shareModal");
     try { await navigator.clipboard.writeText(url); toast("הקישור הועתק ✓"); } catch (e) { /* יוצג לבחירה ידנית */ }
@@ -429,10 +503,32 @@ function doExport() {
   URL.revokeObjectURL(a.href);
 }
 async function handleShareHash() {
-  const m = location.hash.match(/^#s=(.+)$/);
-  if (!m) return;
+  const h = location.hash.slice(1);
+  if (!h) return;
+  const params = new URLSearchParams(h);
+  const enc = params.get("s");
+  const syncId = params.get("sync");
+  if (!enc && !syncId) return;
+  if (syncId && /^[0-9a-f-]{36}$/.test(syncId) && Sync.configured() && Sync.roomId() !== syncId) {
+    const bar = $("#shareBanner");
+    bar.innerHTML = '<span>🔗 קיבלתם קישור למסלול משותף עם סנכרון חי' +
+      (Store.isDirty() ? " — ההצטרפות תחליף את השינויים המקומיים שלכם" : "") + "</span>" +
+      '<button id="shApply" class="mini on">☁️ הצטרפו לסנכרון</button><button id="shSkip" class="mini">התעלם</button>';
+    bar.classList.add("show");
+    $("#shApply").onclick = async () => {
+      try {
+        await Sync.join(syncId);
+        bar.classList.remove("show");
+        history.replaceState(null, "", location.pathname);
+        toast("מחוברים! מעכשיו כל שינוי מסתנכרן בין המכשירים ☁️✓", 3500);
+      } catch (e) { toast("החיבור נכשל — בדקו אינטרנט ונסו שוב"); }
+    };
+    $("#shSkip").onclick = () => { bar.classList.remove("show"); history.replaceState(null, "", location.pathname); };
+    return;
+  }
+  if (!enc) { history.replaceState(null, "", location.pathname); return; }
   try {
-    const d = await Store.decodeShare(decodeURIComponent(m[1]));
+    const d = await Store.decodeShare(decodeURIComponent(enc));
     const changed = Object.keys(d.dayStops || {}).length + Object.keys(d.custom || {}).length;
     const bar = $("#shareBanner");
     bar.innerHTML = '<span>🔗 נפתח קישור עם גרסה משותפת של המסלול (' + changed + " שינויים)" +
@@ -447,9 +543,59 @@ async function handleShareHash() {
   }
 }
 
+/* ---------- סנכרון: ממשק ---------- */
+const SYNC_LABELS = { off: "כבוי", noconfig: "לא מוגדר", ok: "מסונכרן", syncing: "מסנכרן…", error: "שגיאה" };
+function updateSyncDot(st) {
+  const d = $("#syncDot");
+  if (d) d.className = "sdot " + st;
+  const t = $("#btnSync");
+  if (t) t.title = "סנכרון חי: " + (SYNC_LABELS[st] || st);
+}
+function renderSyncModal() {
+  const box = $("#syncBody");
+  const st = Sync.getStatus();
+  if (!Sync.configured()) {
+    box.innerHTML = '<p>☁️ הסנכרון החי עדיין לא הופעל — צריך לחבר פרויקט Supabase ייעודי (חינמי).</p>' +
+      '<p class="hint">בינתיים אפשר לשתף עם כפתור 🔗 — זה עובד מצוין, רק לא מתעדכן לבד.</p>';
+    return;
+  }
+  if (!Sync.roomId()) {
+    box.innerHTML = '<p>סנכרון חי מעדכן את המסלול אוטומטית בין המכשירים של שניכם.</p>';
+    const b = el("button", "addbtn", "☁️ הפעלת סנכרון למכשיר הזה");
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        await Sync.createRoom();
+        renderSyncModal();
+        toast("הסנכרון פעיל! עכשיו שלחו קישור לשותף/ה 🔗", 3500);
+      } catch (e) { b.disabled = false; toast("יצירת הסנכרון נכשלה — בדקו אינטרנט"); }
+    };
+    box.innerHTML += "";
+    box.appendChild(b);
+    return;
+  }
+  box.innerHTML = '<p>☁️ <b>הסנכרון פעיל</b> — סטטוס: ' + (SYNC_LABELS[st] || st) +
+    '</p><p class="hint">מזהה חדר: <code>' + esc(Sync.roomId().slice(0, 8)) + '…</code> · כל שינוי נשלח אוטומטית ומתעדכן אצל השותף/ה תוך שניות.</p>';
+  const share = el("button", "addbtn", "🔗 שליחת קישור הצטרפות לשותף/ה");
+  share.onclick = () => { hideModal("syncModal"); doShare(); };
+  const off = el("button", "menubtn danger", "ניתוק המכשיר הזה מהסנכרון");
+  off.style.marginTop = "8px";
+  off.onclick = () => { Sync.disconnect(); renderSyncModal(); toast("המכשיר נותק מהסנכרון"); };
+  box.append(share, off);
+}
+
 /* ---------- אתחול ---------- */
-function render() { renderDaybar(); renderPanel(); renderMap(); }
+function render() {
+  renderDaybar(); renderPanel(); renderMap();
+  const items = bookingItems();
+  const left = items.filter(x => !Store.isChecked(x.p.id)).length;
+  const badge = $("#bkBadge");
+  if (badge) { badge.textContent = left || ""; badge.style.display = left ? "" : "none"; }
+}
 Store.onChange(render);
+Sync.init(updateSyncDot);
+if (Sync.configured()) $("#btnSync").hidden = false;
+$("#btnSync").onclick = () => { renderSyncModal(); showModal("syncModal"); };
 
 $("#btnShare").onclick = doShare;
 $("#btnUndo").onclick = () => { Store.undo() ? toast("בוטל ↩️") : toast("אין מה לבטל"); };
@@ -480,5 +626,9 @@ $("#shareCopy").onclick = async () => {
 document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => hideModal(b.dataset.close));
 $("#backdrop").onclick = () => document.querySelectorAll(".modal.open").forEach(m => hideModal(m.id));
 
+if (TODAY_ID && !location.hash) {
+  curDay = TODAY_ID;
+  setTimeout(() => toast("🗓 קוניצ'יווה! נטען אוטומטית היום במסלול — יום " + dayById(TODAY_ID).n + ": " + dayById(TODAY_ID).title, 4000), 400);
+}
 render();
 handleShareHash();

@@ -190,3 +190,41 @@ input:focus, select:focus, textarea:focus { outline: 2px solid rgba(194,65,59,.3
     border-radius: 18px 18px 0 0; }
   .modal.open { transform: translateY(0); }
 }
+
+/* ---- הזמנות: תגיות וצ'קבוקסים ---- */
+.bk { font-size: 10.5px; color: #a15c00; background: #fff3d6; border-radius: 999px; padding: 1px 7px; font-weight: 700; }
+.bk.done { color: var(--ok); background: #e2f5ec; }
+.pop-book.done { background: #e2f5ec; color: #0a5c40; }
+.mini.book { background: #e2f5ec; border-color: #bfe5d4; color: #0a5c40; font-weight: 700; }
+.bkcount { font-size: 11.5px; color: var(--mut); background: #f1efe9; border-radius: 999px; padding: 2px 9px; font-weight: 600; margin-inline-start: 6px; }
+label.bookrow { cursor: pointer; }
+.bookrow input[type="checkbox"] { width: 17px; height: 17px; flex-shrink: 0; accent-color: var(--ok); cursor: pointer; align-self: center; }
+.bookrow .bk-main { flex: 1; }
+.bookrow.done .bk-main { text-decoration: line-through; color: var(--mut); }
+.badge { position: absolute; top: -5px; inset-inline-start: -5px; background: var(--acc); color: #fff; font-size: 10px;
+  font-weight: 800; border-radius: 999px; min-width: 16px; height: 16px; line-height: 16px; text-align: center; padding: 0 3px; }
+.tb { position: relative; }
+
+/* ---- היום ---- */
+.dchip.today { border-color: var(--acc); box-shadow: 0 0 0 1.5px rgba(194,65,59,.35); }
+.tdy { background: var(--acc); color: #fff; font-size: 9.5px; font-weight: 800; border-radius: 999px; padding: 1.5px 6px; }
+.dchip.on .tdy { background: #fff; color: var(--acc); }
+
+/* ---- GPS ---- */
+.gpsbtn { width: 34px; height: 34px; border-radius: 9px; border: 2px solid rgba(0,0,0,.2); background: #fff;
+  font-size: 16px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+.gpsbtn.on { background: #e8f0fe; border-color: #1a73e8; }
+.gpsdot { width: 16px; height: 16px; border-radius: 50%; background: #1a73e8; border: 2.5px solid #fff;
+  box-shadow: 0 0 0 0 rgba(26,115,232,.45); animation: gpspulse 2s infinite; }
+@keyframes gpspulse {
+  0% { box-shadow: 0 0 0 0 rgba(26,115,232,.45); }
+  70% { box-shadow: 0 0 0 14px rgba(26,115,232,0); }
+  100% { box-shadow: 0 0 0 0 rgba(26,115,232,0); }
+}
+
+/* ---- סטטוס סנכרון ---- */
+.sdot { position: absolute; bottom: -2px; inset-inline-start: -2px; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #fff; }
+.sdot.off, .sdot.noconfig { background: #b9b6ae; }
+.sdot.ok { background: #12b76a; }
+.sdot.syncing { background: #f79009; }
+.sdot.error { background: #e02424; }
