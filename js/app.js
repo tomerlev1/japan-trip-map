@@ -3,10 +3,20 @@
    ========================================================= */
 "use strict";
 
-const CITY_EN = { "טוקיו": "Tokyo", "קיוטו": "Kyoto", "אוסקה": "Osaka", "נארה": "Nara", "האקונה": "Hakone" };
+const CITY_EN = { "טוקיו": "Tokyo", "קיוטו": "Kyoto", "אוסקה": "Osaka", "נארה": "Nara", "האקונה": "Hakone",
+  "קראבי": "Krabi Thailand", "קופנגן": "Ko Phangan Thailand", "קוסמוי": "Ko Samui Thailand", "בנגקוק": "Bangkok Thailand" };
 const PARTS = ["", "בוקר", "צהריים", "אחה\"צ", "ערב", "לילה", "כל היום"];
 
-let curDay = null;          // null = כל הימים
+let curDay = null;          // null = הכל · "JP"/"TH" = סינון מדינה · אחרת מזהה יום
+const IS_TOUCH = matchMedia("(pointer: coarse)").matches;
+function curDayObj() { return DAYS.find(d => d.id === curDay) || null; }
+function visibleDays() {
+  if (curDay === "JP") return DAYS.filter(d => d.c !== "TH");
+  if (curDay === "TH") return DAYS.filter(d => d.c === "TH");
+  const o = curDayObj();
+  return o ? [o] : DAYS;
+}
+function dayTitleLine(d) { return d.label ? d.label : "יום " + d.n + " · " + d.date + " · " + d.dow; }
 let lastFitKey = null;
 let dragIdx = null;
 let catalogCtx = null;      // {mode:'add'|'replace', dayId, idx}
@@ -47,7 +57,9 @@ function todayDayId(dateStr) {
     const s = dateStr || new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(new Date());
     const [y, m, d] = s.split("-");
     if (y !== "2026") return null;
-    const day = DAYS.find(x => x.date === d + "." + m);
+    const ser = (+m) * 100 + (+d);
+    const p = t => { const [dd, mm] = t.split("."); return (+mm) * 100 + (+dd); };
+    const day = DAYS.find(x => x.dfrom ? (ser >= p(x.dfrom) && ser <= p(x.dto)) : p(x.date) === ser);
     return day ? day.id : null;
   } catch (e) { return null; }
 }
@@ -149,21 +161,47 @@ function linkBtn(txt, url) {
   return a;
 }
 
+function fitOpts() {
+  const mob = matchMedia("(max-width: 860px)").matches;
+  const sheet = mob ? (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--sheet-px")) || 0) : 0;
+  return { paddingTopLeft: [34, 34], paddingBottomRight: [34, sheet + 34], maxZoom: 15 };
+}
 function renderMap() {
   routeLayer.clearLayers();
-  const days = curDay ? [dayById(curDay)] : DAYS;
+  const single = curDayObj();
+  const days = visibleDays();
   const allPts = [];
   for (const day of days) {
-    const stops = Store.dayStops(day.id).map(id => Store.getPlace(id)).filter(Boolean);
+    const stopIds = Store.dayStops(day.id);
+    const stops = stopIds.map(id => Store.getPlace(id)).filter(Boolean);
     const latlngs = stops.map(p => [p.lat, p.lng]);
     allPts.push(...latlngs);
-    if (latlngs.length > 1) {
-      L.polyline(latlngs, { color: day.color, weight: curDay ? 4 : 2.5, opacity: curDay ? 0.85 : 0.55, dashArray: curDay ? null : "4 5" }).addTo(routeLayer);
+    const hp = day.hotel ? Store.getPlace(day.hotel) : null;
+    const hotelInStops = !!(day.hotel && stopIds.includes(day.hotel));
+    // קו המסלול — מתחיל במלון (נקודת ההתחלה של היום)
+    const lineLL = (hp && !hotelInStops && latlngs.length ? [[hp.lat, hp.lng]] : []).concat(latlngs);
+    if (lineLL.length > 1) {
+      L.polyline(lineLL, { color: day.color, weight: single ? 4 : 2.5, opacity: single ? 0.85 : 0.55, dashArray: single ? null : "4 5" }).addTo(routeLayer);
+    }
+    // קו חזרה מקווקו מהעצירה האחרונה למלון
+    if (single && hp && latlngs.length > 0 && stopIds[stopIds.length - 1] !== day.hotel) {
+      L.polyline([latlngs[latlngs.length - 1], [hp.lat, hp.lng]], { color: day.color, weight: 2.5, opacity: 0.45, dashArray: "2 7" }).addTo(routeLayer);
+    }
+    // סמן המלון — נקודת ההתחלה
+    if (single && hp && !hotelInStops) {
+      allPts.push([hp.lat, hp.lng]);
+      const hm = L.marker([hp.lat, hp.lng], {
+        icon: L.divIcon({ className: "", html: '<div class="hpin" style="--c:' + day.color + '">🏨</div>', iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -16] }),
+        riseOnHover: true, zIndexOffset: -100,
+      }).addTo(routeLayer);
+      if (!IS_TOUCH) hm.bindTooltip("נקודת ההתחלה: " + hp.n, { direction: "top", offset: [0, -14] });
+      hm.bindPopup(() => popupContent(Store.getPlace(hp.id) || hp, null, 0), { maxWidth: 300 });
+      hm._placeId = hp.id;
     }
     stops.forEach((p, i) => {
-      if (curDay) {
+      if (single) {
         const m = L.marker([p.lat, p.lng], { icon: numIcon(i + 1, day.color, p.approx), draggable: !!p.approx, riseOnHover: true }).addTo(routeLayer);
-        m.bindTooltip(p.n, { direction: "top", offset: [0, -14] });
+        if (!IS_TOUCH) m.bindTooltip(p.n, { direction: "top", offset: [0, -14] });
         m.bindPopup(() => popupContent(Store.getPlace(p.id) || p, day, i), { maxWidth: 300 });
         if (p.approx) m.on("dragend", () => {
           const ll = m.getLatLng();
@@ -173,14 +211,14 @@ function renderMap() {
         m._placeId = p.id;
       } else {
         const m = L.circleMarker([p.lat, p.lng], { radius: 5, color: "#fff", weight: 1.5, fillColor: day.color, fillOpacity: 1 }).addTo(routeLayer);
-        m.bindTooltip("יום " + day.n + " · " + p.n, { direction: "top" });
+        if (!IS_TOUCH) m.bindTooltip(dayTitleLine(day) + " · " + p.n, { direction: "top" });
         m.on("click", () => selectDay(day.id));
       }
     });
   }
   const fitKey = curDay || "all";
   if (allPts.length && fitKey !== lastFitKey) {
-    map.fitBounds(L.latLngBounds(allPts), { padding: [40, 40], maxZoom: 15 });
+    map.fitBounds(L.latLngBounds(allPts), fitOpts());
     lastFitKey = fitKey;
   }
 }
@@ -196,12 +234,18 @@ function focusStop(placeId) {
 function renderDaybar() {
   const bar = $("#daybar");
   bar.innerHTML = "";
-  const all = el("button", "dchip" + (curDay === null ? " on" : ""), "🗾 כל הימים");
-  all.onclick = () => selectDay(null);
-  bar.appendChild(all);
+  for (const [key, txt] of [[null, "🌏 הכל"], ["JP", "🇯🇵 יפן"], ["TH", "🇹🇭 תאילנד"]]) {
+    const b = el("button", "dchip scope" + (curDay === key ? " on" : ""), txt);
+    b.onclick = () => selectDay(key);
+    bar.appendChild(b);
+  }
+  let lastC = "JP";
   for (const d of DAYS) {
+    const c = d.c || "JP";
+    if (c !== lastC) { bar.appendChild(el("span", "dsep", "🇹🇭")); lastC = c; }
+    const main = d.short ? esc(d.short) : "יום " + d.n;
     const b = el("button", "dchip" + (curDay === d.id ? " on" : "") + (TODAY_ID === d.id ? " today" : ""),
-      '<span class="dot" style="background:' + d.color + '"></span>יום ' + d.n + ' <span class="dt">' + d.date + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
+      '<span class="dot" style="background:' + d.color + '"></span>' + main + ' <span class="dt">' + (d.dfrom || d.date) + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
     b.title = d.title;
     b.onclick = () => selectDay(d.id);
     bar.appendChild(b);
@@ -210,7 +254,7 @@ function renderDaybar() {
 function selectDay(id) {
   curDay = id;
   render();
-  if (id) {
+  if (id && curDayObj()) {
     const btn = $("#daybar .dchip.on");
     if (btn) btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }
@@ -218,31 +262,37 @@ function selectDay(id) {
 
 /* ---------- פאנל ---------- */
 function renderPanel() {
-  const pn = $("#panel");
+  const pn = $("#panelBody");
   pn.innerHTML = "";
-  if (!curDay) {
+  const d = curDayObj();
+  if (!d) {
     pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>"));
     const hint = el("div", "pn-hint", "בחרו יום כדי לראות את המסלול המלא שלו, לערוך, להחליף ולסדר מחדש. כל שינוי נשמר במכשיר — ולחצן השיתוף יוצר קישור לבן/בת הזוג.");
     pn.appendChild(hint);
-    for (const d of DAYS) {
-      const stops = Store.dayStops(d.id);
+    let lastC = null;
+    for (const day of visibleDays()) {
+      const c = day.c || "JP";
+      if (c !== lastC) {
+        pn.appendChild(el("div", "cn-head", c === "JP" ? "🇯🇵 יפן · 10–26.09" : "🇹🇭 תאילנד · 26.09–13.10+"));
+        lastC = c;
+      }
+      const stops = Store.dayStops(day.id);
       const row = el("button", "dayrow");
-      row.innerHTML = '<span class="bar" style="background:' + d.color + '"></span>' +
-        '<span class="dr-main"><b>יום ' + d.n + " · " + d.date + " · " + esc(d.dow) + "</b><span>" + esc(d.title) + "</span></span>" +
-        '<span class="dr-city">' + esc(d.city) + " · " + stops.length + " עצירות</span>";
-      row.onclick = () => selectDay(d.id);
+      row.innerHTML = '<span class="bar" style="background:' + day.color + '"></span>' +
+        '<span class="dr-main"><b>' + esc(dayTitleLine(day)) + "</b><span>" + esc(day.title) + "</span></span>" +
+        '<span class="dr-city">' + esc(day.city) + " · " + stops.length + " עצירות</span>";
+      row.onclick = () => selectDay(day.id);
       pn.appendChild(row);
     }
     return;
   }
-  const d = dayById(curDay);
   const head = el("div", "pn-day");
   head.innerHTML =
     '<div class="pn-nav">' +
     '<button id="navPrev" class="mini">‹ הקודם</button>' +
     '<button id="navAll" class="mini">🗾 כל הימים</button>' +
     '<button id="navNext" class="mini">הבא ›</button></div>' +
-    '<h2><span class="dot big" style="background:' + d.color + '"></span> יום ' + d.n + " · " + d.date + " · " + esc(d.dow) + "</h2>" +
+    '<h2><span class="dot big" style="background:' + d.color + '"></span> ' + esc(dayTitleLine(d)) + "</h2>" +
     '<div class="pn-title">' + esc(d.title) + '</div>' +
     '<div class="pn-sum">' + esc(d.sum) + "</div>" +
     (d.transit ? '<div class="pn-transit">🚄 ' + esc(d.transit) + "</div>" : "");
@@ -253,11 +303,20 @@ function renderPanel() {
   }
   pn.appendChild(head);
   const idx0 = DAYS.indexOf(d);
-  head.querySelector("#navAll").onclick = () => selectDay(null);
+  head.querySelector("#navAll").onclick = () => selectDay(d.c === "TH" ? "TH" : null);
   head.querySelector("#navPrev").onclick = () => selectDay(DAYS[(idx0 - 1 + DAYS.length) % DAYS.length].id);
   head.querySelector("#navNext").onclick = () => selectDay(DAYS[(idx0 + 1) % DAYS.length].id);
 
   const list = el("div", "stops");
+  const hp = d.hotel ? Store.getPlace(d.hotel) : null;
+  const hotelInStops = !!(d.hotel && Store.dayStops(d.id).includes(d.hotel));
+  if (hp && !hotelInStops) {
+    const sr = el("div", "stop start");
+    sr.innerHTML = '<span class="num hstart" style="border-color:' + d.color + '">🏨</span>' +
+      '<span class="s-main"><b>' + esc(hp.n) + '</b><span class="s-part">נקודת ההתחלה והחזרה של היום</span></span>';
+    sr.onclick = () => focusStop(hp.id);
+    list.appendChild(sr);
+  }
   const stops = Store.dayStops(d.id);
   stops.forEach((id, i) => {
     const p = Store.getPlace(id);
@@ -323,8 +382,8 @@ function openCatalog(ctx) {
   catalogCtx = ctx;
   const day = dayById(ctx.dayId);
   $("#catTitle").textContent = ctx.mode === "replace"
-    ? "החלפת עצירה " + (ctx.idx + 1) + " ביום " + day.n
-    : "הוספת עצירה ליום " + day.n + " · " + day.title;
+    ? "החלפת עצירה " + (ctx.idx + 1) + " · " + dayTitleLine(day)
+    : "הוספת עצירה · " + dayTitleLine(day) + " · " + day.title;
   $("#catSearch").value = "";
   $("#catCity").value = day.city.includes("←") ? "הכל" : day.city;
   $("#catCat").value = "הכל";
@@ -380,6 +439,8 @@ const GEO_BBOX = {
   "טוקיו": [35.4, 36.0, 139.55, 140.05], "קיוטו": [34.85, 35.15, 135.55, 135.9],
   "אוסקה": [34.5, 34.85, 135.3, 135.65], "נארה": [34.55, 34.75, 135.7, 135.95],
   "האקונה": [35.1, 35.35, 138.9, 139.25],
+  "קראבי": [7.8, 8.5, 98.5, 99.2], "קופנגן": [9.65, 9.85, 99.9, 100.15],
+  "קוסמוי": [9.4, 9.62, 99.85, 100.12], "בנגקוק": [13.4, 14.05, 100.3, 100.95],
 };
 async function geocodeClient(q, city) {
   try {
@@ -411,7 +472,7 @@ function openEdit(placeId, dayId, idx) {
   $("#edDesc").value = p ? p.d : "";
   $("#edBook").value = p ? p.book : "";
   $("#edSite").value = p ? p.site : "";
-  $("#edDay").innerHTML = DAYS.map(d => '<option value="' + d.id + '"' + (d.id === dayId ? " selected" : "") + ">יום " + d.n + " · " + d.date + " · " + esc(d.title) + "</option>").join("");
+  $("#edDay").innerHTML = DAYS.map(d => '<option value="' + d.id + '"' + (d.id === dayId ? " selected" : "") + ">" + esc(dayTitleLine(d)) + " · " + esc(d.title) + "</option>").join("");
   $("#edDayWrap").style.display = idx == null && placeId == null ? "none" : "";
   showModal("edModal");
 }
@@ -465,7 +526,7 @@ function renderTips() {
     h += '<label class="bookrow' + (ck ? " done" : "") + '">' +
       '<input type="checkbox" data-pid="' + esc(p.id) + '"' + (ck ? " checked" : "") + '>' +
       '<span class="dot" style="background:' + d.color + '"></span>' +
-      '<span class="bk-main"><b>יום ' + d.n + " · " + d.date + "</b> — " + esc(p.n) + ": " + esc(p.book) +
+      '<span class="bk-main"><b>' + esc(d.label || ("יום " + d.n + " · " + d.date)) + "</b> — " + esc(p.n) + ": " + esc(p.book) +
       (p.klook ? ' · <a href="' + p.klook + '" target="_blank" rel="noopener">Klook</a>' : "") + "</span></label>";
   }
   h += "</div><h3>💡 טיפים</h3>";
@@ -625,6 +686,52 @@ $("#shareCopy").onclick = async () => {
 };
 document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => hideModal(b.dataset.close));
 $("#backdrop").onclick = () => document.querySelectorAll(".modal.open").forEach(m => hideModal(m.id));
+
+/* ---------- Bottom sheet (מובייל) ---------- */
+(function initSheet() {
+  const panel = $("#panel"), handle = $("#sheetHandle");
+  const mq = matchMedia("(max-width: 860px)");
+  let snaps = [], h = 0, startY = 0, startH = 0, dragging = false;
+  const setVar = px => document.documentElement.style.setProperty("--sheet-px", Math.round(px) + "px");
+  function calcSnaps() {
+    const H = window.innerHeight;
+    snaps = [Math.round(H * 0.16), Math.round(H * 0.44), Math.round(H * 0.82)];
+  }
+  function apply(px, animate) {
+    h = px;
+    panel.style.height = Math.round(px) + "px";
+    setVar(px);
+    if (animate) setTimeout(() => map.invalidateSize({ pan: false }), 270);
+    else map.invalidateSize({ pan: false });
+  }
+  handle.addEventListener("pointerdown", e => {
+    if (!mq.matches) return;
+    dragging = true; startY = e.clientY; startH = h;
+    panel.style.transition = "none";
+    handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const nh = Math.min(window.innerHeight * 0.9, Math.max(80, startH + (startY - e.clientY)));
+    h = nh; panel.style.height = nh + "px"; setVar(nh);
+  });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    panel.style.transition = "";
+    apply(snaps.reduce((a, b) => Math.abs(b - h) < Math.abs(a - h) ? b : a), true);
+  };
+  handle.addEventListener("pointerup", endDrag);
+  handle.addEventListener("pointercancel", endDrag);
+  function onMode() {
+    if (mq.matches) { calcSnaps(); apply(snaps[1], false); }
+    else { panel.style.height = ""; setVar(0); map.invalidateSize({ pan: false }); }
+  }
+  addEventListener("resize", () => { if (mq.matches) { calcSnaps(); } });
+  addEventListener("orientationchange", () => setTimeout(onMode, 250));
+  mq.addEventListener ? mq.addEventListener("change", onMode) : mq.addListener(onMode);
+  onMode();
+})();
 
 if (TODAY_ID && !location.hash) {
   curDay = TODAY_ID;

@@ -3,8 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>יפן 2026 · המפה שלנו</title>
-<meta name="description" content="מפת המסלול היומי של הטיול ליפן — ספטמבר 2026">
+<title>יפן–תאילנד 2026 · המפה שלנו</title>
+<meta name="description" content="מפת המסלול היומי של הטיול ליפן ותאילנד — ספטמבר-אוקטובר 2026">
+<meta name="theme-color" content="#f7f6f3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="המפה שלנו">
+<link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="css/style.css">
@@ -13,7 +18,7 @@
 <header id="top">
   <div class="brand">
     <span class="logo">🗾</span>
-    <div><h1>יפן 2026 · המפה שלנו</h1><span class="tag">10–26.09 · טוקיו · קיוטו · אוסקה · נארה · האקונה</span></div>
+    <div><h1>יפן–תאילנד 2026 · המפה שלנו</h1><span class="tag">10.09–13.10 · יפן 🇯🇵 ← תאילנד 🇹🇭</span></div>
   </div>
   <div class="tools">
     <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)">↩️</button>
@@ -26,7 +31,10 @@
 <div id="shareBanner"></div>
 <nav id="daybar" aria-label="בחירת יום"></nav>
 <main>
-  <aside id="panel"></aside>
+  <aside id="panel">
+    <div id="sheetHandle"><span></span></div>
+    <div id="panelBody"></div>
+  </aside>
   <div id="map"></div>
 </main>
 <div id="toast" role="status"></div>
@@ -36,7 +44,7 @@
   <div class="m-head"><h2 id="catTitle"></h2><button class="x" data-close="catModal">✕</button></div>
   <div class="m-filter">
     <input id="catSearch" type="search" placeholder="חיפוש מקום, מסעדה, אטרקציה…">
-    <select id="catCity"><option>הכל</option><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option></select>
+    <select id="catCity"><option>הכל</option><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option><option>קראבי</option><option>קופנגן</option><option>קוסמוי</option><option>בנגקוק</option></select>
     <select id="catCat"><option value="הכל">הכל</option><option value="site">⛩️ אתרים</option><option value="food">🍜 אוכל</option><option value="shop">🛍️ קניות</option><option value="exp">✨ חוויות</option></select>
   </div>
   <div id="catList" class="m-body"></div>
@@ -49,7 +57,7 @@
     <label>שם (עברית) <input id="edName" required></label>
     <label>שם באנגלית — לניווט מדויק <input id="edEn" placeholder="Sushi Kenshin Ebisu"></label>
     <div class="row2">
-      <label>עיר <select id="edCity"><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option></select></label>
+      <label>עיר <select id="edCity"><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option><option>קראבי</option><option>קופנגן</option><option>קוסמוי</option><option>בנגקוק</option></select></label>
       <label>סוג <select id="edCat"><option value="site">⛩️ אתר</option><option value="food">🍜 אוכל</option><option value="shop">🛍️ קניות</option><option value="exp">✨ חוויה</option><option value="transit">🚄 תחבורה</option><option value="hotel">🏨 לינה</option></select></label>
     </div>
     <div class="row2">

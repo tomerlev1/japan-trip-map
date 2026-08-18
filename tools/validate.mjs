@@ -10,7 +10,7 @@ for (const d of DAYS) for (const s of d.stops) {
 for (const id in PLACES) {
   const c = COORDS[id];
   if (!c) errs.push("no coords for place " + id);
-  else if (c[0] < 24 || c[0] > 46 || c[1] < 123 || c[1] > 146) errs.push("bad coords " + id + " " + c);
+  else if (c[0] < 5 || c[0] > 46 || c[1] < 95 || c[1] > 146) errs.push("bad coords " + id + " " + c);
 }
 for (const id in COORDS) if (!PLACES[id]) errs.push("orphan coords " + id);
 const seen = new Set();

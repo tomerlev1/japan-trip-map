@@ -7,8 +7,8 @@
 "use strict";
 
 const TRIP = {
-  title: "יפן 2026 · המפה שלנו",
-  sub: "10–26 בספטמבר 2026 · טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו",
+  title: "יפן–תאילנד 2026 · המפה שלנו",
+  sub: "10.09–13.10+ · 🇯🇵 טוקיו → קיוטו → אוסקה → נארה → האקונה → 🇹🇭 קראבי → קופנגן → קוסמוי → בנגקוק",
   version: 1,
   klookCode: "OMERINJAPAN",
 };
@@ -107,6 +107,16 @@ const COORDS = {
   "ginza-sand":          [35.66982, 139.76214],
   "hakkoku":             [35.67260, 139.76400],
   "airport-dep":         [35.54940, 139.77980],
+  "arr-kbv":             [8.09641, 98.98512],
+  "hotel-tubkaak":       [8.09143, 98.74772],
+  "hotel-banyan":        [8.09663, 98.74687],
+  "flight-kbv-usm":      [8.09641, 98.98512],
+  "ferry-samui-phangan": [9.55600, 100.05000],
+  "hotel-panviman":      [9.77646, 100.05640],
+  "ferry-phangan-samui": [9.71050, 99.98850],
+  "hotel-hansar":        [9.56154, 100.02578],
+  "flight-usm-bkk":      [9.54883, 100.06320],
+  "bkk-airport":         [13.69000, 100.75010],
 };
 
 /* קטגוריות */
@@ -407,12 +417,71 @@ const DAYS = [
 PLACES["shodai"] = { n: "shodai — אודון קארי", en: "Curry Udon Shodai Tokyo", city: "טוקיו", cat: "food", part: "ערב", approx: true,
   d: "אודון קארי עם קציפת תפוחי אדמה (חלבי+בשרי).", };
 
+/* ---------- תאילנד 🇹🇭 (26.09–13.10+) ---------- */
+Object.assign(PLACES, {
+  "arr-kbv": { n: "נחיתה בקראבי ✈️", en: "Krabi International Airport", city: "קראבי", cat: "transit",
+    d: "26.09 · טיסה מטוקיו (קבלה 1357764, bookaflight) — לוודא שעה בכרטיס. משדה התעופה ~40 דק' נסיעה למלון." },
+  "hotel-tubkaak": { n: "The Tubkaak Krabi Boutique Resort", en: "The Tubkaak Krabi Boutique Resort", city: "קראבי", cat: "hotel",
+    d: "26–28.09 · הוזמן ✔ (Agoda 672013915) · כולל ארוחת בוקר · חוף טובקק השקט, מול איי הונג." },
+  "hotel-banyan": { n: "Banyan Tree Krabi", en: "Banyan Tree Krabi", city: "קראבי", cat: "hotel",
+    d: "28.09–01.10 · הוזמן ✔ (Agoda 2026155830) · סוויטת Partial Ocean Pool King + ארוחת בוקר · באותו חוף — מעבר קצר מהטובקק." },
+  "flight-kbv-usm": { n: "טיסה קראבי ← קוסמוי ✈️ PG266", en: "Krabi International Airport", city: "קראבי", cat: "transit",
+    d: "01.10 · המראה 14:00 · Bangkok Airways, ישירה 50 דק' · מושבים 9A/9B · הזמנה FF7LFU (Booking.com)." },
+  "ferry-samui-phangan": { n: "מעבורת לקופנגן ⛴", en: "Bangrak Pier Koh Samui", city: "קוסמוי", cat: "transit", approx: true,
+    d: "מנמל בנגרק (Lomprayah / Seatran) ~30 דק'. כדאי לתאם דרך המלון הסעה+מעבורת מראש." },
+  "hotel-panviman": { n: "Panviman Resort קופנגן", en: "Panviman Resort Koh Phangan", city: "קופנגן", cat: "hotel",
+    d: "01–06.10 · הוזמן ✔ (Agoda 2041089608) · חדר Deluxe Jacuzzi Grande + ארוחת בוקר · מפרץ תונג נאי פאן נוי." },
+  "ferry-phangan-samui": { n: "מעבורת חזרה לסמוי ⛴", en: "Thong Sala Pier Koh Phangan", city: "קופנגן", cat: "transit", approx: true,
+    d: "06.10 · מנמל תונג סאלה ~30-45 דק' לסמוי." },
+  "hotel-hansar": { n: "Hansar Samui Resort", en: "Hansar Samui Resort", city: "קוסמוי", cat: "hotel",
+    d: "06–13.10 · הוזמן ✔ (Agoda 2026143615) · 5 כוכבים על חוף בופוט · Fisherman's Village במרחק הליכה · ארוחת בוקר לשניים." },
+  "flight-usm-bkk": { n: "טיסה סמוי ← בנגקוק ✈️", en: "Samui International Airport", city: "קוסמוי", cat: "transit",
+    d: "13.10 · טרם נסגר — לתאם מול טיסת ההמשך לישראל.", book: "להזמין כשיתבררו פרטי הטיסה הביתה" },
+  "bkk-airport": { n: "בנגקוק ← ישראל ✈️", en: "Suvarnabhumi Airport Bangkok", city: "בנגקוק", cat: "transit",
+    d: "כנראה אחרי 13.10 — התאריך המדויק לא מופיע בקבלות. לוודא בכרטיס האלקטרוני (הזמנה 63900)." },
+});
+
+DAYS.push(
+  { id: "t1", n: 17, c: "TH", label: "קראבי · 26–28.09", short: "קראבי א׳", date: "26–28.09", dfrom: "26.09", dto: "27.09",
+    city: "קראבי", color: "#0284c7", title: "נחיתה בקראבי — The Tubkaak",
+    sum: "נחיתה מטוקיו וצ'ק-אין בטובקק. חוף, בריכה והתאוששות מהקצב של יפן. אטרקציות יתווספו בהמשך.",
+    hotel: "hotel-tubkaak",
+    transit: "משדה התעופה של קראבי ~40 דק' נסיעה למלון — לתאם הסעה מראש.",
+    stops: ["arr-kbv", "hotel-tubkaak"] },
+  { id: "t2", n: 18, c: "TH", label: "קראבי · 28.09–01.10", short: "קראבי ב׳", date: "28.09–01.10", dfrom: "28.09", dto: "30.09",
+    city: "קראבי", color: "#0f766e", title: "Banyan Tree קראבי",
+    sum: "מעבר לבניאן טרי — בריכה, ספא ושקיעות. רעיונות להמשך: שייט 4 איים, לגונת האמרלד, ריילי ביץ'.",
+    hotel: "hotel-banyan",
+    stops: ["hotel-banyan"] },
+  { id: "t3", n: 19, c: "TH", label: "קופנגן · 01–06.10", short: "קופנגן", date: "01–06.10", dfrom: "01.10", dto: "05.10",
+    city: "קופנגן", color: "#15803d", title: "Panviman קופנגן",
+    sum: "טיסה קצרה לסמוי, מעבורת לקופנגן — 5 לילות בפנווימאן שמעל מפרץ תונג נאי פאן.",
+    hotel: "hotel-panviman",
+    transit: "PG266 בשעה 14:00 (50 דק') ← נמל בנגרק ← מעבורת לקופנגן.",
+    stops: ["flight-kbv-usm", "ferry-samui-phangan", "hotel-panviman"] },
+  { id: "t4", n: 20, c: "TH", label: "קוסמוי · 06–13.10", short: "קוסמוי", date: "06–13.10", dfrom: "06.10", dto: "12.10",
+    city: "קוסמוי", color: "#b45309", title: "Hansar קוסמוי",
+    sum: "שבוע בהאנסר על חוף בופוט — שווקי לילה, Fisherman's Village והמון בריכה.",
+    hotel: "hotel-hansar",
+    transit: "מעבורת קופנגן ← סמוי ~45 דק', ומשם נסיעה קצרה לבופוט.",
+    stops: ["ferry-phangan-samui", "hotel-hansar"] },
+  { id: "t5", n: 21, c: "TH", label: "בנגקוק · 13.10 ←", short: "בנגקוק", date: "13.10 והלאה", dfrom: "13.10", dto: "14.10",
+    city: "בנגקוק", color: "#6d28d9", title: "בנגקוק — וטיסה הביתה",
+    sum: "טיסה מסמוי לבנגקוק והמשך לישראל. תאריך הטיסה הביתה טרם ודאי — לבדוק בכרטיס.",
+    hotel: null,
+    stops: ["flight-usm-bkk", "bkk-airport"] }
+);
+
 /* מלונות — לתצוגת כרטיס היום */
 const HOTELS = {
   "hotel-shiodome": { nights: "10–13.09 + 22–26.09", booked: true },
   "hotel-nohga":    { nights: "13–17.09", booked: true },
   "hotel-flag":     { nights: "17–21.09", booked: true },
   "hotel-suiun":    { nights: "21–22.09 (לילה אחד)", booked: true },
+  "hotel-tubkaak":  { nights: "26–28.09 · 2 לילות", booked: true },
+  "hotel-banyan":   { nights: "28.09–01.10 · 3 לילות", booked: true },
+  "hotel-panviman": { nights: "01–06.10 · 5 לילות", booked: true },
+  "hotel-hansar":   { nights: "06–13.10 · 7 לילות", booked: true },
 };
 
 /* =========================================================
@@ -425,6 +494,10 @@ const CITY_CENTERS = {
   "אוסקה":  [34.6937, 135.5023],
   "נארה":   [34.6851, 135.8048],
   "האקונה": [35.2324, 139.1069],
+  "קראבי":  [8.0863, 98.9063],
+  "קופנגן": [9.7500, 100.0140],
+  "קוסמוי": [9.5120, 100.0136],
+  "בנגקוק": [13.7563, 100.5018],
 };
 
 const CATALOG = [
