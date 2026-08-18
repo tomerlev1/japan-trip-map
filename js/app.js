@@ -147,6 +147,100 @@ const FoodControl = L.Control.extend({
 });
 map.addControl(new FoodControl());
 
+/* ---------- מזג אוויר (Open-Meteo, ללא מפתח) ---------- */
+const WX_EMOJI = c =>
+  c === 0 ? "☀️" : c <= 2 ? "🌤️" : c === 3 ? "☁️" : c <= 48 ? "🌫️" : c <= 57 ? "🌦️" :
+  c <= 67 ? "🌧️" : c <= 77 ? "🌨️" : c <= 81 ? "🌦️" : c === 82 ? "⛈️" : c <= 86 ? "🌨️" : "⛈️";
+let wxCache = {};
+try { wxCache = JSON.parse(localStorage.getItem("jtm.wx") || "{}"); } catch (e) {}
+function dayISO(d) {
+  const t = (d.dfrom || d.date || "").split("–")[0];
+  if (!/^\d\d\.\d\d$/.test(t)) return null;
+  const [dd, mm] = t.split(".");
+  return "2026-" + mm + "-" + dd;
+}
+function wxCity(d) { return Object.keys(CITY_CENTERS).find(c => d.city.includes(c)); }
+async function fetchWx(city) {
+  const c = wxCache[city];
+  if (c && Date.now() - c.t < 3 * 3600e3) return c.d;
+  const [lat, lng] = CITY_CENTERS[city];
+  const u = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lng +
+    "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=16&timezone=auto";
+  const r = await fetch(u);
+  const j = await r.json();
+  const d = {};
+  (j.daily?.time || []).forEach((t, i) => {
+    d[t] = { c: j.daily.weather_code[i], hi: Math.round(j.daily.temperature_2m_max[i]), lo: Math.round(j.daily.temperature_2m_min[i]), pp: j.daily.precipitation_probability_max[i] };
+  });
+  wxCache[city] = { t: Date.now(), d };
+  try { localStorage.setItem("jtm.wx", JSON.stringify(wxCache)); } catch (e) {}
+  return d;
+}
+function wxHtml(w) {
+  return WX_EMOJI(w.c) + " " + w.lo + "–" + w.hi + "°" + (w.pp >= 20 ? " · 💧" + w.pp + "%" : "");
+}
+function fillWx(day, sel) {
+  const iso = dayISO(day), city = wxCity(day);
+  if (!iso || !city) return;
+  const todayIso = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(new Date());
+  const diff = (new Date(iso) - new Date(todayIso)) / 86400e3;
+  if (diff < -1 || diff > 15) return;
+  fetchWx(city).then(d => {
+    const w = d && d[iso];
+    const elm = document.querySelector(sel);
+    if (w && elm) { elm.innerHTML = wxHtml(w); elm.style.display = ""; }
+  }).catch(() => {});
+}
+
+/* ---------- 🚕 כרטיס לנהג מונית ---------- */
+const JP_CITIES = new Set(["טוקיו", "קיוטו", "אוסקה", "נארה", "האקונה"]);
+function hasTaxi(p) { return p && JP_CITIES.has(p.city); }
+function openTaxi(placeId) {
+  const p = Store.getPlace(placeId);
+  if (!p) return;
+  const ja = (typeof JA !== "undefined" && JA[placeId]) || {};
+  $("#taxiName").textContent = ja.n || p.en || p.n;
+  $("#taxiAddr").textContent = ja.a || "";
+  $("#taxiHeName").textContent = p.n;
+  showModal("taxiModal");
+}
+
+/* ---------- 🧭 מלווה מסלול ---------- */
+function tzForDay(d) { return d.c === "TH" ? "Asia/Bangkok" : "Asia/Tokyo"; }
+function currentPart(d) {
+  const h = +new Intl.DateTimeFormat("en", { timeZone: tzForDay(d), hour: "numeric", hourCycle: "h23" }).format(new Date());
+  return h >= 5 && h < 11 ? "בוקר" : h >= 11 && h < 14 ? "צהריים" : h >= 14 && h < 18 ? "אחה\"צ" : h >= 18 && h < 23 ? "ערב" : "לילה";
+}
+function walkKm(d) {
+  const ids = Store.dayStops(d.id);
+  const pts = ids.map(id => Store.getPlace(id)).filter(Boolean).map(p => [p.lat, p.lng]);
+  const hp = d.hotel ? Store.getPlace(d.hotel) : null;
+  if (hp && !ids.includes(d.hotel)) { pts.unshift([hp.lat, hp.lng]); pts.push([hp.lat, hp.lng]); }
+  let m = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const leg = haversine(pts[i - 1], pts[i]);
+    if (leg < 3000) m += leg * 1.25;
+  }
+  return m / 1000;
+}
+function updateGpsNext() {
+  const elm = $("#gpsNext");
+  const d = curDayObj();
+  if (!elm || !d || !gpsDot) return;
+  const here = [gpsDot.getLatLng().lat, gpsDot.getLatLng().lng];
+  let best = null;
+  for (const id of Store.dayStops(d.id)) {
+    const p = Store.getPlace(id);
+    if (!p) continue;
+    const dist = haversine(here, [p.lat, p.lng]);
+    if (!best || dist < best.dist) best = { p, dist };
+  }
+  if (best && best.dist < 100000) {
+    elm.innerHTML = "📍 אתם ~" + fmtDist(best.dist) + " מ„" + esc(best.p.n) + "”";
+    elm.style.display = "";
+  }
+}
+
 /* ---------- מצב "היום" (שעון יפן) ---------- */
 function todayDayId(dateStr) {
   try {
@@ -196,6 +290,7 @@ function toggleGps() {
       gpsDot.setLatLng(ll); gpsRing.setLatLng(ll); gpsRing.setRadius(pos.coords.accuracy || 30);
     }
     if (!gpsFirstFix) { gpsFirstFix = true; map.flyTo(ll, Math.max(map.getZoom(), 15), { duration: .8 }); }
+    updateGpsNext();
   }, err => {
     toast(err.code === 1 ? "אין הרשאת מיקום — אפשרו גישה לאתר בהגדרות הדפדפן" : "לא הצלחתי לקבל מיקום, מנסה שוב…");
     if (err.code === 1) toggleGps();
@@ -225,6 +320,12 @@ function popupContent(p, day, idx) {
 
   const links = el("div", "pop-links");
   links.appendChild(linkBtn("🗺️ במפות Google", gmapsUrl(p)));
+  if (hasTaxi(p)) {
+    const tb = el("a", "lbtn");
+    tb.textContent = "🚕 כרטיס לנהג מונית (ביפנית)";
+    tb.href = "#"; tb.onclick = e => { e.preventDefault(); map.closePopup(); openTaxi(p.id); };
+    links.appendChild(tb);
+  }
   if (day && idx > 0) {
     const prev = Store.getPlace(Store.dayStops(day.id)[idx - 1]);
     if (prev) links.appendChild(linkBtn("🚇 הגעה מהעצירה הקודמת", navUrl(prev, p)));
@@ -390,13 +491,16 @@ function renderPanel() {
     '<button id="navAll" class="mini">🗾 כל הימים</button>' +
     '<button id="navNext" class="mini">הבא ›</button></div>' +
     '<h2><span class="dot big" style="background:' + d.color + '"></span> ' + esc(dayTitleLine(d)) + "</h2>" +
-    '<div class="pn-title">' + esc(d.title) + '</div>' +
+    '<div class="pn-title">' + esc(d.title) + ' <span id="wxSlot" class="wx" style="display:none"></span></div>' +
     '<div class="pn-sum">' + esc(d.sum) + "</div>" +
+    (d.id === TODAY_ID ? '<div class="pn-now">🕐 עכשיו ' + esc(currentPart(d)) + ' — העצירות של השעה מסומנות</div><div id="gpsNext" class="pn-gps" style="display:none"></div>' : "") +
+    (walkKm(d) > 0.5 ? '<div class="pn-walk">🚶 הליכה משוערת היום: ~' + walkKm(d).toFixed(1) + ' ק"מ (בלי קטעי רכבת)</div>' : "") +
     (d.transit ? '<div class="pn-transit">🚄 ' + esc(d.transit) + "</div>" : "");
   if (d.hotel) {
     const h = Store.getPlace(d.hotel), meta = HOTELS[d.hotel];
     if (h) head.innerHTML += '<div class="pn-hotel">🏨 <a href="' + gmapsUrl(h) + '" target="_blank" rel="noopener">' + esc(h.n) + "</a>" +
-      (meta ? ' · ' + esc(meta.nights) + (meta.booked ? ' <span class="ok">הוזמן ✔</span>' : "") : "") + "</div>";
+      (meta ? ' · ' + esc(meta.nights) + (meta.booked ? ' <span class="ok">הוזמן ✔</span>' : "") : "") +
+      (hasTaxi(h) ? ' <button class="taxibtn" data-taxi="' + esc(h.id) + '">🚕 לנהג</button>' : "") + "</div>";
   }
   for (const lug of LUGGAGE.filter(l => l.day === d.id)) {
     const ck = Store.isChecked(lug.id);
@@ -406,6 +510,9 @@ function renderPanel() {
     head.appendChild(row);
   }
   pn.appendChild(head);
+  fillWx(d, "#wxSlot");
+  const tb = head.querySelector(".taxibtn");
+  if (tb) tb.onclick = e => { e.preventDefault(); openTaxi(tb.dataset.taxi); };
   const idx0 = DAYS.indexOf(d);
   head.querySelector("#navAll").onclick = () => selectDay(d.c === "TH" ? "TH" : null);
   head.querySelector("#navPrev").onclick = () => selectDay(DAYS[(idx0 - 1 + DAYS.length) % DAYS.length].id);
@@ -426,7 +533,7 @@ function renderPanel() {
     const p = Store.getPlace(id);
     if (!p) return;
     const cat = CATS[p.cat] || CATS.site;
-    const row = el("div", "stop");
+    const row = el("div", "stop" + (d.id === TODAY_ID && p.part === currentPart(d) ? " nowpart" : ""));
     row.draggable = true;
     row.dataset.idx = i;
     row.innerHTML =
@@ -765,6 +872,7 @@ function renderSyncModal() {
 /* ---------- אתחול ---------- */
 function render() {
   renderDaybar(); renderPanel(); renderMap();
+  updateGpsNext();
   const items = bookingItems();
   const left = items.filter(x => !Store.isChecked(x.p.id)).length + LUGGAGE.filter(l => !Store.isChecked(l.id)).length;
   const badge = $("#bkBadge");

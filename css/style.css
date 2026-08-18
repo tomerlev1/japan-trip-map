@@ -285,3 +285,21 @@ label.bookrow { cursor: pointer; }
 .pn-lug input { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--ok); }
 .pn-lug.done { background: #eef5ee; }
 .pn-lug.done span { text-decoration: line-through; color: var(--mut); }
+
+/* ---- מזג אוויר ---- */
+.wx { font-size: 12.5px; font-weight: 600; color: var(--mut); background: #eef4fb; border-radius: 999px; padding: 2px 9px; margin-inline-start: 6px; white-space: nowrap; }
+
+/* ---- מלווה מסלול ---- */
+.pn-now { font-size: 12.5px; margin-top: 8px; padding: 7px 10px; border-radius: 9px; background: #fdeef0; color: #8c2f39; }
+.pn-gps { font-size: 12.5px; margin-top: 6px; padding: 7px 10px; border-radius: 9px; background: #e8f0fe; color: #274a6d; }
+.pn-walk { font-size: 12px; margin-top: 6px; color: var(--mut); }
+.stop.nowpart { border-inline-start: 4px solid var(--acc); background: #fffaf7; }
+
+/* ---- כרטיס מונית ---- */
+.taxibtn { border: 1px solid #d8cfe8; background: #fff; border-radius: 999px; padding: 2px 9px; font-size: 11px; cursor: pointer; font-family: inherit; }
+.taxibtn:hover { background: #f4f0fa; }
+.modal.taxi .taxi-body { text-align: center; padding-bottom: 26px; }
+.taxi-please { font-size: 20px; color: var(--mut); margin: 8px 0 14px; }
+.taxi-name { font-size: 34px; font-weight: 800; line-height: 1.35; direction: ltr; }
+.taxi-addr { font-size: 22px; color: #333; margin-top: 12px; direction: ltr; line-height: 1.5; }
+.taxi-he { font-size: 13px; color: var(--mut); margin-top: 14px; }
