@@ -1,0 +1,1631 @@
+[
+ {
+  "id": "hotel-shiodome",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.66351,
+   139.7587
+  ],
+  "best": {
+   "name": "ロイヤルパークホテル ザ 汐留",
+   "t": "hotel",
+   "ll": [
+    35.66406,
+    139.76041
+   ],
+   "sc": 0,
+   "dist": 166
+  }
+ },
+ {
+  "id": "toriyaki-ohana",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.666,
+   139.756
+  ],
+  "best": {
+   "name": "La Ohana",
+   "t": "restaurant",
+   "ll": [
+    35.67514,
+    139.82721
+   ],
+   "sc": 0.5,
+   "dist": 6512
+  }
+ },
+ {
+  "id": "meiji-shrine",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6764,
+   139.6993
+  ],
+  "best": {
+   "name": "明治神宮",
+   "t": "assembly_point",
+   "ll": [
+    35.67484,
+    139.69963
+   ],
+   "sc": 0,
+   "dist": 176
+  }
+ },
+ {
+  "id": "takeshita-st",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6716,
+   139.7031
+  ],
+  "best": {
+   "name": "Harajuku Candy",
+   "t": "yes",
+   "ll": [
+    35.67104,
+    139.70533
+   ],
+   "sc": 0.5,
+   "dist": 211
+  }
+ },
+ {
+  "id": "omotesando",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6659,
+   139.7125
+  ],
+  "best": null
+ },
+ {
+  "id": "onodera-omotesando",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6671,
+   139.7086
+  ],
+  "best": {
+   "t": "restaurant",
+   "ll": [
+    35.66575,
+    139.71013
+   ],
+   "sc": 0,
+   "dist": 205
+  }
+ },
+ {
+  "id": "hachiko",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6595,
+   139.7005
+  ],
+  "best": {
+   "name": "忠犬ハチ公像",
+   "t": "artwork",
+   "ll": [
+    35.65906,
+    139.70063
+   ],
+   "sc": 0,
+   "dist": 50
+  }
+ },
+ {
+  "id": "sbux-tsutaya",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6598,
+   139.7007
+  ],
+  "best": {
+   "name": "TSUTAYA",
+   "t": "video",
+   "ll": [
+    35.65983,
+    139.7003
+   ],
+   "sc": 0.5,
+   "dist": 36
+  }
+ },
+ {
+  "id": "katsugyu-dogenzaka",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6584,
+   139.6964
+  ],
+  "best": {
+   "name": "牛角",
+   "t": "restaurant",
+   "ll": [
+    35.65891,
+    139.6973
+   ],
+   "sc": 0,
+   "dist": 99
+  }
+ },
+ {
+  "id": "shibuya-parco",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6621,
+   139.6987
+  ],
+  "best": {
+   "name": "Union Record Shibuya Parco",
+   "t": "music",
+   "ll": [
+    35.66196,
+    139.69891
+   ],
+   "sc": 1,
+   "dist": 25
+  }
+ },
+ {
+  "id": "sensoji",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.7148,
+   139.7967
+  ],
+  "best": {
+   "name": "金龍山 浅草寺",
+   "t": "place_of_worship",
+   "ll": [
+    35.7134,
+    139.79553
+   ],
+   "sc": 0,
+   "dist": 188
+  }
+ },
+ {
+  "id": "nakamise",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.7127,
+   139.7966
+  ],
+  "best": {
+   "name": "仲見世商店街",
+   "t": "attraction",
+   "ll": [
+    35.71228,
+    139.79649
+   ],
+   "sc": 0,
+   "dist": 48
+  }
+ },
+ {
+  "id": "kappabashi",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.7139,
+   139.7887
+  ],
+  "best": {
+   "name": "合羽橋道具街",
+   "t": "attraction",
+   "ll": [
+    35.71427,
+    139.78889
+   ],
+   "sc": 0,
+   "dist": 45
+  }
+ },
+ {
+  "id": "ueno-park",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.7146,
+   139.7737
+  ],
+  "best": {
+   "name": "上野公園",
+   "t": "neighbourhood",
+   "ll": [
+    35.71529,
+    139.77383
+   ],
+   "sc": 0,
+   "dist": 78
+  }
+ },
+ {
+  "id": "skytree",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.7101,
+   139.8107
+  ],
+  "best": {
+   "name": "東京スカイツリー",
+   "t": "attraction",
+   "ll": [
+    35.71005,
+    139.81071
+   ],
+   "sc": 0,
+   "dist": 5
+  }
+ },
+ {
+  "id": "setsugetsuka",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6717,
+   139.765
+  ],
+  "best": null
+ },
+ {
+  "id": "tokyo-station",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6812,
+   139.7671
+  ],
+  "best": {
+   "t": "train_station",
+   "ll": [
+    35.71395,
+    139.77756
+   ],
+   "sc": 0,
+   "dist": 3762
+  }
+ },
+ {
+  "id": "kyoto-station",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.9858,
+   135.7585
+  ],
+  "best": {
+   "name": "京都駅ビル東第１駐車場 (Kyoto Station Building East First Parkinglot)",
+   "t": "parking",
+   "ll": [
+    34.98593,
+    135.76087
+   ],
+   "sc": 0,
+   "dist": 217
+  }
+ },
+ {
+  "id": "hotel-nohga",
+  "city": "קיוטו",
+  "approx": true,
+  "stored": [
+   34.9932,
+   135.7727
+  ],
+  "best": {
+   "name": "The Hotel Seiryu Kyoto Kiyomizu",
+   "t": "hotel",
+   "ll": [
+    34.99757,
+    135.77946
+   ],
+   "sc": 0.67,
+   "dist": 785
+  }
+ },
+ {
+  "id": "kyoto-gyoen",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0254,
+   135.7621
+  ],
+  "best": {
+   "name": "京都御苑 案内図",
+   "t": "map",
+   "ll": [
+    35.0234,
+    135.76651
+   ],
+   "sc": 0,
+   "dist": 459
+  }
+ },
+ {
+  "id": "nijo-castle",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0142,
+   135.7481
+  ],
+  "best": {
+   "name": "二条城",
+   "t": "attraction",
+   "ll": [
+    35.01401,
+    135.74854
+   ],
+   "sc": 0,
+   "dist": 45
+  }
+ },
+ {
+  "id": "pontocho",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0093,
+   135.771
+  ],
+  "best": {
+   "name": "先斗町通",
+   "t": "residential",
+   "ll": [
+    35.00822,
+    135.77104
+   ],
+   "sc": 0,
+   "dist": 120
+  }
+ },
+ {
+  "id": "onodera-kyoto",
+  "city": "קיוטו",
+  "approx": true,
+  "stored": [
+   35.008,
+   135.769
+  ],
+  "best": null
+ },
+ {
+  "id": "monkey-park",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0093,
+   135.6778
+  ],
+  "best": {
+   "name": "嵐山モンキーパークいわたやま 案内図",
+   "t": "map",
+   "ll": [
+    35.00844,
+    135.67583
+   ],
+   "sc": 0,
+   "dist": 203
+  }
+ },
+ {
+  "id": "togetsukyo",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0126,
+   135.6776
+  ],
+  "best": {
+   "name": "渡月小橋",
+   "t": "bridge",
+   "ll": [
+    35.01146,
+    135.67742
+   ],
+   "sc": 0,
+   "dist": 127
+  }
+ },
+ {
+  "id": "arabica-arashiyama",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0135,
+   135.6739
+  ],
+  "best": {
+   "name": "アラビアカ 京都嵐山",
+   "t": "cafe",
+   "ll": [
+    35.01354,
+    135.67644
+   ],
+   "sc": 0,
+   "dist": 231
+  }
+ },
+ {
+  "id": "bamboo-grove",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.017,
+   135.671
+  ],
+  "best": {
+   "name": "嵐山竹林",
+   "t": "attraction",
+   "ll": [
+    35.01674,
+    135.67115
+   ],
+   "sc": 0,
+   "dist": 32
+  }
+ },
+ {
+  "id": "kijurou",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.01684,
+   135.67743
+  ],
+  "best": {
+   "name": "嵐山 喜重郎",
+   "t": "restaurant",
+   "ll": [
+    35.01684,
+    135.67743
+   ],
+   "sc": 0,
+   "dist": 1
+  }
+ },
+ {
+  "id": "kinkakuji",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0394,
+   135.7292
+  ],
+  "best": {
+   "name": "金閣寺",
+   "t": "place_of_worship",
+   "ll": [
+    35.03953,
+    135.72954
+   ],
+   "sc": 0,
+   "dist": 34
+  }
+ },
+ {
+  "id": "bungo-gion",
+  "city": "קיוטו",
+  "approx": true,
+  "stored": [
+   35.0037,
+   135.7745
+  ],
+  "best": null
+ },
+ {
+  "id": "kiyomizudera",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.9949,
+   135.785
+  ],
+  "best": {
+   "name": "清水寺 (Kiyomizu-dera Temple)ﾍ500ｍ道案内",
+   "t": "guidepost",
+   "ll": [
+    34.99023,
+    135.78807
+   ],
+   "sc": 1,
+   "dist": 590
+  }
+ },
+ {
+  "id": "sannenzaka",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.9966,
+   135.781
+  ],
+  "best": null
+ },
+ {
+  "id": "nishiki-market",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.005,
+   135.7649
+  ],
+  "best": {
+   "name": "錦市場",
+   "t": "marketplace",
+   "ll": [
+    35.00502,
+    135.76557
+   ],
+   "sc": 0,
+   "dist": 61
+  }
+ },
+ {
+  "id": "maikoya",
+  "city": "קיוטו",
+  "approx": true,
+  "stored": [
+   35.0043,
+   135.7625
+  ],
+  "best": {
+   "name": "KIMONO PRIVATE TEA CEREMONY MAIKOYA GION",
+   "t": "attraction",
+   "ll": [
+    34.99823,
+    135.77414
+   ],
+   "sc": 0.75,
+   "dist": 1257
+  }
+ },
+ {
+  "id": "in-the-moon",
+  "city": "קיוטו",
+  "approx": true,
+  "stored": [
+   35.008,
+   135.769
+  ],
+  "best": null
+ },
+ {
+  "id": "fushimi-inari",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.9671,
+   135.7727
+  ],
+  "best": {
+   "name": "本殿",
+   "t": "place_of_worship",
+   "ll": [
+    34.96717,
+    135.77335
+   ],
+   "sc": 0,
+   "dist": 60
+  }
+ },
+ {
+  "id": "fushimi-castle",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.9375,
+   135.7797
+  ],
+  "best": {
+   "name": "明治天皇 伏見桃山陵",
+   "t": "tomb",
+   "ll": [
+    34.93697,
+    135.78114
+   ],
+   "sc": 0,
+   "dist": 144
+  }
+ },
+ {
+  "id": "gekkeikan",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.9296,
+   135.7605
+  ],
+  "best": {
+   "name": "月桂冠大倉記念館",
+   "t": "museum",
+   "ll": [
+    34.92888,
+    135.76163
+   ],
+   "sc": 0,
+   "dist": 130
+  }
+ },
+ {
+  "id": "shijo-dori",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   35.0037,
+   135.7683
+  ],
+  "best": {
+   "name": "R&B Hotel Kyoto Shijo Kawaramachi",
+   "t": "hotel",
+   "ll": [
+    35.00119,
+    135.76887
+   ],
+   "sc": 0.5,
+   "dist": 284
+  }
+ },
+ {
+  "id": "teamlab-biovortex",
+  "city": "קיוטו",
+  "approx": false,
+  "stored": [
+   34.98375,
+   135.76542
+  ],
+  "best": {
+   "name": "teamLab BioVortex",
+   "t": "attraction",
+   "ll": [
+    34.98375,
+    135.76542
+   ],
+   "sc": 1,
+   "dist": 1
+  }
+ },
+ {
+  "id": "marutomi",
+  "city": "קיוטו",
+  "approx": true,
+  "stored": [
+   35.004,
+   135.768
+  ],
+  "best": {
+   "name": "Kyoto Yakiniku Suzuki",
+   "t": "restaurant",
+   "ll": [
+    35.00416,
+    135.771
+   ],
+   "sc": 0.5,
+   "dist": 274
+  }
+ },
+ {
+  "id": "hotel-flag",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6742,
+   135.50305
+  ],
+  "best": {
+   "name": "The Flag Shinsaibashi",
+   "t": "hotel",
+   "ll": [
+    34.6742,
+    135.50305
+   ],
+   "sc": 0.67,
+   "dist": 0
+  }
+ },
+ {
+  "id": "kaiyukan",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6545,
+   135.429
+  ],
+  "best": {
+   "name": "海遊館",
+   "t": "aquarium",
+   "ll": [
+    34.65455,
+    135.42892
+   ],
+   "sc": 0,
+   "dist": 9
+  }
+ },
+ {
+  "id": "yodobashi-umeda",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.7043,
+   135.4961
+  ],
+  "best": {
+   "name": "ヨドバシ梅田タワー",
+   "t": "retail",
+   "ll": [
+    34.70439,
+    135.49625
+   ],
+   "sc": 0,
+   "dist": 16
+  }
+ },
+ {
+  "id": "umeda-sky",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.7053,
+   135.4903
+  ],
+  "best": {
+   "name": "梅田スカイビル",
+   "t": "office",
+   "ll": [
+    34.70529,
+    135.49053
+   ],
+   "sc": 0,
+   "dist": 21
+  }
+ },
+ {
+  "id": "dojima-yakiniku",
+  "city": "אוסקה",
+  "approx": true,
+  "stored": [
+   34.6939,
+   135.4936
+  ],
+  "best": {
+   "name": "NTT テレパーク堂島 第2ビル",
+   "t": "commercial",
+   "ll": [
+    34.69472,
+    135.49213
+   ],
+   "sc": 0,
+   "dist": 163
+  }
+ },
+ {
+  "id": "usj",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6654,
+   135.4323
+  ],
+  "best": {
+   "name": "ユニバーサル・スタジオ・ジャパン",
+   "t": "commercial",
+   "ll": [
+    34.66564,
+    135.43245
+   ],
+   "sc": 0,
+   "dist": 30
+  }
+ },
+ {
+  "id": "osaka-castle",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6873,
+   135.5262
+  ],
+  "best": {
+   "name": "大阪城",
+   "t": "castle",
+   "ll": [
+    34.68737,
+    135.52586
+   ],
+   "sc": 0,
+   "dist": 33
+  }
+ },
+ {
+  "id": "namba-yasaka",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6633,
+   135.4966
+  ],
+  "best": {
+   "name": "難波八坂神社",
+   "t": "place_of_worship",
+   "ll": [
+    34.66148,
+    135.49673
+   ],
+   "sc": 0,
+   "dist": 203
+  }
+ },
+ {
+  "id": "rikuros",
+  "city": "אוסקה",
+  "approx": true,
+  "stored": [
+   34.6659,
+   135.5013
+  ],
+  "best": null
+ },
+ {
+  "id": "shinsaibashi",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6724,
+   135.501
+  ],
+  "best": {
+   "name": "心斎橋筋商店街",
+   "t": "pedestrian",
+   "ll": [
+    34.67195,
+    135.50135
+   ],
+   "sc": 0,
+   "dist": 60
+  }
+ },
+ {
+  "id": "dotonbori",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.6687,
+   135.5013
+  ],
+  "best": {
+   "name": "Hotel Forza Osaka Namba Dotonbori",
+   "t": "hotel",
+   "ll": [
+    34.66858,
+    135.50339
+   ],
+   "sc": 1,
+   "dist": 192
+  }
+ },
+ {
+  "id": "nara-park",
+  "city": "נארה",
+  "approx": false,
+  "stored": [
+   34.6851,
+   135.843
+  ],
+  "best": {
+   "name": "奈良公園",
+   "t": "park",
+   "ll": [
+    34.6829,
+    135.8546
+   ],
+   "sc": 0,
+   "dist": 1088
+  }
+ },
+ {
+  "id": "todaiji",
+  "city": "נארה",
+  "approx": false,
+  "stored": [
+   34.6889,
+   135.8399
+  ],
+  "best": {
+   "name": "東大寺",
+   "t": "religious",
+   "ll": [
+    34.68824,
+    135.83976
+   ],
+   "sc": 0,
+   "dist": 74
+  }
+ },
+ {
+  "id": "isuien",
+  "city": "נארה",
+  "approx": false,
+  "stored": [
+   34.6892,
+   135.8365
+  ],
+  "best": {
+   "name": "依水園",
+   "t": "garden",
+   "ll": [
+    34.68547,
+    135.83792
+   ],
+   "sc": 0,
+   "dist": 435
+  }
+ },
+ {
+  "id": "kasuga-taisha",
+  "city": "נארה",
+  "approx": false,
+  "stored": [
+   34.6814,
+   135.8484
+  ],
+  "best": {
+   "name": "春日大社表参道 (Kasuga-taisha Omotesandō)",
+   "t": "bus_stop",
+   "ll": [
+    34.68187,
+    135.83989
+   ],
+   "sc": 1,
+   "dist": 780
+  }
+ },
+ {
+  "id": "nakatanidou",
+  "city": "נארה",
+  "approx": false,
+  "stored": [
+   34.6819,
+   135.8278
+  ],
+  "best": {
+   "name": "中谷堂",
+   "t": "confectionery",
+   "ll": [
+    34.68193,
+    135.82886
+   ],
+   "sc": 0,
+   "dist": 97
+  }
+ },
+ {
+  "id": "kamaiki",
+  "city": "נארה",
+  "approx": false,
+  "stored": [
+   34.68297,
+   135.82881
+  ],
+  "best": {
+   "name": "釜粋",
+   "t": "restaurant",
+   "ll": [
+    34.68297,
+    135.82881
+   ],
+   "sc": 0,
+   "dist": 1
+  }
+ },
+ {
+  "id": "osaka-station",
+  "city": "אוסקה",
+  "approx": false,
+  "stored": [
+   34.7025,
+   135.4959
+  ],
+  "best": {
+   "name": "O-STAY Shin-Osaka Station Hotel Apartment",
+   "t": "hotel",
+   "ll": [
+    34.7327,
+    135.50278
+   ],
+   "sc": 1,
+   "dist": 3417
+  }
+ },
+ {
+  "id": "odawara-station",
+  "city": "האקונה",
+  "approx": false,
+  "stored": [
+   35.2564,
+   139.1552
+  ],
+  "best": {
+   "name": "小田原駅西口",
+   "t": "traffic_signals",
+   "ll": [
+    35.25679,
+    139.15399
+   ],
+   "sc": 0,
+   "dist": 118
+  }
+ },
+ {
+  "id": "hotel-suiun",
+  "city": "האקונה",
+  "approx": true,
+  "stored": [
+   35.2317,
+   139.1056
+  ],
+  "best": {
+   "name": "Mikawaya Ryokan",
+   "t": "hotel",
+   "ll": [
+    35.23664,
+    139.04702
+   ],
+   "sc": 0.5,
+   "dist": 5349
+  }
+ },
+ {
+  "id": "openair-museum",
+  "city": "האקונה",
+  "approx": false,
+  "stored": [
+   35.2447,
+   139.0503
+  ],
+  "best": {
+   "name": "彫刻の森美術館",
+   "t": "museum",
+   "ll": [
+    35.24428,
+    139.05208
+   ],
+   "sc": 0,
+   "dist": 168
+  }
+ },
+ {
+  "id": "gora-park",
+  "city": "האקונה",
+  "approx": false,
+  "stored": [
+   35.2482,
+   139.0456
+  ],
+  "best": {
+   "name": "強羅公園",
+   "t": "park",
+   "ll": [
+    35.24864,
+    139.04525
+   ],
+   "sc": 0,
+   "dist": 58
+  }
+ },
+ {
+  "id": "owakudani",
+  "city": "האקונה",
+  "approx": false,
+  "stored": [
+   35.2444,
+   139.0194
+  ],
+  "best": {
+   "name": "大涌谷駅",
+   "t": "station",
+   "ll": [
+    35.24442,
+    139.01958
+   ],
+   "sc": 0,
+   "dist": 16
+  }
+ },
+ {
+  "id": "togendai",
+  "city": "האקונה",
+  "approx": false,
+  "stored": [
+   35.2419,
+   138.9967
+  ],
+  "best": null
+ },
+ {
+  "id": "hakone-shrine",
+  "city": "האקונה",
+  "approx": false,
+  "stored": [
+   35.2048,
+   139.0256
+  ],
+  "best": {
+   "name": "箱根神社の龍神水",
+   "t": "drinking_water",
+   "ll": [
+    35.20459,
+    139.02555
+   ],
+   "sc": 0,
+   "dist": 24
+  }
+ },
+ {
+  "id": "roppongi-hills",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6605,
+   139.7292
+  ],
+  "best": {
+   "name": "六本木ヒルズ森タワー",
+   "t": "office",
+   "ll": [
+    35.66046,
+    139.72928
+   ],
+   "sc": 0,
+   "dist": 8
+  }
+ },
+ {
+  "id": "midtown-2121",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6667,
+   139.7308
+  ],
+  "best": {
+   "name": "21_21 Design Sight",
+   "t": "museum",
+   "ll": [
+    35.66741,
+    139.73013
+   ],
+   "sc": 1,
+   "dist": 99
+  }
+ },
+ {
+  "id": "teamlab-borderless",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6604,
+   139.7413
+  ],
+  "best": null
+ },
+ {
+  "id": "tokyo-tower",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6586,
+   139.7454
+  ],
+  "best": {
+   "name": "The Tokyo Towers Mid Tower",
+   "t": "apartments",
+   "ll": [
+    35.65566,
+    139.77356
+   ],
+   "sc": 1,
+   "dist": 2565
+  }
+ },
+ {
+  "id": "savoy",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.65376,
+   139.73528
+  ],
+  "best": {
+   "name": "Savoy Pizza",
+   "t": "restaurant",
+   "ll": [
+    35.65376,
+    139.73528
+   ],
+   "sc": 0.67,
+   "dist": 0
+  }
+ },
+ {
+  "id": "ogawa-lab",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.66325,
+   139.66976
+  ],
+  "best": {
+   "name": "Ogawa Coffee Laboratory",
+   "t": "cafe",
+   "ll": [
+    35.66325,
+    139.66976
+   ],
+   "sc": 0.75,
+   "dist": 0
+  }
+ },
+ {
+  "id": "reload",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6631,
+   139.669
+  ],
+  "best": {
+   "name": "General Record Store SHIMOKITAZAWA",
+   "t": "music",
+   "ll": [
+    35.66207,
+    139.66939
+   ],
+   "sc": 0.5,
+   "dist": 120
+  }
+ },
+ {
+  "id": "flippers-shimokita",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6607,
+   139.6676
+  ],
+  "best": null
+ },
+ {
+  "id": "shirohige",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.656,
+   139.6689
+  ],
+  "best": null
+ },
+ {
+  "id": "shinjuku-gyoen",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6852,
+   139.71
+  ],
+  "best": {
+   "name": "新宿御苑",
+   "t": "park",
+   "ll": [
+    35.68507,
+    139.70955
+   ],
+   "sc": 0,
+   "dist": 43
+  }
+ },
+ {
+  "id": "cois-cafe",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6938,
+   139.7034
+  ],
+  "best": {
+   "name": "SQUARE ENIX cafe & Shop SHINJUKU",
+   "t": "cafe",
+   "ll": [
+    35.6898,
+    139.702
+   ],
+   "sc": 0.5,
+   "dist": 462
+  }
+ },
+ {
+  "id": "uniqlo-shinjuku",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6905,
+   139.7045
+  ],
+  "best": {
+   "name": "ユニクロ",
+   "t": "cafe",
+   "ll": [
+    35.69142,
+    139.70321
+   ],
+   "sc": 0,
+   "dist": 155
+  }
+ },
+ {
+  "id": "godzilla",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6952,
+   139.7019
+  ],
+  "best": null
+ },
+ {
+  "id": "kabukicho-goldengai",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6942,
+   139.7047
+  ],
+  "best": {
+   "name": "新宿ゴールデン街",
+   "t": "attraction",
+   "ll": [
+    35.69399,
+    139.7047
+   ],
+   "sc": 0,
+   "dist": 23
+  }
+ },
+ {
+  "id": "teamlab-planets",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6493,
+   139.7898
+  ],
+  "best": {
+   "name": "チームラボ プラネッツ",
+   "t": "museum",
+   "ll": [
+    35.64938,
+    139.78973
+   ],
+   "sc": 0,
+   "dist": 11
+  }
+ },
+ {
+  "id": "tsukiji",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6655,
+   139.7707
+  ],
+  "best": {
+   "name": "築地場外市場",
+   "t": "marketplace",
+   "ll": [
+    35.66539,
+    139.77047
+   ],
+   "sc": 0,
+   "dist": 24
+  }
+ },
+ {
+  "id": "x-coffee",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.669,
+   139.7649
+  ],
+  "best": {
+   "name": "Janai Coffee",
+   "t": "bar",
+   "ll": [
+    35.64556,
+    139.70735
+   ],
+   "sc": 0.5,
+   "dist": 5816
+  }
+ },
+ {
+  "id": "uniqlo-ginza",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6717,
+   139.7636
+  ],
+  "best": {
+   "name": "ユニクロ",
+   "t": "clothes",
+   "ll": [
+    35.6702,
+    139.76343
+   ],
+   "sc": 0,
+   "dist": 168
+  }
+ },
+ {
+  "id": "mitsukoshi-ginza",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6717,
+   139.7645
+  ],
+  "best": {
+   "name": "三越銀座店",
+   "t": "department_store",
+   "ll": [
+    35.67119,
+    139.76591
+   ],
+   "sc": 0,
+   "dist": 139
+  }
+ },
+ {
+  "id": "ginza-ramen",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6719,
+   139.7659
+  ],
+  "best": {
+   "name": "Ginza Noodles むぎとオリーブ Clam Ramen",
+   "t": "restaurant",
+   "ll": [
+    35.66899,
+    139.76434
+   ],
+   "sc": 0.5,
+   "dist": 353
+  }
+ },
+ {
+  "id": "nissan-ginzasix",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.6705,
+   139.7638
+  ],
+  "best": {
+   "name": "Viennoiserie JEAN FRANÇOIS　GINZA SIX店",
+   "t": "bakery",
+   "ll": [
+    35.67005,
+    139.76419
+   ],
+   "sc": 1,
+   "dist": 61
+  }
+ },
+ {
+  "id": "ginza-sand",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.66982,
+   139.76214
+  ],
+  "best": {
+   "name": "銀座サンド",
+   "t": "restaurant",
+   "ll": [
+    35.66982,
+    139.76214
+   ],
+   "sc": 0,
+   "dist": 0
+  }
+ },
+ {
+  "id": "hakkoku",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6726,
+   139.764
+  ],
+  "best": null
+ },
+ {
+  "id": "akihabara",
+  "city": "טוקיו",
+  "approx": false,
+  "stored": [
+   35.7022,
+   139.773
+  ],
+  "best": {
+   "name": "秋葉原駅電気街口(西側交通広場)",
+   "t": "bicycle_rental",
+   "ll": [
+    35.69917,
+    139.77263
+   ],
+   "sc": 0,
+   "dist": 338
+  }
+ },
+ {
+  "id": "airport-dep",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.5494,
+   139.7798
+  ],
+  "best": {
+   "name": "羽田空港第1・第2ターミナル",
+   "t": "stop",
+   "ll": [
+    35.5499,
+    139.78605
+   ],
+   "sc": 0,
+   "dist": 568
+  }
+ },
+ {
+  "id": "shodai",
+  "city": "טוקיו",
+  "approx": true,
+  "stored": [
+   35.6486,
+   139.7027
+  ],
+  "best": {
+   "name": "Soup Curry UDON",
+   "t": "restaurant",
+   "ll": [
+    35.62488,
+    139.71978
+   ],
+   "sc": 0.67,
+   "dist": 3056
+  }
+ }
+]

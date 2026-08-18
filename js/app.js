@@ -44,10 +44,32 @@ function toast(msg, ms) {
 /* ---------- מפה ---------- */
 const map = L.map("map", { zoomControl: false, worldCopyJump: true });
 L.control.zoom({ position: "bottomleft" }).addTo(map);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: "abcd", maxZoom: 20,
-}).addTo(map);
+/* מפת בסיס: וקטורית עם תוויות באנגלית (OpenFreeMap); נפילה לרסטר אם אין WebGL */
+function addRasterBasemap() {
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: "abcd", maxZoom: 20,
+  }).addTo(map);
+}
+(async function initBasemap() {
+  const webgl = (() => { try { const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); } catch (e) { return false; } })();
+  if (!webgl || typeof maplibregl === "undefined" || typeof L.maplibreGL !== "function") { addRasterBasemap(); return; }
+  try {
+    const st = await (await fetch("https://tiles.openfreemap.org/styles/bright")).json();
+    for (const lyr of st.layers || []) {
+      const tf = lyr.layout && lyr.layout["text-field"];
+      if (tf && JSON.stringify(tf).includes("name")) {
+        lyr.layout["text-field"] = ["coalesce", ["get", "name:en"], ["get", "name:latin"], ["get", "name"]];
+      }
+    }
+    const gl = L.maplibreGL({
+      style: st,
+      attribution: '<a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+    });
+    gl.addTo(map);
+    gl.getMaplibreMap().once("error", () => { try { map.removeLayer(gl); } catch (e) {} addRasterBasemap(); });
+  } catch (e) { addRasterBasemap(); }
+})();
 map.setView([35.5, 137.5], 6);
 const routeLayer = L.layerGroup().addTo(map);
 
@@ -460,7 +482,8 @@ function renderDaybar() {
     if (c !== lastC) { bar.appendChild(el("span", "dsep", "🇹🇭")); lastC = c; }
     const main = d.short ? esc(d.short) : "יום " + d.n;
     const b = el("button", "dchip" + (curDay === d.id ? " on" : "") + (TODAY_ID === d.id ? " today" : ""),
-      '<span class="dot" style="background:' + d.color + '"></span>' + main + ' <span class="dt">' + (d.dfrom || d.date) + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
+      '<span class="dot" style="background:' + (curDay === d.id ? "rgba(255,255,255,.9)" : d.color) + '"></span>' + main + ' <span class="dt">' + (d.dfrom || d.date) + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
+    if (curDay === d.id) b.style.background = d.color;
     b.title = d.title;
     b.onclick = () => selectDay(d.id);
     bar.appendChild(b);

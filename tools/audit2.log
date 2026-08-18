@@ -1,0 +1,68 @@
+== Nominatim distance check (stored vs top EN-name result) ==
+hotel-shiodome | 166m | ロイヤルパークホテル ザ 汐留, 3, 東新橋一丁目
+meiji-shrine | 176m | 明治神宮, 1, 代々木神園町
+omotesando | NO RESULT
+onodera-omotesando ~ | NO RESULT
+hachiko | NO RESULT
+katsugyu-dogenzaka ~ | NO RESULT
+sensoji | 188m | 金龍山 浅草寺, 1, 浅草二丁目
+nakamise | 48m | 仲見世商店街, 伝法院通り東, 浅草一丁目
+kappabashi | NO RESULT
+ueno-park | 78m | 上野公園, 台東区, 東京都
+skytree | 5m | 東京スカイツリー, 2, 押上一丁目
+setsugetsuka ~ | NO RESULT
+tokyo-station | 245m | 東京駅(改札外), 丸の内二丁目, 丸の内
+kyoto-station | 74m | 京都駅前, 塩小路通, 東塩小路町
+kyoto-gyoen | 459m | 京都御苑 案内図, 寺町通, 京都御苑  <<<< CHECK
+nijo-castle | 45m | 二条城, 日暮通, 南伊勢屋町
+pontocho | 369m | 先斗町通, 鍋屋町, 中京区
+onodera-kyoto ~ | NO RESULT
+monkey-park | 259m | 嵐山モンキーパークいわたやま, 宇多野嵐山山田線, 嵐山中尾下町
+togetsukyo | 377530m | 渡月橋, 本駒込六丁目, 本駒込  <<<< CHECK
+arabica-arashiyama | 231m | アラビアカ 京都嵐山, 二条停車場嵐山線, 嵯峨中ノ島町
+bamboo-grove | 32m | 嵐山竹林, 宇多野嵐山山田線, 嵯峨天龍寺立石町
+kijurou | 1m | 嵐山 喜重郎, 宇多野嵐山山田線, 嵯峨天龍寺立石町
+kinkakuji | 34m | 金閣寺, 金閣寺町, 馬喰町
+bungo-gion ~ | NO RESULT
+sannenzaka | NO RESULT
+nishiki-market | 61m | 錦市場, 錦小路通, 東魚屋町
+in-the-moon ~ | NO RESULT
+fushimi-inari | 640m | 伏見稲荷大社, 伏見区, 京都市  <<<< CHECK
+fushimi-castle | 325m | 伏見城, 上板橋通, 深草大亀谷五郎太町
+gekkeikan | 130m | 月桂冠大倉記念館, 南浜通, 本材木町
+kaiyukan | 9m | 海遊館, 北海岸通, 海岸通一丁目
+yodobashi-umeda | 16m | ヨドバシ梅田タワー, 大深町, 北区
+umeda-sky | 21m | 梅田スカイビル, 大阪伊丹線, 大淀中一丁目
+dojima-yakiniku ~ | NO RESULT
+usj | 30m | ユニバーサル・スタジオ・ジャパン, 此花区, 大阪市
+osaka-castle | 75m | 大阪城, 笹の小径, 大阪城
+namba-yasaka | 203m | 難波八坂神社, 大国町筋, 元町二丁目
+rikuros ~ | NO RESULT
+shinsaibashi | 205m | 心斎橋筋商店街, 心斎橋筋一丁目, 中央区
+nara-park | 1088m | 奈良公園, 奈良市, 奈良県  <<<< CHECK
+todaiji | NO RESULT
+isuien | 435m | 依水園, 春日野町, 奈良市  <<<< CHECK
+nakatanidou | 97m | 中谷堂, 29, 三条通り
+kamaiki | NO RESULT
+odawara-station | 109m | 小田原, 東通り, 栄町一丁目
+openair-museum | 168m | 彫刻の森美術館, 関本小涌谷線, 木賀
+gora-park | 58m | 強羅公園, 強羅, 箱根町
+owakudani | 550m | 大涌谷, 箱根町, 足柄下郡  <<<< CHECK
+togendai | NO RESULT
+hakone-shrine | 92m | 箱根神社, 神社通り, 箱根町
+roppongi-hills | 66m | 六本木ヒルズ, 六本木, 港区
+teamlab-borderless | 261m | teamLab Borderless Museum, 八幡通り, 麻布台ヒルズ
+flippers-shimokita ~ | NO RESULT
+shirohige ~ | NO RESULT
+shinjuku-gyoen | 43m | 新宿御苑, 内藤町, 新宿区
+uniqlo-shinjuku ~ | NO RESULT
+godzilla | NO RESULT
+kabukicho-goldengai | 23m | 新宿ゴールデン街, あかるい花園八番街, 歌舞伎町一丁目
+teamlab-planets | 11m | チームラボ プラネッツ, 16, 豊洲六丁目
+tsukiji | 24m | 築地場外市場, 波除通り, 築地四丁目
+uniqlo-ginza | 168m | ユニクロ, 銀座すずらん通り, 銀座六丁目
+mitsukoshi-ginza | 139m | 三越銀座店, 16, 銀座四丁目
+ginza-sand | NO RESULT
+hakkoku ~ | NO RESULT
+akihabara | 338m | 秋葉原駅電気街口(西側交通広場), 秋葉原駅西側交通広場, 外神田一丁目
+airport-dep ~ | 531m | 東京国際空港, 羽田空港, 大田区  <<<< CHECK
