@@ -75,10 +75,11 @@ const routeLayer = L.layerGroup().addTo(map);
 
 /* ---------- שכבת "אוכל בסביבה" ---------- */
 const KINDS = {
-  sushi: ["🍣", "סושי"], ramen: ["🍜", "ראמן ואודון"], meat: ["🥩", "בשר"],
-  cafe: ["☕", "קפה ומתוק"], italian: ["🍕", "איטלקי"], jp: ["🥟", "יפני"],
-  bar: ["🍸", "ברים"], fine: ["⭐", "יוקרה"], attr: ["✨", "אטרקציות"], other: ["🍽️", "עוד"],
+  sushi: ["🍣", "סושי", "#d95468"], ramen: ["🍜", "ראמן ואודון", "#e08a1e"], meat: ["🥩", "בשר", "#b5542a"],
+  cafe: ["☕", "קפה ומתוק", "#8d6e63"], italian: ["🍕", "איטלקי", "#43a047"], jp: ["🥟", "יפני", "#7e57c2"],
+  bar: ["🍸", "ברים", "#5c6bc0"], fine: ["⭐", "יוקרה", "#c9a227"], attr: ["✨", "אטרקציות", "#00897b"], other: ["🍽️", "עוד", "#78909c"],
 };
+let foodMarkers = {};
 const foodLayer = L.layerGroup().addTo(map);
 let foodOn = false, foodKind = null;
 function haversine(a, b) {
@@ -103,6 +104,7 @@ function foodPopup(c) {
     '<span class="chip">' + esc(c.city) + "</span>" +
     (c.mich ? '<span class="chip mich">⭐ מישלן</span>' : "") + "</div>";
   if (c.note) h += '<div class="pop-d">' + esc(c.note) + "</div>";
+  if (c.addr) h += '<div class="pop-dist">📍 ' + esc(c.addr) + "</div>";
   h += c.book
     ? '<div class="pop-book">📌 כדאי להזמין מראש (דרך קבלת המלון / OMAKASE.IN)</div>'
     : '<div class="pop-walkin">🚶 הגעה ספונטנית — בלי הזמנה</div>';
@@ -111,6 +113,7 @@ function foodPopup(c) {
   const links = el("div", "pop-links");
   links.appendChild(linkBtn("🗺️ במפות Google", "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((c.en || c.n) + ", " + (CITY_EN[c.city] || "") + " Japan")));
   links.appendChild(linkBtn("🧭 ניווט לשם עכשיו (הליכה)", "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((c.en || c.n) + ", " + (CITY_EN[c.city] || "")) + "&travelmode=walking"));
+  if (JP_CITIES.has(c.city) && c.cat === "food") links.appendChild(linkBtn("⭐ ביקורות ב-Tabelog", "https://tabelog.com/en/rstLst/?sw=" + encodeURIComponent(c.en || c.n)));
   box.appendChild(links);
   const acts = el("div", "pop-acts");
   const day = curDayObj();
@@ -126,30 +129,64 @@ function foodPopup(c) {
 }
 function renderFood() {
   foodLayer.clearLayers();
+  foodMarkers = {};
   const bar = $("#foodbar");
   bar.style.display = foodOn ? "" : "none";
   if (!foodOn) return;
   const items = foodItems();
   // chips
   bar.innerHTML = "";
-  const kindsHere = [...new Set(CATALOG.filter(c => c.ll && foodScopeCities().has(c.city)).map(c => c.k))];
+  const listBtn = el("button", "fchip list", "📋 רשימה לפי מרחק");
+  listBtn.onclick = openRecList;
+  bar.appendChild(listBtn);
   const all = el("button", "fchip" + (!foodKind ? " on" : ""), "הכל");
   all.onclick = () => { foodKind = null; renderFood(); };
   bar.appendChild(all);
+  const kindsHere = [...new Set(CATALOG.filter(c => c.ll && foodScopeCities().has(c.city)).map(c => c.k))];
   for (const k of Object.keys(KINDS)) {
     if (!kindsHere.includes(k)) continue;
     const b = el("button", "fchip" + (foodKind === k ? " on" : ""), KINDS[k][0] + " " + KINDS[k][1]);
     b.onclick = () => { foodKind = foodKind === k ? null : k; renderFood(); };
     bar.appendChild(b);
   }
-  for (const c of items) {
-    const m = L.marker(c.ll, {
-      icon: L.divIcon({ className: "", html: '<div class="fpin">' + (KINDS[c.k] || KINDS.other)[0] + "</div>", iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -14] }),
-      zIndexOffset: -200, riseOnHover: true,
-    }).addTo(foodLayer);
-    if (!IS_TOUCH) m.bindTooltip(c.n, { direction: "top", offset: [0, -12] });
-    m.bindPopup(() => foodPopup(c), { maxWidth: 300 });
+  if (!items.length) {
+    toast(foodKind ? "אין המלצות מהסוג הזה באזור — נסו סינון אחר" : "אין עדיין המלצות שמורות לאזור הזה (ההמלצות מהחוברת הן ליפן)");
+    return;
   }
+  for (const c of items) {
+    const kc = (KINDS[c.k] || KINDS.other)[2];
+    const m = L.marker(c.ll, {
+      icon: L.divIcon({ className: "", html: '<div class="fpin" style="--kc:' + kc + '">' + (KINDS[c.k] || KINDS.other)[0] + "</div>", iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -15] }),
+      zIndexOffset: 650, riseOnHover: true,
+    }).addTo(foodLayer);
+    if (!IS_TOUCH) m.bindTooltip(c.n, { direction: "top", offset: [0, -13] });
+    m.bindPopup(() => foodPopup(c), { maxWidth: 300 });
+    foodMarkers[c.en || c.n] = m;
+  }
+}
+function openRecList() {
+  const items = foodItems();
+  const from = gpsDot ? [gpsDot.getLatLng().lat, gpsDot.getLatLng().lng] : [map.getCenter().lat, map.getCenter().lng];
+  const rows = items.map(c => ({ c, d: haversine(from, c.ll) })).sort((a, b) => a.d - b.d);
+  $("#recTitle").textContent = "המלצות באזור · " + (gpsDot ? "לפי מרחק מכם" : "לפי מרחק ממרכז המפה");
+  const box = $("#recList");
+  box.innerHTML = "";
+  if (!rows.length) box.appendChild(el("div", "cat-empty", "אין המלצות שמורות לאזור הזה"));
+  for (const { c, d } of rows) {
+    const k = KINDS[c.k] || KINDS.other;
+    const row = el("button", "cat-row");
+    row.innerHTML = '<span class="s-ic">' + k[0] + '</span><span class="cr-main"><b>' + esc(c.n) +
+      (c.mich ? " ⭐" : "") + "</b><span>" + esc(c.note || "") + (c.book ? " · 📌 בהזמנה" : " · 🚶 ספונטני") + "</span></span>" +
+      '<span class="cr-city">' + fmtDist(d) + "</span>";
+    row.onclick = () => {
+      hideModal("recModal");
+      map.flyTo(c.ll, Math.max(map.getZoom(), 16), { duration: .7 });
+      const m = foodMarkers[c.en || c.n];
+      if (m) setTimeout(() => m.openPopup(), 750);
+    };
+    box.appendChild(row);
+  }
+  showModal("recModal");
 }
 const FoodControl = L.Control.extend({
   options: { position: "bottomleft" },
