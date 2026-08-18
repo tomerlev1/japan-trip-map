@@ -1,0 +1,210 @@
+{
+ "toriyaki-ohana": {
+  "lat": 35.76196,
+  "lng": 139.60752,
+  "name": "OHANA",
+  "type": "social_facility",
+  "old": [
+   35.666,
+   139.756
+  ]
+ },
+ "onodera-omotesando": null,
+ "katsugyu-dogenzaka": {
+  "lat": 35.65867,
+  "lng": 139.69779,
+  "name": "かつや",
+  "type": "fast_food",
+  "old": [
+   35.6584,
+   139.6964
+  ]
+ },
+ "setsugetsuka": null,
+ "hotel-nohga": {
+  "lat": 34.99757,
+  "lng": 135.77946,
+  "name": "The Hotel Seiryu Kyoto Kiyomizu",
+  "type": "hotel",
+  "old": [
+   34.9932,
+   135.7727
+  ]
+ },
+ "onodera-kyoto": null,
+ "kijurou": {
+  "lat": 35.01684,
+  "lng": 135.67743,
+  "name": "嵐山 喜重郎",
+  "type": "restaurant",
+  "old": [
+   35.016,
+   135.678
+  ]
+ },
+ "bungo-gion": null,
+ "maikoya": {
+  "lat": 34.9977,
+  "lng": 135.77401,
+  "name": "KIMONO TEA CEREMONY MAIKOYA at GION KIYOMIZU",
+  "type": "attraction",
+  "old": [
+   35.0043,
+   135.7625
+  ]
+ },
+ "in-the-moon": null,
+ "teamlab-biovortex": {
+  "lat": 34.98375,
+  "lng": 135.76542,
+  "name": "teamLab BioVortex",
+  "type": "attraction",
+  "old": [
+   34.9793,
+   135.7622
+  ]
+ },
+ "marutomi": {
+  "lat": 35.00416,
+  "lng": 135.771,
+  "name": "Kyoto Yakiniku Suzuki",
+  "type": "restaurant",
+  "old": [
+   35.004,
+   135.768
+  ]
+ },
+ "hotel-flag": {
+  "lat": 34.6742,
+  "lng": 135.50305,
+  "name": "The Flag Shinsaibashi",
+  "type": "hotel",
+  "old": [
+   34.6733,
+   135.5033
+  ]
+ },
+ "dojima-yakiniku": {
+  "lat": 34.69391,
+  "lng": 135.48935,
+  "name": "堂島 リバー フォーラム",
+  "type": "community_centre",
+  "old": [
+   34.6939,
+   135.4936
+  ]
+ },
+ "rikuros": null,
+ "kamaiki": {
+  "lat": 34.68297,
+  "lng": 135.82881,
+  "name": "釜粋",
+  "type": "restaurant",
+  "old": [
+   34.6822,
+   135.8285
+  ]
+ },
+ "hotel-suiun": {
+  "lat": 35.25107,
+  "lng": 139.04088,
+  "name": "桐谷 箱根荘",
+  "type": "guest_house",
+  "old": [
+   35.2325,
+   139.1065
+  ]
+ },
+ "savoy": {
+  "lat": 35.65376,
+  "lng": 139.73528,
+  "name": "Savoy Pizza",
+  "type": "restaurant",
+  "old": [
+   35.6554,
+   139.7365
+  ]
+ },
+ "ogawa-lab": {
+  "lat": 35.66325,
+  "lng": 139.66976,
+  "name": "Ogawa Coffee Laboratory",
+  "type": "cafe",
+  "old": [
+   35.6614,
+   139.668
+  ]
+ },
+ "flippers-shimokita": null,
+ "shirohige": null,
+ "cois-cafe": {
+  "lat": 35.6898,
+  "lng": 139.702,
+  "name": "SQUARE ENIX cafe & Shop SHINJUKU",
+  "type": "cafe",
+  "old": [
+   35.6938,
+   139.7034
+  ]
+ },
+ "uniqlo-shinjuku": {
+  "lat": 35.69187,
+  "lng": 139.70305,
+  "type": "toys",
+  "old": [
+   35.6905,
+   139.7045
+  ]
+ },
+ "x-coffee": {
+  "lat": 35.67101,
+  "lng": 139.76604,
+  "name": "タリーズコーヒー",
+  "type": "cafe",
+  "old": [
+   35.669,
+   139.7649
+  ]
+ },
+ "ginza-ramen": {
+  "lat": 35.66899,
+  "lng": 139.76434,
+  "name": "Ginza Noodles むぎとオリーブ Clam Ramen",
+  "type": "restaurant",
+  "old": [
+   35.6719,
+   139.7659
+  ]
+ },
+ "ginza-sand": {
+  "lat": 35.66982,
+  "lng": 139.76214,
+  "name": "銀座サンド",
+  "type": "restaurant",
+  "old": [
+   35.6705,
+   139.766
+  ]
+ },
+ "hakkoku": null,
+ "airport-dep": {
+  "lat": 35.5499,
+  "lng": 139.78605,
+  "name": "羽田空港第1・第2ターミナル",
+  "type": "stop",
+  "old": [
+   35.5494,
+   139.7798
+  ]
+ },
+ "shodai": {
+  "lat": 35.62488,
+  "lng": 139.71978,
+  "name": "Soup Curry UDON",
+  "type": "restaurant",
+  "old": [
+   35.665,
+   139.708
+  ]
+ }
+}

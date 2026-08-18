@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>יפן 2026 · המפה שלנו</title>
+<meta name="description" content="מפת המסלול היומי של הטיול ליפן — ספטמבר 2026">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header id="top">
+  <div class="brand">
+    <span class="logo">🗾</span>
+    <div><h1>יפן 2026 · המפה שלנו</h1><span class="tag">10–26.09 · טוקיו · קיוטו · אוסקה · נארה · האקונה</span></div>
+  </div>
+  <div class="tools">
+    <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)">↩️</button>
+    <button id="btnTips" class="tb" title="הזמנות וטיפים">📌</button>
+    <button id="btnMenu" class="tb" title="גיבוי ואיפוס">⋯</button>
+    <button id="btnShare" class="tb main">🔗 שיתוף</button>
+  </div>
+</header>
+<div id="shareBanner"></div>
+<nav id="daybar" aria-label="בחירת יום"></nav>
+<main>
+  <aside id="panel"></aside>
+  <div id="map"></div>
+</main>
+<div id="toast" role="status"></div>
+<div id="backdrop"></div>
+
+<div class="modal" id="catModal" role="dialog">
+  <div class="m-head"><h2 id="catTitle"></h2><button class="x" data-close="catModal">✕</button></div>
+  <div class="m-filter">
+    <input id="catSearch" type="search" placeholder="חיפוש מקום, מסעדה, אטרקציה…">
+    <select id="catCity"><option>הכל</option><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option></select>
+    <select id="catCat"><option value="הכל">הכל</option><option value="site">⛩️ אתרים</option><option value="food">🍜 אוכל</option><option value="shop">🛍️ קניות</option><option value="exp">✨ חוויות</option></select>
+  </div>
+  <div id="catList" class="m-body"></div>
+  <div class="m-foot"><button id="catNew" class="addbtn">＋ מקום חדש שלא ברשימה</button></div>
+</div>
+
+<div class="modal" id="edModal" role="dialog">
+  <div class="m-head"><h2 id="edTitle"></h2><button class="x" data-close="edModal">✕</button></div>
+  <div class="m-body form">
+    <label>שם (עברית) <input id="edName" required></label>
+    <label>שם באנגלית — לניווט מדויק <input id="edEn" placeholder="Sushi Kenshin Ebisu"></label>
+    <div class="row2">
+      <label>עיר <select id="edCity"><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option></select></label>
+      <label>סוג <select id="edCat"><option value="site">⛩️ אתר</option><option value="food">🍜 אוכל</option><option value="shop">🛍️ קניות</option><option value="exp">✨ חוויה</option><option value="transit">🚄 תחבורה</option><option value="hotel">🏨 לינה</option></select></label>
+    </div>
+    <div class="row2">
+      <label>חלק ביום <select id="edPart"><option value="">—</option><option>בוקר</option><option>צהריים</option><option>אחה"צ</option><option>ערב</option><option>לילה</option><option>כל היום</option></select></label>
+      <label id="edDayWrap">יום <select id="edDay"></select></label>
+    </div>
+    <label>תיאור <textarea id="edDesc" rows="2"></textarea></label>
+    <label>הזמנה מראש (הערה) <input id="edBook" placeholder="למשל: להזמין דרך הקבלה / Klook"></label>
+    <label>קישור לאתר / הזמנות <input id="edSite" type="url" placeholder="https://…"></label>
+    <p class="hint">🧭 מיקום לא מדויק? גררו את הסיכה שלו על המפה.</p>
+  </div>
+  <div class="m-foot"><button id="edSave" class="addbtn">שמירה</button></div>
+</div>
+
+<div class="modal" id="shareModal" role="dialog">
+  <div class="m-head"><h2>🔗 שיתוף המסלול</h2><button class="x" data-close="shareModal">✕</button></div>
+  <div class="m-body">
+    <p>שלחו את הקישור בוואטסאפ — הוא כולל את כל השינויים שעשיתם. בצד השני לוחצים "טען גרסה זו" והמסלול נשמר אצלם.</p>
+    <div class="sharebox"><input id="shareUrl" readonly><button id="shareCopy" class="mini on">העתקה</button></div>
+    <p class="hint">כל שינוי חדש = ליצור קישור חדש ולשלוח שוב.</p>
+  </div>
+</div>
+
+<div class="modal" id="tipsModal" role="dialog">
+  <div class="m-head"><h2>📌 הזמנות וטיפים</h2><button class="x" data-close="tipsModal">✕</button></div>
+  <div class="m-body" id="tipsBody"></div>
+</div>
+
+<div class="modal" id="menuModal" role="dialog">
+  <div class="m-head"><h2>גיבוי ואיפוס</h2><button class="x" data-close="menuModal">✕</button></div>
+  <div class="m-body menu">
+    <button id="mExport" class="menubtn">⬇️ ייצוא לקובץ גיבוי (JSON)</button>
+    <button id="mImport" class="menubtn">⬆️ ייבוא מקובץ גיבוי</button>
+    <button id="mReset" class="menubtn danger">🗑 איפוס למסלול המקורי</button>
+  </div>
+</div>
+<input type="file" id="importFile" accept="application/json" hidden>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
