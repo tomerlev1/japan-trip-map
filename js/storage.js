@@ -27,7 +27,7 @@ const Store = (() => {
     return m;
   }
   function freshState() {
-    return { v: TRIP.version, dayStops: defaultDayStops(), custom: {}, checked: {} };
+    return { v: TRIP.version, dayStops: defaultDayStops(), custom: {}, checked: {}, visited: {} };
   }
 
   /* --- גישה --- */
@@ -84,6 +84,10 @@ const Store = (() => {
     mutate(s => { if (s.checked[placeId]) delete s.checked[placeId]; else s.checked[placeId] = true; });
   }
   function isChecked(placeId) { return !!state.checked[placeId]; }
+  function toggleVisited(placeId) {
+    mutate(s => { if (s.visited[placeId]) delete s.visited[placeId]; else s.visited[placeId] = true; });
+  }
+  function isVisited(placeId) { return !!(state.visited && state.visited[placeId]); }
 
   function setCoords(placeId, lat, lng) {
     mutate(s => {
@@ -116,6 +120,9 @@ const Store = (() => {
     if (s.checked && typeof s.checked === "object") {
       for (const [id, v] of Object.entries(s.checked)) if (v === true) clean.checked[id] = true;
     }
+    if (s.visited && typeof s.visited === "object") {
+      for (const [id, v] of Object.entries(s.visited)) if (v === true) clean.visited[id] = true;
+    }
     // הסר עצירות שמצביעות למקום לא קיים
     for (const d of DAYS) clean.dayStops[d.id] = clean.dayStops[d.id].filter(id => clean.custom[id] || PLACES[id]);
     return clean;
@@ -135,6 +142,7 @@ const Store = (() => {
   function diff() {
     const d = { v: TRIP.version, dayStops: {}, custom: state.custom };
     if (Object.keys(state.checked || {}).length) d.checked = state.checked;
+    if (Object.keys(state.visited || {}).length) d.visited = state.visited;
     const def = defaultDayStops();
     for (const day of DAYS) {
       if (JSON.stringify(state.dayStops[day.id]) !== JSON.stringify(def[day.id]))
@@ -146,6 +154,7 @@ const Store = (() => {
     const s = freshState();
     if (d.custom) s.custom = d.custom;
     if (d.checked) s.checked = d.checked;
+    if (d.visited) s.visited = d.visited;
     if (d.dayStops) for (const [k, v] of Object.entries(d.dayStops)) if (s.dayStops[k]) s.dayStops[k] = v;
     const clean = validate(s);
     if (!clean) throw new Error("bad diff");
@@ -156,7 +165,7 @@ const Store = (() => {
   }
   function isDirty() {
     const d = diff();
-    return Object.keys(d.dayStops).length > 0 || Object.keys(d.custom).length > 0 || !!d.checked;
+    return Object.keys(d.dayStops).length > 0 || Object.keys(d.custom).length > 0 || !!d.checked || !!d.visited;
   }
 
   /* --- סנכרון --- */
@@ -226,5 +235,5 @@ const Store = (() => {
   return { getPlace, dayStops, upsertPlace, removeStop, addStop, replaceStop, moveStop, moveStopToDay,
     setCoords, resetAll, undo, canUndo, encodeShare, decodeShare, applyDiff, isDirty,
     exportJSON, importJSON, onChange, defaultPlace,
-    toggleChecked, isChecked, snapshotState, replaceState };
+    toggleChecked, isChecked, toggleVisited, isVisited, snapshotState, replaceState };
 })();

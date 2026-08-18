@@ -241,6 +241,20 @@ function updateGpsNext() {
   }
 }
 
+/* ---------- ספירה לאחור ---------- */
+function countdownHtml() {
+  const now = new Date(new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem" }).format(new Date()) + "T12:00:00");
+  const fly = new Date("2026-09-09T12:00:00");
+  const end = new Date("2026-10-14T12:00:00");
+  const days = Math.round((fly - now) / 86400e3);
+  if (days > 0) return '<div class="countdown">✈️ עוד <b>' + days + '</b> ימים לטיסה!</div>';
+  if (now <= end) {
+    const n = Math.round((now - new Date("2026-09-10T12:00:00")) / 86400e3) + 1;
+    return '<div class="countdown">🎌 יום <b>' + n + '</b> לטיול — תהנו!</div>';
+  }
+  return "";
+}
+
 /* ---------- מצב "היום" (שעון יפן) ---------- */
 function todayDayId(dateStr) {
   try {
@@ -297,10 +311,10 @@ function toggleGps() {
   }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
 }
 
-function numIcon(n, color, approx) {
+function numIcon(n, color, approx, visited) {
   return L.divIcon({
     className: "",
-    html: '<div class="pin' + (approx ? " approx" : "") + '" style="--c:' + color + '">' + n + "</div>",
+    html: '<div class="pin' + (approx ? " approx" : "") + (visited ? " vdone" : "") + '" style="--c:' + color + '">' + (visited ? "✓" : n) + "</div>",
     iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -16],
   });
 }
@@ -336,6 +350,9 @@ function popupContent(p, day, idx) {
 
   if (day) {
     const acts = el("div", "pop-acts");
+    const bV = el("button", "mini" + (Store.isVisited(p.id) ? " on" : ""), Store.isVisited(p.id) ? "↺ בטל \"היינו\"" : "✓ היינו כאן!");
+    bV.onclick = () => { map.closePopup(); Store.toggleVisited(p.id); };
+    acts.appendChild(bV);
     if (p.book) {
       const bB = el("button", "mini book", Store.isChecked(p.id) ? "↺ בטל \"הוזמן\"" : "✓ סמן שהוזמן");
       bB.onclick = () => { map.closePopup(); Store.toggleChecked(p.id); toast(Store.isChecked(p.id) ? "סומן שהוזמן ✅" : "הסימון בוטל"); };
@@ -397,7 +414,7 @@ function renderMap() {
     }
     stops.forEach((p, i) => {
       if (single) {
-        const m = L.marker([p.lat, p.lng], { icon: numIcon(i + 1, day.color, p.approx), draggable: !!p.approx, riseOnHover: true }).addTo(routeLayer);
+        const m = L.marker([p.lat, p.lng], { icon: numIcon(i + 1, day.color, p.approx, Store.isVisited(p.id)), draggable: !!p.approx, riseOnHover: true }).addTo(routeLayer);
         if (!IS_TOUCH) m.bindTooltip(p.n, { direction: "top", offset: [0, -14] });
         m.bindPopup(() => popupContent(Store.getPlace(p.id) || p, day, i), { maxWidth: 300 });
         if (p.approx) m.on("dragend", () => {
@@ -464,7 +481,7 @@ function renderPanel() {
   pn.innerHTML = "";
   const d = curDayObj();
   if (!d) {
-    pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>"));
+    pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>" + countdownHtml()));
     const hint = el("div", "pn-hint", "בחרו יום כדי לראות את המסלול המלא שלו, לערוך, להחליף ולסדר מחדש. כל שינוי נשמר במכשיר — ולחצן השיתוף יוצר קישור לבן/בת הזוג.");
     pn.appendChild(hint);
     let lastC = null;
@@ -510,6 +527,15 @@ function renderPanel() {
     head.appendChild(row);
   }
   pn.appendChild(head);
+  {
+    const ids = Store.dayStops(d.id);
+    const v = ids.filter(id => Store.isVisited(id)).length;
+    if (v > 0) {
+      const pr = el("div", "dayprog");
+      pr.innerHTML = '<div class="progress"><div class="progress-fill" style="width:' + Math.round(100 * v / ids.length) + '%;background:' + d.color + '"></div></div><span>' + v + "/" + ids.length + " היום ✓</span>";
+      head.appendChild(pr);
+    }
+  }
   fillWx(d, "#wxSlot");
   const tb = head.querySelector(".taxibtn");
   if (tb) tb.onclick = e => { e.preventDefault(); openTaxi(tb.dataset.taxi); };
@@ -533,7 +559,8 @@ function renderPanel() {
     const p = Store.getPlace(id);
     if (!p) return;
     const cat = CATS[p.cat] || CATS.site;
-    const row = el("div", "stop" + (d.id === TODAY_ID && p.part === currentPart(d) ? " nowpart" : ""));
+    const vis = Store.isVisited(p.id);
+    const row = el("div", "stop" + (d.id === TODAY_ID && p.part === currentPart(d) ? " nowpart" : "") + (vis ? " vdone" : ""));
     row.draggable = true;
     row.dataset.idx = i;
     row.innerHTML =
@@ -543,6 +570,7 @@ function renderPanel() {
       (p.part || p.book ? '<span class="s-part">' + esc(p.part || "") +
         (p.book ? (Store.isChecked(p.id) ? ' <span class="bk done">✓ הוזמן</span>' : ' <span class="bk">📌 להזמין</span>') : "") + "</span>" : "") + "</span>" +
       '<span class="s-acts">' +
+      '<button class="ib vbtn' + (vis ? " on" : "") + '" data-a="vis" title="סמן שהיינו">✓</button>' +
       '<button class="ib" data-a="up" title="הזז למעלה">▲</button>' +
       '<button class="ib" data-a="down" title="הזז למטה">▼</button>' +
       '<button class="ib" data-a="edit" title="עריכה">✎</button>' +
@@ -551,7 +579,8 @@ function renderPanel() {
     row.addEventListener("click", e => {
       const a = e.target.closest("button")?.dataset.a;
       if (!a) { focusStop(id); return; }
-      if (a === "up") Store.moveStop(d.id, i, i - 1);
+      if (a === "vis") Store.toggleVisited(id);
+      else if (a === "up") Store.moveStop(d.id, i, i - 1);
       else if (a === "down") Store.moveStop(d.id, i, i + 1);
       else if (a === "edit") openEdit(id, d.id, i);
       else if (a === "swap") openCatalog({ mode: "replace", dayId: d.id, idx: i });
@@ -735,7 +764,11 @@ function renderTips() {
   const box = $("#tipsBody");
   const items = bookingItems();
   const done = items.filter(x => Store.isChecked(x.p.id)).length;
-  let h = '<h3>📌 מה צריך להזמין מראש <span class="bkcount">' + done + "/" + items.length + ' הוזמנו</span></h3><div class="booklist">';
+  const lugDone = LUGGAGE.filter(l => Store.isChecked(l.id)).length;
+  const total = items.length + LUGGAGE.length, totDone = done + lugDone;
+  let h = '<div class="progress"><div class="progress-fill" style="width:' + Math.round(100 * totDone / total) + '%"></div></div>' +
+    '<div class="prog-txt">בוצעו ' + totDone + ' מתוך ' + total + ' משימות</div>' +
+    '<h3>📌 מה צריך להזמין מראש <span class="bkcount">' + done + "/" + items.length + ' הוזמנו</span></h3><div class="booklist">';
   for (const { d, p } of items) {
     const ck = Store.isChecked(p.id);
     h += '<label class="bookrow' + (ck ? " done" : "") + '">' +
@@ -753,12 +786,25 @@ function renderTips() {
       '<span class="dot" style="background:' + d2.color + '"></span>' +
       '<span class="bk-main"><b>יום ' + d2.n + " · " + d2.date + "</b> — " + esc(lug.title) + ": " + esc(lug.d) + "</span></label>";
   }
-  h += "</div><h3>💡 טיפים</h3>";
-  for (const t of TIPS) h += '<div class="tiprow"><b>' + esc(t.t) + "</b> — " + esc(t.d) + "</div>";
+  h += "</div>";
   box.innerHTML = h;
   box.querySelectorAll("input[data-pid]").forEach(cb => {
     cb.onchange = () => { Store.toggleChecked(cb.dataset.pid); renderTips(); };
   });
+}
+function renderInfo() {
+  const box = $("#infoBody");
+  let h = "<h3>💡 טיפים מהחוברת</h3>";
+  for (const t of TIPS) h += '<div class="tiprow"><b>' + esc(t.t) + "</b> — " + esc(t.d) + "</div>";
+  h += "<h3>✈️ הטיסות שלנו</h3><div class='booklist'>";
+  for (const f of FLIGHTS) h += '<div class="bookrow"><span class="bk-main"><b>' + esc(f.r) + "</b> · " + esc(f.d) + '<br><span class="fl-note">' + esc(f.note) + "</span></span></div>";
+  h += "</div><h3>🔗 קישורים מהירים</h3><div class='qlinks'>";
+  for (const q of QUICKLINKS) h += '<a class="lbtn" target="_blank" rel="noopener" href="' + q.u + '">' + esc(q.t) + "</a>";
+  h += "</div><h3>🆘 חירום (לוודא לפני היציאה)</h3>";
+  for (const e2 of EMERGENCY) {
+    h += '<div class="tiprow"><b>' + esc(e2.t) + "</b> — " + e2.items.map(esc).join(" · ") + "</div>";
+  }
+  box.innerHTML = h;
 }
 
 /* ---------- מודאלים ---------- */
@@ -886,6 +932,7 @@ $("#btnSync").onclick = () => { renderSyncModal(); showModal("syncModal"); };
 $("#btnShare").onclick = doShare;
 $("#btnUndo").onclick = () => { Store.undo() ? toast("בוטל ↩️") : toast("אין מה לבטל"); };
 $("#btnTips").onclick = () => { renderTips(); showModal("tipsModal"); };
+$("#btnInfo").onclick = () => { renderInfo(); showModal("infoModal"); };
 $("#btnMenu").onclick = () => showModal("menuModal");
 $("#mExport").onclick = () => { hideModal("menuModal"); doExport(); };
 $("#mImport").onclick = () => { hideModal("menuModal"); $("#importFile").click(); };

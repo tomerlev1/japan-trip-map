@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="המפה שלנו">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=5">
-<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=6">
+<link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
 <header id="top">
@@ -23,7 +23,8 @@
   <div class="tools">
     <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)">↩️</button>
     <button id="btnSync" class="tb" title="סנכרון חי" hidden>☁️<span id="syncDot" class="sdot off"></span></button>
-    <button id="btnTips" class="tb" title="הזמנות וטיפים">📌<span id="bkBadge" class="badge"></span></button>
+    <button id="btnInfo" class="tb" title="טיפים, טיסות וקישורים">💡</button>
+    <button id="btnTips" class="tb" title="משימות: הזמנות ומזוודות">📋<span id="bkBadge" class="badge"></span></button>
     <button id="btnMenu" class="tb" title="גיבוי ואיפוס">⋯</button>
     <button id="btnShare" class="tb main">🔗 שיתוף</button>
   </div>
@@ -83,8 +84,13 @@
 </div>
 
 <div class="modal" id="tipsModal" role="dialog">
-  <div class="m-head"><h2>📌 הזמנות וטיפים</h2><button class="x" data-close="tipsModal">✕</button></div>
+  <div class="m-head"><h2>📋 משימות — הזמנות ומזוודות</h2><button class="x" data-close="tipsModal">✕</button></div>
   <div class="m-body" id="tipsBody"></div>
+</div>
+
+<div class="modal" id="infoModal" role="dialog">
+  <div class="m-head"><h2>💡 מידע שימושי</h2><button class="x" data-close="infoModal">✕</button></div>
+  <div class="m-body" id="infoBody"></div>
 </div>
 
 <div class="modal" id="syncModal" role="dialog">
@@ -113,11 +119,11 @@
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=5"></script>
-<script src="js/config.js?v=5"></script>
-<script src="js/data.js?v=5"></script>
-<script src="js/storage.js?v=5"></script>
-<script src="js/sync.js?v=5"></script>
-<script src="js/app.js?v=5"></script>
+<script src="vendor/leaflet/leaflet.js?v=6"></script>
+<script src="js/config.js?v=6"></script>
+<script src="js/data.js?v=6"></script>
+<script src="js/storage.js?v=6"></script>
+<script src="js/sync.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
 </body>
 </html>

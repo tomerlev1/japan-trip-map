@@ -303,3 +303,26 @@ label.bookrow { cursor: pointer; }
 .taxi-name { font-size: 34px; font-weight: 800; line-height: 1.35; direction: ltr; }
 .taxi-addr { font-size: 22px; color: #333; margin-top: 12px; direction: ltr; line-height: 1.5; }
 .taxi-he { font-size: 13px; color: var(--mut); margin-top: 14px; }
+
+/* ---- התקדמות ---- */
+.progress { height: 7px; background: #eceae2; border-radius: 999px; overflow: hidden; margin: 6px 0 4px; }
+.progress-fill { height: 100%; background: var(--ok); border-radius: 999px; transition: width .3s; }
+.prog-txt { font-size: 12px; color: var(--mut); margin-bottom: 8px; }
+.dayprog { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.dayprog .progress { flex: 1; margin: 0; }
+.dayprog span { font-size: 11.5px; color: var(--mut); white-space: nowrap; }
+
+/* ---- ביקרנו ---- */
+.vbtn { color: #b9b6ae; font-weight: 800; }
+.vbtn.on { color: var(--ok); }
+.stop.vdone { opacity: .62; }
+.stop.vdone .s-main b { text-decoration: line-through; }
+.pin.vdone { opacity: .55; font-size: 15px; }
+.mini.on { background: var(--ok); border-color: var(--ok); }
+
+/* ---- מידע ---- */
+.fl-note { font-size: 11px; color: var(--mut); }
+.qlinks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.countdown { margin-top: 8px; background: #fdeef0; border-radius: 10px; padding: 8px 12px; font-size: 13.5px; color: #8c2f39; }
+.countdown b { font-size: 16px; }
+@media (max-width: 860px) { .qlinks { grid-template-columns: 1fr; } }
