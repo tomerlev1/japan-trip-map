@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="המפה שלנו">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=8">
-<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=8">
-<link rel="stylesheet" href="css/style.css?v=8">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=9">
+<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=9">
+<link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
 <header id="top">
@@ -118,6 +118,7 @@
 <div class="modal" id="menuModal" role="dialog">
   <div class="m-head"><h2>גיבוי ואיפוס</h2><button class="x" data-close="menuModal">✕</button></div>
   <div class="m-body menu">
+    <button id="mPreload" class="menubtn">📥 הורדת מפות הטיול לאופליין</button>
     <button id="mExport" class="menubtn">⬇️ ייצוא לקובץ גיבוי (JSON)</button>
     <button id="mImport" class="menubtn">⬆️ ייבוא מקובץ גיבוי</button>
     <button id="mReset" class="menubtn danger">🗑 איפוס למסלול המקורי</button>
@@ -125,13 +126,13 @@
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=8"></script>
-<script src="vendor/maplibre/maplibre-gl.js?v=8"></script>
-<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=8"></script>
-<script src="js/config.js?v=8"></script>
-<script src="js/data.js?v=8"></script>
-<script src="js/storage.js?v=8"></script>
-<script src="js/sync.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="vendor/leaflet/leaflet.js?v=9"></script>
+<script src="vendor/maplibre/maplibre-gl.js?v=9"></script>
+<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=9"></script>
+<script src="js/config.js?v=9"></script>
+<script src="js/data.js?v=9"></script>
+<script src="js/storage.js?v=9"></script>
+<script src="js/sync.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@
 
 ## חוקים קשיחים — לקרוא לפני כל שינוי
 1. **כל שינוי נבדק גם בדסקטופ (1380px) וגם במובייל (390px, isMobile+hasTouch)** — תמיד שניהם, כולל צילומי מסך. בלי יוצא מן הכלל.
-2. **בכל דיפלוי חובה להעלות את מספר הגרסה** `?v=N` בכל הקישורים ב-index.html (cache-busting), אחרת המשתמש רואה גרסה ישנה.
+2. **בכל דיפלוי חובה להעלות גרסה עם `node tools/bump.mjs <N>`** — מעדכן גם את `?v=N` ב-index.html וגם את `const V` ב-sw.js (בלעדיו ה-Service Worker לא יתעדכן והמשתמש יראה גרסה ישנה).
 3. **אסור לגעת בבסיסי הנתונים של SkillUp ב-Supabase** (`supabase`/`supabase-prod` = ntofcpjwulypvjcsytqv, `supabase-dev` = hjgumjfrljoietbzciyl) לשום צורך של הפרויקט הזה. קרה בעבר בטעות — לא לחזור על זה.
 4. **דיוק פינים = בטיחות.** מקום שלא אומת מול מקור חיצוני מסומן `approx: true` (מוצג ≈, ניתן לגרירה) — וכל קישורי הניווט שלו עובדים לפי *שם* ולא לפי קואורדינטות, כך שגוגל מפות תמיד מוביל נכון. לא להסיר approx בלי אימות (Photon/Nominatim/Overpass).
 5. **אין build ואין תלויות CDN** — הכול vanilla JS + קבצים סטטיים; ספריות (Leaflet, MapLibre, פונטים) vendored בתוך הריפו.
@@ -25,6 +25,8 @@ js/app.js             מפה (Leaflet + MapLibre GL basemap), פאנלים, קט
 tools/validate.mjs    בדיקת שלמות נתונים (חובה אחרי עריכת data.js)
 tools/audit.mjs       ביקורת קואורדינטות מול Photon
 tools/sync-migration.sql  הפעלת סנכרון בפרויקט Supabase ייעודי חדש בלבד
+sw.js                 Service Worker אופליין: shell precache + tile cache (טרים ב-3500) + preload אזורי טיול
+tools/bump.mjs        העלאת גרסה מסונכרנת (index.html + sw.js)
 ```
 
 ## מצב state (v:1)
@@ -35,7 +37,7 @@ tools/sync-migration.sql  הפעלת סנכרון בפרויקט Supabase ייע
 ## תהליך דיפלוי
 1. שינוי → `node --check` לכל JS שנגעת בו → `node tools/validate.mjs`
 2. בדיקת E2E מקומית (playwright-core, Chromium בקאש: `~/Library/Caches/ms-playwright/chromium-1223`) — דסקטופ + מובייל
-3. העלאת `?v=N` → commit+push → המתנה לבניית Pages (`until curl | grep v=N`) → אימות על ה-live
+3. `node tools/bump.mjs <N>` → commit+push → המתנה לבניית Pages (`until curl | grep v=N`) → אימות על ה-live
 4. עדכון קובץ הזיכרון: `~/.claude/projects/-Users-tomermac-Desktop/memory/japan-trip-map-project.md`
 
 ## עקרונות מוצר
@@ -45,6 +47,5 @@ tools/sync-migration.sql  הפעלת סנכרון בפרויקט Supabase ייע
 - טון עברי, חם, תמציתי. אימוג'י כן, קיטש לא.
 
 ## נשאר פתוח (לפי סדר עדיפות שהוצע למשתמש)
-- 📴 Offline PWA (service worker) — טרם אושר
 - 📝 הערות אישיות לכל עצירה · 🔍 חיפוש גלובלי · 🗓 תצוגת timeline יומית
 - אטרקציות לתאילנד — יגיעו מהמשתמש, מתווספות דרך הקטלוג/מקום-חדש (geocode אוטומטי)

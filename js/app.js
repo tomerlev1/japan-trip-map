@@ -62,6 +62,7 @@ function addRasterBasemap() {
         lyr.layout["text-field"] = ["coalesce", ["get", "name:en"], ["get", "name:latin"], ["get", "name"]];
       }
     }
+    window.__glStyle = st;
     const gl = L.maplibreGL({
       style: st,
       attribution: '<a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
@@ -1064,6 +1065,80 @@ $("#backdrop").onclick = () => document.querySelectorAll(".modal.open").forEach(
   mq.addEventListener ? mq.addEventListener("change", onMode) : mq.addListener(onMode);
   onMode();
 })();
+
+/* ---------- 📴 אופליין: Service Worker + הורדת אזורי הטיול ---------- */
+function lon2tile(lng, z) { return Math.floor((lng + 180) / 360 * 2 ** z); }
+function lat2tile(lat, z) {
+  return Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * 2 ** z);
+}
+async function preloadOffline() {
+  if (!("caches" in window) || !("serviceWorker" in navigator)) { toast("הדפדפן לא תומך באחסון אופליין"); return; }
+  if (!navigator.serviceWorker.controller) { toast("רעננו את הדף פעם אחת ואז נסו שוב"); return; }
+  const st = window.__glStyle;
+  let tpl = null, glyphs = null, stacks = new Set();
+  try {
+    const src = st && st.sources && (st.sources.openmaptiles || Object.values(st.sources).find(x => x.type === "vector"));
+    if (src) {
+      if (src.tiles) tpl = src.tiles[0];
+      else if (src.url) { const tj = await (await fetch(src.url)).json(); tpl = tj.tiles && tj.tiles[0]; }
+    }
+    glyphs = st && st.glyphs;
+    for (const l of (st && st.layers) || []) {
+      const f = l.layout && l.layout["text-font"];
+      if (Array.isArray(f)) f.forEach(x => { if (typeof x === "string") stacks.add(x); });
+    }
+  } catch (e) {}
+  if (!tpl) { toast("המפה עוד לא נטענה — חכו רגע ונסו שוב"); return; }
+  const cap = (window.JTM_CONFIG && JTM_CONFIG.preloadCap) || 2200;
+  const want = new Set();
+  const add = (x, y, z) => { if (x >= 0 && y >= 0 && x < 2 ** z && y < 2 ** z) want.add(z + "/" + x + "/" + y); };
+  for (const bb of Object.values(GEO_BBOX)) {
+    for (let z = 10; z <= 12; z++) {
+      const x1 = lon2tile(bb[2], z), x2 = lon2tile(bb[3], z), y1 = lat2tile(bb[1], z), y2 = lat2tile(bb[0], z);
+      for (let x = x1; x <= x2; x++) for (let y = y1; y <= y2; y++) add(x, y, z);
+    }
+  }
+  for (const [la, lo] of Object.values(COORDS)) {
+    for (const [z, r] of [[13, 2], [14, 1]]) {
+      const cx = lon2tile(lo, z), cy = lat2tile(la, z);
+      for (let x = cx - r; x <= cx + r; x++) for (let y = cy - r; y <= cy + r; y++) add(x, y, z);
+    }
+  }
+  let list = [...want].slice(0, cap);
+  // גליפים לכל fontstack (לטינית בסיסית) + ספרייט — כדי שתוויות יעבדו גם באזור שלא נצפה
+  const extra = [];
+  if (glyphs) for (const fs of stacks) for (const rg of ["0-255", "256-511", "512-767"])
+    extra.push(glyphs.replace("{fontstack}", encodeURIComponent(fs)).replace("{range}", rg));
+  if (st && st.sprite) extra.push(st.sprite + ".json", st.sprite + ".png", st.sprite + "@2x.json", st.sprite + "@2x.png");
+  toast("📥 מוריד את מפות הטיול (" + list.length + " אריחים) — השאירו את הדף פתוח…", 6000);
+  let done = 0, fail = 0;
+  const q = [...extra.map(u => ["url", u]), ...list.map(k => ["tile", k])];
+  await Promise.all(Array.from({ length: 6 }, async () => {
+    while (q.length) {
+      const [kind, v] = q.pop();
+      const u = kind === "url" ? v : (() => { const [z, x, y] = v.split("/"); return tpl.replace("{z}", z).replace("{x}", x).replace("{y}", y); })();
+      try { await fetch(u); } catch (e) { fail++; }
+      done++;
+      if (done % 300 === 0) toast("📥 " + done + "/" + (list.length + extra.length) + " …", 2500);
+    }
+  }));
+  toast(fail > list.length / 4 ? "ההורדה הושלמה חלקית (" + fail + " נכשלו) — נסו שוב על WiFi" : "✅ מפות אזורי הטיול שמורות במכשיר — המפה תעבוד גם בלי אינטרנט", 6000);
+}
+if ("serviceWorker" in navigator && (location.protocol === "https:" || ["localhost", "127.0.0.1"].includes(location.hostname))) {
+  navigator.serviceWorker.register("sw.js").then(reg => {
+    const first = !navigator.serviceWorker.controller;
+    reg.addEventListener("updatefound", () => {
+      const w = reg.installing;
+      if (w) w.addEventListener("statechange", () => {
+        if (w.state === "activated" && first) toast("📴 מעכשיו האפליקציה עובדת גם בלי אינטרנט", 4500);
+        else if (w.state === "activated") toast("האפליקציה התעדכנה לגרסה החדשה ✓");
+      });
+    });
+  }).catch(() => {});
+}
+window.addEventListener("offline", () => toast("📴 אין אינטרנט — המסלול והמפות השמורות ממשיכים לעבוד", 4000));
+window.addEventListener("online", () => toast("📶 חזרתם לרשת ✓"));
+$("#mPreload").onclick = () => { hideModal("menuModal"); preloadOffline(); };
 
 if (TODAY_ID && !location.hash) {
   curDay = TODAY_ID;
