@@ -94,9 +94,12 @@ button { font-family: inherit; }
   border-inline-start: 1px solid var(--line2); }
 
 /* ---------- Food bar ---------- */
-#foodbar { display: flex; gap: 6px; padding: 8px 14px; overflow-x: auto; background: #fffcf5;
-  border-bottom: 1px solid var(--line); scrollbar-width: none; z-index: 999; }
-#foodbar::-webkit-scrollbar { display: none; }
+#foodbar { display: flex; flex-direction: column; gap: 6px; padding: 8px 14px; background: #fffcf5;
+  border-bottom: 1px solid var(--line); z-index: 999; }
+.fbrow { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.fbrow::-webkit-scrollbar { display: none; }
+.fbrow.subs { padding-inline-start: 6px; border-inline-start: 3px solid var(--line2); }
+.fchip.top { font-weight: 700; }
 .fchip { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px;
   font-size: 12.5px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all .15s; }
 .fchip:hover { border-color: var(--line2); }

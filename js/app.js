@@ -96,14 +96,25 @@ const routeLayer = L.layerGroup().addTo(map);
 
 /* ---------- שכבת "אוכל בסביבה" ---------- */
 const KINDS = {
-  sushi: ["🍣", "סושי", "#d95468"], ramen: ["🍜", "ראמן ואודון", "#e08a1e"], meat: ["🥩", "בשר", "#b5542a"],
-  cafe: ["☕", "קפה ומתוק", "#8d6e63"], italian: ["🍕", "איטלקי", "#43a047"], jp: ["🥟", "יפני", "#7e57c2"],
-  bar: ["🍸", "ברים", "#5c6bc0"], fine: ["⭐", "יוקרה", "#c9a227"], attr: ["✨", "אטרקציות", "#00897b"],
-  shop: ["🛍️", "קניות וסכינים", "#ad4b8c"], market: ["🥡", "שווקים ודוכנים", "#e0621e"], other: ["🍽️", "עוד", "#78909c"],
+  meat: ["🥩", "בשר", "#b5542a"], sushi: ["🍣", "סושי", "#d95468"], ramen: ["🍜", "ראמן ואודון", "#e08a1e"],
+  fish: ["🐟", "דגים ופירות ים", "#1878a8"], michelin: ["⭐", "מישלן ויוקרה", "#c9a227"],
+  sweets: ["☕", "קפה ומתוקים", "#8d6e63"], street: ["🥡", "אוכל רחוב", "#e0621e"], market: ["🧺", "שוקי אוכל", "#c04a12"],
+  other: ["🍽️", "מסעדות עוד", "#78909c"], bar: ["🍸", "ברים", "#5c6bc0"],
+  vintage: ["👖", "וינטג'", "#7b5e2e"], luxury: ["💎", "יוקרה ומותגים", "#8e24aa"], mall: ["🏬", "כלבו ולייף-סטייל", "#5c6bc0"],
+  fashion: ["👟", "אופנה יפנית", "#00838f"], toys: ["🕹️", "גיימינג ואנימה", "#e53935"],
+  knives: ["🔪", "סכינים", "#455a64"], utensils: ["🍶", "כלי מטבח וקרמיקה", "#8d6e63"],
+  culture: ["✨", "תרבות וחוויות", "#00897b"],
 };
+const TAXO = [
+  { id: "food", he: "אוכל", icon: "🍽️", subs: ["meat", "sushi", "ramen", "fish", "michelin", "sweets", "street", "market", "other"] },
+  { id: "bars", he: "ברים", icon: "🍸", subs: ["bar"] },
+  { id: "shopping", he: "קניות", icon: "🛍️", subs: ["vintage", "luxury", "mall", "fashion", "toys"] },
+  { id: "kitchen", he: "מטבח", icon: "🔪", subs: ["knives", "utensils"] },
+  { id: "culture", he: "תרבות", icon: "✨", subs: ["culture"] },
+];
 let foodMarkers = {};
 const foodLayer = L.layerGroup().addTo(map);
-let foodOn = false, foodKind = null;
+let foodOn = false, foodTop = null, foodSub = null;
 function haversine(a, b) {
   const R = 6371000, r = x => x * Math.PI / 180;
   const dLat = r(b[0] - a[0]), dLng = r(b[1] - a[1]);
@@ -116,7 +127,9 @@ function foodScopeCities() {
 }
 function foodItems() {
   const cities = foodScopeCities();
-  return CATALOG.filter(c => c.ll && cities.has(c.city) && (!foodKind || c.k === foodKind));
+  const top = TAXO.find(t => t.id === foodTop);
+  return CATALOG.filter(c => c.ll && cities.has(c.city) &&
+    (!top || top.subs.includes(c.k)) && (!foodSub || c.k === foodSub));
 }
 function foodPopup(c) {
   const box = el("div", "pop");
@@ -157,23 +170,43 @@ function renderFood() {
   bar.style.display = foodOn ? "" : "none";
   if (!foodOn) return;
   const items = foodItems();
-  // chips
+  // שתי שורות: קטגוריות-על, ותתי-קטגוריות כשנבחרה קטגוריה
   bar.innerHTML = "";
-  const listBtn = el("button", "fchip list", "📋 רשימה לפי מרחק");
+  const kindsHere = new Set(CATALOG.filter(c => c.ll && foodScopeCities().has(c.city)).map(c => c.k));
+  const row1 = el("div", "fbrow");
+  const listBtn = el("button", "fchip list", "📋 רשימה");
   listBtn.onclick = openRecList;
-  bar.appendChild(listBtn);
-  const all = el("button", "fchip" + (!foodKind ? " on" : ""), "הכל");
-  all.onclick = () => { foodKind = null; renderFood(); };
-  bar.appendChild(all);
-  const kindsHere = [...new Set(CATALOG.filter(c => c.ll && foodScopeCities().has(c.city)).map(c => c.k))];
-  for (const k of Object.keys(KINDS)) {
-    if (!kindsHere.includes(k)) continue;
-    const b = el("button", "fchip" + (foodKind === k ? " on" : ""), KINDS[k][0] + " " + KINDS[k][1]);
-    b.onclick = () => { foodKind = foodKind === k ? null : k; renderFood(); };
-    bar.appendChild(b);
+  row1.appendChild(listBtn);
+  const all = el("button", "fchip" + (!foodTop ? " on" : ""), "הכל");
+  all.onclick = () => { foodTop = null; foodSub = null; renderFood(); };
+  row1.appendChild(all);
+  for (const t of TAXO) {
+    if (!t.subs.some(k => kindsHere.has(k))) continue;
+    const b = el("button", "fchip top" + (foodTop === t.id ? " on" : ""), t.icon + " " + t.he + (foodTop === t.id ? "" : " ▾"));
+    b.onclick = () => {
+      if (foodTop === t.id) { foodTop = null; foodSub = null; }
+      else { foodTop = t.id; foodSub = null; }
+      renderFood();
+    };
+    row1.appendChild(b);
+  }
+  bar.appendChild(row1);
+  const top = TAXO.find(t => t.id === foodTop);
+  if (top && top.subs.length > 1) {
+    const row2 = el("div", "fbrow subs");
+    const allS = el("button", "fchip" + (!foodSub ? " on" : ""), "כל ה" + top.he);
+    allS.onclick = () => { foodSub = null; renderFood(); };
+    row2.appendChild(allS);
+    for (const k of top.subs) {
+      if (!kindsHere.has(k)) continue;
+      const b = el("button", "fchip" + (foodSub === k ? " on" : ""), KINDS[k][0] + " " + KINDS[k][1]);
+      b.onclick = () => { foodSub = foodSub === k ? null : k; renderFood(); };
+      row2.appendChild(b);
+    }
+    bar.appendChild(row2);
   }
   if (!items.length) {
-    toast(foodKind ? "אין המלצות מהסוג הזה באזור — נסו סינון אחר" : "אין עדיין המלצות שמורות לאזור הזה (ההמלצות מהחוברת הן ליפן)");
+    toast(foodTop || foodSub ? "אין המלצות מהקטגוריה הזו באזור — נסו קטגוריה אחרת" : "אין עדיין המלצות שמורות לאזור הזה");
     return;
   }
   for (const c of items) {
