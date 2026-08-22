@@ -220,6 +220,12 @@ function renderFood() {
     foodMarkers[c.en || c.n] = m;
   }
 }
+function unpinnedItems() {
+  const cities = foodScopeCities();
+  const top = TAXO.find(t => t.id === foodTop);
+  return CATALOG.filter(c => !c.ll && cities.has(c.city) &&
+    (!top || top.subs.includes(c.k)) && (!foodSub || c.k === foodSub));
+}
 function openRecList() {
   const items = foodItems();
   const from = gpsDot ? [gpsDot.getLatLng().lat, gpsDot.getLatLng().lng] : [map.getCenter().lat, map.getCenter().lng];
@@ -241,6 +247,20 @@ function openRecList() {
       if (m) setTimeout(() => m.openPopup(), 750);
     };
     box.appendChild(row);
+  }
+  const extra = unpinnedItems();
+  if (extra.length) {
+    box.appendChild(el("div", "cn-head", "🗂 עוד המלצות באזור — בלי נעיצה, ניווט לפי שם"));
+    for (const c of extra) {
+      const k = KINDS[c.k] || KINDS.other;
+      const row = el("button", "cat-row");
+      row.innerHTML = '<span class="s-ic">' + k[0] + '</span><span class="cr-main"><b>' + esc(c.n) +
+        (c.mich ? " ⭐" : "") + "</b><span>" + esc(c.note || "") + (c.book ? " · 📌 בהזמנה" : "") + "</span></span>" +
+        '<span class="cr-city">🗺️</span>';
+      row.onclick = () => window.open("https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent((c.en || c.n) + ", " + (CITY_EN[c.city] || "")), "_blank", "noopener");
+      box.appendChild(row);
+    }
   }
   showModal("recModal");
 }

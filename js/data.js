@@ -541,7 +541,7 @@ const CATALOG = [
   { n: "THE MUSIC BAR CAVE", en: "The Music Bar Cave Shibuya", city: "טוקיו", cat: "exp", note: "בר רטרו" , k: "bar" },
   { n: "A10 (בר סודי)", en: "A10 Bar Shibuya", city: "טוקיו", cat: "exp", note: "בר קוקטיילים סודי" , k: "bar" },
   { n: "Crony (מישלן)", en: "Crony Nishiazabu", city: "טוקיו", cat: "food", note: "צרפתית מישלן — להזמין מראש", book: true , k: "michelin", mich: true },
-  { n: "SÉZANNE (מישלן)", en: "Sezanne Tokyo", city: "טוקיו", cat: "food", note: "צרפתית מישלן — להזמין מראש", book: true , k: "michelin", mich: true },
+  { n: "SÉZANNE (מישלן)", en: "Sezanne Tokyo", city: "טוקיו", cat: "food", note: "צרפתית מישלן — להזמין מראש", book: true , k: "michelin", mich: true, ll: [35.67870, 139.76450] },
   { n: "MAZ (מישלן)", en: "MAZ Tokyo", city: "טוקיו", cat: "food", note: "פרואנית מישלן — להזמין מראש", book: true , k: "michelin", mich: true },
   { n: "Kabi (מישלן)", en: "Kabi Meguro", city: "טוקיו", cat: "food", note: "יפנית מודרנית — להזמין מראש", book: true , k: "michelin", mich: true },
 
@@ -573,7 +573,7 @@ const CATALOG = [
   { n: "mixology bar Smooth", en: "Mixology Bar Smooth Kyoto", city: "קיוטו", cat: "exp", note: "בר קוקטיילים" , k: "bar" },
   { n: "Hyotei (3 כוכבי מישלן)", en: "Hyotei Kyoto", city: "קיוטו", cat: "food", note: "קייסקי ~450 שנה — להזמין מראש", book: true , k: "michelin", mich: true, ll: [35.01142, 135.78673] , addr: "Niō Gate Street, Nanzenji-Kusagawacho, Sakyō Ward, Kyoto" },
   { n: "Tenjaku (מישלן)", en: "Tenjaku Tempura Kyoto", city: "קיוטו", cat: "food", note: "טמפורה עונתית — להזמין מראש", book: true , k: "other", mich: true },
-  { n: "Kikunoi Honten (3 כוכבים)", en: "Kikunoi Honten Kyoto", city: "קיוטו", cat: "food", note: "קייסקי — להזמין מראש", book: true , k: "michelin", mich: true },
+  { n: "Kikunoi Honten (3 כוכבים)", en: "Kikunoi Honten Kyoto", city: "קיוטו", cat: "food", note: "קייסקי — להזמין מראש", book: true , k: "michelin", mich: true, ll: [34.99930, 135.78080] },
   { n: "Kōdaiji Jūgyūan (2 כוכבים)", en: "Kodaiji Jugyuan Kyoto", city: "קיוטו", cat: "food", note: "קייסקי — להזמין מראש", book: true , k: "michelin", mich: true, ll: [35.00030, 135.78060] , addr: "Daidokoro Slope, Shimogawara-chō, Higashiyama Ward, Kyoto" },
 
   /* --- אוסקה: מסעדות --- */
@@ -584,7 +584,7 @@ const CATALOG = [
   { n: "Ichiran נמבה", en: "Ichiran Namba Midosuji", city: "אוסקה", cat: "food", note: "ראמן — ללא חזיר" , k: "ramen" },
   { n: "OSAKA ENGINE RAMEN", en: "Osaka Engine Ramen", city: "אוסקה", cat: "food", note: "ראמן" , k: "ramen" },
   { n: "Kyushu Ramen Kio", en: "Kyushu Ramen Kio Dotonbori", city: "אוסקה", cat: "food", note: "ראמן אותנטי" , k: "ramen", ll: [34.66458, 135.50362] , addr: "Sennichimae Doguyasuji Shopping St, Nanba-Sennichimae, Chūō Ward, Osaka" },
-  { n: "Mugito Mensuke", en: "Mugito Mensuke Osaka", city: "אוסקה", cat: "food", note: "ראמן מומלץ מישלן" , k: "ramen", mich: true },
+  { n: "Mugito Mensuke", en: "Mugito Mensuke Osaka", city: "אוסקה", cat: "food", note: "ראמן מומלץ מישלן" , k: "ramen", mich: true, ll: [34.71133, 135.49999] },
   { n: "Ourlog coffee", en: "Ourlog Coffee Osaka", city: "אוסקה", cat: "food", note: "קפה ומאפה" , k: "sweets", ll: [34.66074, 135.53601] , addr: "御幸通商店街, Momodani 3-chome, Ikuno Ward, Osaka" },
   { n: "Brooklyn Roasting Co.", en: "Brooklyn Roasting Company Kitahama", city: "אוסקה", cat: "food", note: "קפה ומאפה" , k: "sweets", ll: [34.69101, 135.50919] , addr: "Tosabori Street, Kitahama 1-chome, Chūō Ward, Osaka" },
   { n: "GLITCH COFFEE", en: "Glitch Coffee Osaka", city: "אוסקה", cat: "food", note: "קפה ספשלטי" , k: "sweets", ll: [34.69366, 135.49553] , addr: "4, Nakanoshima 3-chome, Kita Ward, Osaka" },
@@ -603,7 +603,7 @@ const CATALOG = [
   { n: "Akashic Records", en: "Osaka Cocktail Library Akashic Records", city: "אוסקה", cat: "exp", note: "בר קוקטיילים" , k: "bar" },
   { n: "La Cime (2 כוכבים)", en: "La Cime Osaka", city: "אוסקה", cat: "food", note: "צרפתית-יפנית — להזמין מראש", book: true , k: "michelin", mich: true },
   { n: "HAJIME (3 כוכבים)", en: "Hajime Osaka", city: "אוסקה", cat: "food", note: "גסטרונומיה — להזמין מראש", book: true , k: "michelin", mich: true },
-  { n: "Koryu (2 כוכבים)", en: "Koryu Osaka", city: "אוסקה", cat: "food", note: "קייסקי — להזמין מראש", book: true , k: "michelin", mich: true },
+  { n: "Koryu (2 כוכבים)", en: "Koryu Osaka", city: "אוסקה", cat: "food", note: "קייסקי — להזמין מראש", book: true , k: "michelin", mich: true, ll: [34.69660, 135.49850] },
   { n: "Tenjimbashi Aoki (2 כוכבים)", en: "Tenjimbashi Aoki Osaka", city: "אוסקה", cat: "food", note: "קייסקי — מקומות מוגבלים", book: true , k: "michelin", mich: true },
   /* --- המלצות מהמחקר (פורומים ישראליים, Reddit, Time Out, Tripadvisor) — מאומתות מיקום --- */
   { n: "מלון-פאן Kagetsudo", en: "Asakusa Kagetsudo Melonpan", city: "טוקיו", cat: "food", k: "street", ll: [35.71461, 139.79519], src: "מוסד באסאקוסה; תורים מ-10:00 — לאכול חם!", note: "לחמניית מלון ענקית, פריכה בחוץ ורכה בפנים · ליד סנסו-ג'י" },
