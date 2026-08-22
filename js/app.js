@@ -98,7 +98,8 @@ const routeLayer = L.layerGroup().addTo(map);
 const KINDS = {
   sushi: ["🍣", "סושי", "#d95468"], ramen: ["🍜", "ראמן ואודון", "#e08a1e"], meat: ["🥩", "בשר", "#b5542a"],
   cafe: ["☕", "קפה ומתוק", "#8d6e63"], italian: ["🍕", "איטלקי", "#43a047"], jp: ["🥟", "יפני", "#7e57c2"],
-  bar: ["🍸", "ברים", "#5c6bc0"], fine: ["⭐", "יוקרה", "#c9a227"], attr: ["✨", "אטרקציות", "#00897b"], other: ["🍽️", "עוד", "#78909c"],
+  bar: ["🍸", "ברים", "#5c6bc0"], fine: ["⭐", "יוקרה", "#c9a227"], attr: ["✨", "אטרקציות", "#00897b"],
+  shop: ["🛍️", "קניות וסכינים", "#ad4b8c"], market: ["🥡", "שווקים ודוכנים", "#e0621e"], other: ["🍽️", "עוד", "#78909c"],
 };
 let foodMarkers = {};
 const foodLayer = L.layerGroup().addTo(map);
@@ -126,6 +127,7 @@ function foodPopup(c) {
     (c.mich ? '<span class="chip mich">⭐ מישלן</span>' : "") + "</div>";
   if (c.note) h += '<div class="pop-d">' + esc(c.note) + "</div>";
   if (c.addr) h += '<div class="pop-dist">📍 ' + esc(c.addr) + "</div>";
+  if (c.src) h += '<div class="pop-src">🗣️ ' + esc(c.src) + "</div>";
   h += c.book
     ? '<div class="pop-book">📌 כדאי להזמין מראש (דרך קבלת המלון / OMAKASE.IN)</div>'
     : '<div class="pop-walkin">🚶 הגעה ספונטנית — בלי הזמנה</div>';

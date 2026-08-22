@@ -605,6 +605,34 @@ const CATALOG = [
   { n: "HAJIME (3 כוכבים)", en: "Hajime Osaka", city: "אוסקה", cat: "food", note: "גסטרונומיה — להזמין מראש", book: true , k: "fine", mich: true },
   { n: "Koryu (2 כוכבים)", en: "Koryu Osaka", city: "אוסקה", cat: "food", note: "קייסקי — להזמין מראש", book: true , k: "fine", mich: true },
   { n: "Tenjimbashi Aoki (2 כוכבים)", en: "Tenjimbashi Aoki Osaka", city: "אוסקה", cat: "food", note: "קייסקי — מקומות מוגבלים", book: true , k: "fine", mich: true },
+  /* --- המלצות מהמחקר (פורומים ישראליים, Reddit, Time Out, Tripadvisor) — מאומתות מיקום --- */
+  { n: "מלון-פאן Kagetsudo", en: "Asakusa Kagetsudo Melonpan", city: "טוקיו", cat: "food", k: "market", ll: [35.71461, 139.79519], src: "מוסד באסאקוסה; תורים מ-10:00 — לאכול חם!", note: "לחמניית מלון ענקית, פריכה בחוץ ורכה בפנים · ליד סנסו-ג'י" },
+  { n: "סכינים: Kama-Asa (מ-1908)", en: "Kama-Asa Shoten Kappabashi", city: "טוקיו", cat: "shop", k: "shop", ll: [35.71230, 139.78870], src: "החנות המוערכת בקפבאשי; צוות דובר אנגלית", note: "חריטת שם חינם · חותמת האומן על הלהב" },
+  { n: "סכינים: Kamata Hakensha", en: "Kamata Hakensha Kappabashi", city: "טוקיו", cat: "shop", k: "shop", ll: [35.71311, 139.78848], src: "Time Out; השחזה במקום", note: "מבחר ענק + הדגמות השחזה" },
+  { n: "טמגויאקי Tsukiji Shouro", en: "Tsukiji Shouro Tamagoyaki", city: "טוקיו", cat: "food", k: "market", ll: [35.66664, 139.77024], src: "ספיישליסט חביתות מ-1924; גם Yamacho באותו רחוב", note: "חביתה יפנית מתוקה על מקל · סנדוויץ' הביצה המפורסם" },
+  { n: "קרפ Marion (מ-1976)", en: "Marion Crepes Takeshita Street", city: "טוקיו", cat: "food", k: "market", ll: [35.67150, 139.70370], src: "הקרפ המקורי של הרג'וקו", note: "עשרות טעמים · הסמל של רחוב טאקשיטה" },
+  { n: "Uobei — סושי מסך מגע", en: "Uobei Sushi Shibuya Dogenzaka", city: "טוקיו", cat: "food", k: "sushi", ll: [35.65770, 139.69870], src: "המלצה חוזרת בפורומים הישראליים (למטייל)", note: "מזמינים במסך והצלחת מגיעה בטיל · זול, טרי וכיף" },
+  { n: "וינטג': Flamingo", en: "Flamingo Shimokitazawa Vintage", city: "טוקיו", cat: "shop", k: "shop", ll: [35.66080, 139.66760], src: "מ-2005; קונים בארה\"ב ומביאים לכאן", note: "אמריקנה אמצע המאה + כלים ואקססוריז רטרו" },
+  { n: "וינטג': Chicago", en: "Chicago Shimokitazawa Vintage", city: "טוקיו", cat: "shop", k: "shop", ll: [35.66140, 139.66800], src: "25+ שנה בשימוקיטה", note: "רשת הווינטג' הוותיקה · גם קימונו יד-שנייה" },
+  { n: "וינטג' ב-800¥: STICK OUT", en: "Stick Out Vintage Shimokitazawa", city: "טוקיו", cat: "shop", k: "shop", ll: [35.66070, 139.66850], src: "בלוגים; הכול ב-800 ין", note: "מציאות אמיתיות למי שאוהב לחפור" },
+  { n: "Super Potato — משחקי רטרו", en: "Super Potato Akihabara", city: "טוקיו", cat: "shop", k: "shop", ll: [35.69960, 139.77120], src: "מקדש הרטרו-גיימינג; כל משחק נבדק לפני מכירה", note: "3 קומות של נינטנדו/סגה עתיקים + ארקייד בקומה 5" },
+  { n: "סכינים: Aritsugu (מ-1560!)", en: "Aritsugu Knives Nishiki Market", city: "קיוטו", cat: "shop", k: "shop", ll: [35.00505, 135.76440], src: "מחרבות סמוראים לסכיני שף; חריטת שם במקום", note: "בכניסה לשוק נישיקי · השחזה על אבן מסתובבת מול העיניים" },
+  { n: "וורבימוצ'י Gion Komori", en: "Gion Komori Warabimochi", city: "קיוטו", cat: "food", k: "cafe", ll: [35.00590, 135.77510], src: "בית תה על נהר השיראקאווה בגיון", note: "הוורבימוצ'י הכי רך שיש + פרפה מאצ'ה" },
+  { n: "מאצ'ה Sawawa אראשיאמה", en: "Sawawa Arashiyama Matcha", city: "קיוטו", cat: "food", k: "cafe", ll: [35.01540, 135.67810], src: "בלוגי קיוטו; מאצ'ה עשירה במיוחד", note: "וורבימוצ'י וסופט מאצ'ה ברחוב הראשי של אראשיאמה" },
+  { n: "שוק קורומון איצ'יבה", en: "Kuromon Ichiba Market", city: "אוסקה", cat: "food", k: "market", ll: [34.66533, 135.50698], src: "'המטבח של אוסקה'; מומלץ גם בפורומים הישראליים", note: "שיפודי וואגיו, צדפות בגריל, פירות ים · 5 דק' מדוטונבורי · לבוא רעבים לפני 16:00" },
+  { n: "טקויאקי Wanaka", en: "Takoyaki Wanaka Dotonbori", city: "אוסקה", cat: "food", k: "market", ll: [34.66880, 135.50160], src: "מהאהובים על המקומיים; פריך בחוץ נוזלי בפנים", note: "תור זז מהר · חתיכות תמנון גדולות" },
+  { n: "טקויאקי Kukuru", en: "Takoyaki Kukuru Dotonbori", city: "אוסקה", cat: "food", k: "market", ll: [34.66875, 135.50110], src: "המפורסם עם התמנון הסגול על הקיר", note: "הכי מפורסם בדוטונבורי · קצת יקר יותר, שווה לחוויה" },
+  { n: "אוקונומיאקי Mizuno (מ-1945)", en: "Okonomiyaki Mizuno Dotonbori", city: "אוסקה", cat: "food", k: "jp", ll: [34.66845, 135.50307], src: "ביב גורמן של מישלן; מוסד דוטונבורי", note: "אוקונומיאקי על פלנצ'ה מולכם · תור — לבוא מוקדם", book: true },
+  { n: "סכינים: Tower Knives", en: "Tower Knives Osaka Shinsekai", city: "אוסקה", cat: "shop", k: "shop", ll: [34.65234, 135.50690], src: "טריפאדוויזר: 'חנות הסכינים הכי טובה'; אנגלית מלאה", note: "סכיני סאקאי בעבודת יד · מלמדים אחיזה והשחזה · ליד מגדל טסוטנקאקו, 10 דק' מנמבה" },
+  { n: "בית התה Amazake-chaya", en: "Amazake Chaya Hakone", city: "האקונה", cat: "food", k: "cafe", ll: [35.20216, 139.04895], src: "400 שנה על דרך הטוקאידו העתיקה; מתכון שלא השתנה", note: "אמאזאקה חם (בלי אלכוהול) + מוצ'י על האש · בדרך למקדש האקונה" },
+  { n: "Bakery & Table — אגם אשי", en: "Bakery and Table Hakone Motohakone", city: "האקונה", cat: "food", k: "cafe", ll: [35.19850, 139.02900], src: "המאפייה המפורסמת של האקונה, על שפת האגם", note: "Pan de Soft — לחמנייה חמה עם גלידה · מול המזח במוטו-האקונה" },
+  { n: "Gora Brewery & Grill", en: "Gora Brewery and Grill Hakone", city: "האקונה", cat: "food", k: "bar", ll: [35.24760, 139.04634], src: "טריפאדוויזר 4.4; בירה מקומית", note: "מבשלה + גריל בגורה — ערב מושלם אחרי אונסן" },
+  { n: "Coco Tam's — באנג'י על החוף", en: "Coco Tams Beach Bar Bophut", city: "קוסמוי", cat: "exp", k: "bar", ll: [9.55920, 100.03130], src: "המקום המפורסם של סמוי; מופעי אש 19:30 ו-21:00", note: "פופים על החול, קוקטיילים ומופעי אש · בכפר הדייגים, 20 דק' הליכה מהמלון" },
+  { n: "כפר הדייגים — שוק שישי", en: "Fisherman's Village Walking Street Bophut", city: "קוסמוי", cat: "exp", k: "market", ll: [9.55898, 100.03151], src: "שוק הלילה הכי טוב בסמוי (ימי שישי)", note: "אוכל רחוב, דוכנים ומוזיקה · אתם שם בשישי 09.10 ✓" },
+  { n: "Luna Lounge — תונג נאי פאן", en: "Luna Lounge Thong Nai Pan Noi", city: "קופנגן", cat: "food", k: "other", ll: [9.77668, 100.05363], src: "טריפאדוויזר: מהמובילות בקופנגן", note: "פיוז'ן תאילנדי-צרפתי · 5 דק' הליכה מהפנווימאן" },
+  { n: "שוק לילה Ao Nang Landmark", en: "Ao Nang Landmark Night Market", city: "קראבי", cat: "food", k: "market", ll: [8.04290, 98.81231], src: "שוק הלילה הגדול באזור; כל ערב", note: "אוכל רחוב תאילנדי, שייקים ומנגו סטיקי רייס · ~25 דק' מהמלון" },
+  { n: "The Longtail Boat Restaurant", en: "The Longtail Boat Restaurant Ao Nang", city: "קראבי", cat: "food", k: "other", ll: [8.03200, 98.82500], src: "בלוגרים: 'השירות הכי טוב בתאילנד'", note: "פירות ים ותאילנדי על החוף באו-נאנג" },
+  { n: "שוק סופ\"ש בעיר קראבי", en: "Krabi Town Walking Street", city: "קראבי", cat: "food", k: "market", ll: [8.06397, 98.91618], src: "השוק המסודר והטעים במחוז (שישי-ראשון)", note: "אתם שם בסופ\"ש 26–27.09 ✓ · גריל פירות ים ומנגו סטיקי רייס" },
 ];
 
 /* משימות שליחת מזוודות (Takkyubin) — לפי החוברת: למסור לפחות 24ש' לפני צ'ק-אאוט */
@@ -615,6 +643,7 @@ const LUGGAGE = [
     d: "בבוקר, בקבלה, עם אישור ההזמנה של HOTEL THE FLAG שינסאיבאשי. לשמור עותק של טפסי המשלוח." },
   { id: "lug-3", day: "d10", title: "🧳 חשוב! מזוודות ישר לטוקיו — מדלגות על האקונה",
     d: "למסור בקבלה באוסקה עם אישור Royal Park Iconic שיודומה. להאקונה לוקחים רק תיק לילה קטן לריוקאן — ככה נוסעים קל ברכבל ובשייט." },
+
 ];
 
 /* טיפים כלליים — פאנל מידע */

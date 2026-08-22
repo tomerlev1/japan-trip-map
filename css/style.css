@@ -376,3 +376,6 @@ label.bookrow { cursor: pointer; }
 .dayrow.big { padding: 16px 15px; }
 .dayrow.big .flag { font-size: 26px; }
 .dayrow.big .dr-main b { font-size: 15px; }
+
+/* ---- מקור ההמלצה ---- */
+.pop-src { background: #f3eefa; border-radius: 9px; padding: 6px 9px; font-size: 11.5px; color: #5b3f8f; margin-bottom: 6px; line-height: 1.5; }
