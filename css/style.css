@@ -365,3 +365,14 @@ label.bookrow { cursor: pointer; }
   .modal.open { transform: translateY(0); }
   .qlinks { grid-template-columns: 1fr; }
 }
+
+/* ---- ניווט מדורג ---- */
+.dchip.country { font-weight: 800; font-size: 14px; padding: 9px 18px; background: #f1efe8; }
+.dchip.country:hover { background: var(--ink); color: #fff; }
+.dchip.back { color: var(--mut); background: transparent; border-style: dashed; }
+.dchip.back:hover { color: var(--ink); }
+.dchip.seg b { font-weight: 800; }
+.dchip.seg.on { background: var(--ink); }
+.dayrow.big { padding: 16px 15px; }
+.dayrow.big .flag { font-size: 26px; }
+.dayrow.big .dr-main b { font-size: 15px; }

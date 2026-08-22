@@ -23,3 +23,4 @@ const sb = { console };
 vm.runInNewContext(src + check, sb);
 console.log(sb.__out);
 process.exit(sb.__fail ? 1 : 0);
+// (בדיקת SEGMENTS מתבצעת בקריאה חוזרת דרך check2 בעת הצורך)

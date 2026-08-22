@@ -10,11 +10,25 @@ const PARTS = ["", "בוקר", "צהריים", "אחה\"צ", "ערב", "לילה
 let curDay = null;          // null = הכל · "JP"/"TH" = סינון מדינה · אחרת מזהה יום
 const IS_TOUCH = matchMedia("(pointer: coarse)").matches;
 function curDayObj() { return DAYS.find(d => d.id === curDay) || null; }
+function curSeg() {
+  const o = curDayObj();
+  if (o) return SEGMENTS.find(sg => sg.days.includes(o.id)) || null;
+  if (typeof curDay === "string" && curDay.startsWith("seg:")) return SEGMENTS.find(sg => sg.id === curDay.slice(4)) || null;
+  return null;
+}
+function curCountry() {
+  if (curDay === "JP" || curDay === "TH") return curDay;
+  const sg = curSeg();
+  return sg ? sg.c : null;
+}
 function visibleDays() {
+  const o = curDayObj();
+  if (o) return [o];
+  const sg = curSeg();
+  if (sg) return DAYS.filter(d => sg.days.includes(d.id));
   if (curDay === "JP") return DAYS.filter(d => d.c !== "TH");
   if (curDay === "TH") return DAYS.filter(d => d.c === "TH");
-  const o = curDayObj();
-  return o ? [o] : DAYS;
+  return DAYS;
 }
 function dayTitleLine(d) { return d.label ? d.label : "יום " + d.n + " · " + d.date + " · " + d.dow; }
 let lastFitKey = null;
@@ -31,9 +45,15 @@ function gmapsUrl(p) {
   return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((p.en || p.n) + ", " + (CITY_EN[p.city] || "") + " Japan");
 }
 function pointRef(p) { return p.approx ? (p.en || p.n) + ", " + (CITY_EN[p.city] || "") + " Japan" : p.lat + "," + p.lng; }
+/* יעד ניווט — תמיד לפי שם (גוגל מזהה POI מדויק); קואורדינטות רק כשאין שם */
+function destRef(p) {
+  if (p.en) return p.en + ", " + (CITY_EN[p.city] || "") + " Japan";
+  if (!p.approx) return p.lat + "," + p.lng;
+  return p.n + ", " + (CITY_EN[p.city] || "");
+}
 function navUrl(from, to) {
   return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(pointRef(from)) +
-    "&destination=" + encodeURIComponent(pointRef(to)) + "&travelmode=transit";
+    "&destination=" + encodeURIComponent(destRef(to)) + "&travelmode=transit";
 }
 function toast(msg, ms) {
   const t = $("#toast");
@@ -259,9 +279,11 @@ function openTaxi(placeId) {
   const p = Store.getPlace(placeId);
   if (!p) return;
   const ja = (typeof JA !== "undefined" && JA[placeId]) || {};
-  $("#taxiName").textContent = ja.n || p.en || p.n;
-  $("#taxiAddr").textContent = ja.a || "";
-  $("#taxiHeName").textContent = p.n;
+  const name = ja.n || "";
+  const addr = ja.a || "";
+  $("#taxiName").textContent = name || addr || (p.en || p.n);
+  $("#taxiAddr").textContent = name ? addr : "";
+  $("#taxiHeName").textContent = p.n + (!name && !addr ? " · אין שם יפני שמור — הראו לנהג גם את הנעיצה במפה" : "");
   showModal("taxiModal");
 }
 
@@ -506,25 +528,61 @@ function focusStop(placeId) {
 }
 
 /* ---------- סרגל ימים ---------- */
+function dayChip(d) {
+  const main = d.short ? esc(d.short) : "יום " + d.n;
+  const b = el("button", "dchip" + (curDay === d.id ? " on" : "") + (TODAY_ID === d.id ? " today" : ""),
+    '<span class="dot" style="background:' + (curDay === d.id ? "rgba(255,255,255,.9)" : d.color) + '"></span>' + main + ' <span class="dt">' + (d.dfrom || d.date) + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
+  if (curDay === d.id) b.style.background = d.color;
+  b.title = d.title;
+  b.onclick = () => selectDay(d.id);
+  return b;
+}
 function renderDaybar() {
   const bar = $("#daybar");
   bar.innerHTML = "";
-  for (const [key, txt] of [[null, "🌏 הכל"], ["JP", "🇯🇵 יפן"], ["TH", "🇹🇭 תאילנד"]]) {
-    const b = el("button", "dchip scope" + (curDay === key ? " on" : ""), txt);
-    b.onclick = () => selectDay(key);
+  const sg = curSeg();
+  const country = curCountry();
+  const backChip = (label, target) => {
+    const b = el("button", "dchip back", "‹ " + label);
+    b.onclick = () => selectDay(target);
     bar.appendChild(b);
+  };
+  if (!country) {
+    // רמה 1: מדינות
+    for (const [key, txt] of [["JP", "🇯🇵 יפן"], ["TH", "🇹🇭 תאילנד"]]) {
+      const b = el("button", "dchip country", txt);
+      b.onclick = () => selectDay(key);
+      bar.appendChild(b);
+    }
+    if (TODAY_ID) {
+      const t = el("button", "dchip today", '🗓 היום בטיול <span class="tdy">עכשיו</span>');
+      t.onclick = () => selectDay(TODAY_ID);
+      bar.appendChild(t);
+    }
+    return;
   }
-  let lastC = "JP";
-  for (const d of DAYS) {
-    const c = d.c || "JP";
-    if (c !== lastC) { bar.appendChild(el("span", "dsep", "🇹🇭")); lastC = c; }
-    const main = d.short ? esc(d.short) : "יום " + d.n;
-    const b = el("button", "dchip" + (curDay === d.id ? " on" : "") + (TODAY_ID === d.id ? " today" : ""),
-      '<span class="dot" style="background:' + (curDay === d.id ? "rgba(255,255,255,.9)" : d.color) + '"></span>' + main + ' <span class="dt">' + (d.dfrom || d.date) + "</span>" + (TODAY_ID === d.id ? '<span class="tdy">היום</span>' : ""));
-    if (curDay === d.id) b.style.background = d.color;
-    b.title = d.title;
-    b.onclick = () => selectDay(d.id);
-    bar.appendChild(b);
+  if (!sg) {
+    // רמה 2: יעדים בתוך מדינה
+    backChip("כל הטיול", null);
+    bar.appendChild(el("span", "dsep", country === "JP" ? "🇯🇵" : "🇹🇭"));
+    for (const seg of SEGMENTS.filter(x => x.c === country)) {
+      const hasToday = TODAY_ID && seg.days.includes(TODAY_ID);
+      const b = el("button", "dchip seg" + (hasToday ? " today" : ""),
+        "<b>" + esc(seg.n) + '</b> <span class="dt">' + esc(seg.sub) + "</span>" + (hasToday ? '<span class="tdy">היום</span>' : ""));
+      b.onclick = () => selectDay("seg:" + seg.id);
+      bar.appendChild(b);
+    }
+    return;
+  }
+  // רמה 3: ימים בתוך יעד
+  backChip(country === "JP" ? "יפן" : "תאילנד", country);
+  const sc = el("button", "dchip seg" + (curDayObj() ? "" : " on"), "<b>" + esc(sg.n) + "</b>");
+  sc.onclick = () => selectDay("seg:" + sg.id);
+  bar.appendChild(sc);
+  bar.appendChild(el("span", "dsep", "·"));
+  for (const id of sg.days) {
+    const d = dayById(id);
+    if (d) bar.appendChild(dayChip(d));
   }
 }
 function selectDay(id) {
@@ -542,31 +600,62 @@ function renderPanel() {
   pn.innerHTML = "";
   const d = curDayObj();
   if (!d) {
-    pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>" + countdownHtml()));
-    const hint = el("div", "pn-hint", "בחרו יום כדי לראות את המסלול המלא שלו, לערוך, להחליף ולסדר מחדש. כל שינוי נשמר במכשיר — ולחצן השיתוף יוצר קישור לבן/בת הזוג.");
-    pn.appendChild(hint);
-    let lastC = null;
-    for (const day of visibleDays()) {
-      const c = day.c || "JP";
-      if (c !== lastC) {
-        pn.appendChild(el("div", "cn-head", c === "JP" ? "🇯🇵 יפן · 10–26.09" : "🇹🇭 תאילנד · 26.09–13.10+"));
-        lastC = c;
-      }
+    const sg = curSeg();
+    const country = curCountry();
+    const dayRow = day => {
       const stops = Store.dayStops(day.id);
       const row = el("button", "dayrow");
       row.innerHTML = '<span class="bar" style="background:' + day.color + '"></span>' +
         '<span class="dr-main"><b>' + esc(dayTitleLine(day)) + "</b><span>" + esc(day.title) + "</span></span>" +
         '<span class="dr-city">' + esc(day.city) + " · " + stops.length + " עצירות</span>";
       row.onclick = () => selectDay(day.id);
+      return row;
+    };
+    if (sg) {
+      // רמה 3: יעד — הימים שלו
+      pn.appendChild(el("div", "pn-head", "<h2>" + esc(sg.n) + "</h2><div class='pn-sub'>" + esc(sg.sub) + " · " + sg.days.length + (sg.days.length === 1 ? " יום" : " ימים") + "</div>"));
+      for (const id of sg.days) { const day = dayById(id); if (day) pn.appendChild(dayRow(day)); }
+      return;
+    }
+    if (country) {
+      // רמה 2: מדינה — היעדים שלה
+      pn.appendChild(el("div", "pn-head", "<h2>" + (country === "JP" ? "🇯🇵 יפן" : "🇹🇭 תאילנד") + "</h2><div class='pn-sub'>" +
+        (country === "JP" ? "10–26.09 · טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו" : "26.09–13.10+ · קראבי → קופנגן → קוסמוי → בנגקוק") + "</div>"));
+      for (const seg of SEGMENTS.filter(x => x.c === country)) {
+        const firstDay = dayById(seg.days[0]);
+        const nStops = seg.days.reduce((a, id) => a + Store.dayStops(id).length, 0);
+        const row = el("button", "dayrow");
+        row.innerHTML = '<span class="bar" style="background:' + (firstDay ? firstDay.color : "#888") + '"></span>' +
+          '<span class="dr-main"><b>' + esc(seg.n) + " · " + esc(seg.sub) + "</b><span>" +
+          seg.days.length + (seg.days.length === 1 ? " יום" : " ימים") + " · " + nStops + " עצירות</span></span>" +
+          '<span class="dr-city">' + (TODAY_ID && seg.days.includes(TODAY_ID) ? "🗓 היום" : "") + "</span>";
+        row.onclick = () => selectDay("seg:" + seg.id);
+        pn.appendChild(row);
+      }
+      return;
+    }
+    // רמה 1: כל הטיול — שתי מדינות
+    pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>" + countdownHtml()));
+    const cards = [
+      ["JP", "🇯🇵", "יפן", "10–26.09 · 17 ימים", "טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו"],
+      ["TH", "🇹🇭", "תאילנד", "26.09–13.10+ · 5 יעדים", "קראבי → קופנגן → קוסמוי → בנגקוק"],
+    ];
+    for (const [key, flag, name, meta, route] of cards) {
+      const row = el("button", "dayrow big");
+      row.innerHTML = '<span class="flag">' + flag + '</span>' +
+        '<span class="dr-main"><b>' + name + " · " + meta + "</b><span>" + route + "</span></span><span class='dr-city'>›</span>";
+      row.onclick = () => selectDay(key);
       pn.appendChild(row);
     }
+    const hint = el("div", "pn-hint", "לחצו על מדינה ← יעד ← יום כדי לראות מסלול מפורט, לערוך ולסדר מחדש. כל שינוי נשמר — וכפתור השיתוף שולח הכול לבן/בת הזוג.");
+    pn.appendChild(hint);
     return;
   }
   const head = el("div", "pn-day");
   head.innerHTML =
     '<div class="pn-nav">' +
     '<button id="navPrev" class="mini">‹ הקודם</button>' +
-    '<button id="navAll" class="mini">🗾 כל הימים</button>' +
+    '<button id="navAll" class="mini">🗺 ' + esc((curSeg() || { n: "הכל" }).n) + '</button>' +
     '<button id="navNext" class="mini">הבא ›</button></div>' +
     '<h2><span class="dot big" style="background:' + d.color + '"></span> ' + esc(dayTitleLine(d)) + "</h2>" +
     '<div class="pn-title">' + esc(d.title) + ' <span id="wxSlot" class="wx" style="display:none"></span></div>' +
@@ -601,7 +690,7 @@ function renderPanel() {
   const tb = head.querySelector(".taxibtn");
   if (tb) tb.onclick = e => { e.preventDefault(); openTaxi(tb.dataset.taxi); };
   const idx0 = DAYS.indexOf(d);
-  head.querySelector("#navAll").onclick = () => selectDay(d.c === "TH" ? "TH" : null);
+  head.querySelector("#navAll").onclick = () => { const sg = curSeg(); selectDay(sg ? "seg:" + sg.id : null); };
   head.querySelector("#navPrev").onclick = () => selectDay(DAYS[(idx0 - 1 + DAYS.length) % DAYS.length].id);
   head.querySelector("#navNext").onclick = () => selectDay(DAYS[(idx0 + 1) % DAYS.length].id);
 

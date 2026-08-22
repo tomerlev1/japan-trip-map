@@ -10,14 +10,15 @@
 4. **דיוק פינים = בטיחות.** מקום שלא אומת מול מקור חיצוני מסומן `approx: true` (מוצג ≈, ניתן לגרירה) — וכל קישורי הניווט שלו עובדים לפי *שם* ולא לפי קואורדינטות, כך שגוגל מפות תמיד מוביל נכון. לא להסיר approx בלי אימות (Photon/Nominatim/Overpass).
 5. **אין build ואין תלויות CDN** — הכול vanilla JS + קבצים סטטיים; ספריות (Leaflet, MapLibre, פונטים) vendored בתוך הריפו.
 6. אחרי כל שינוי נתונים: `node tools/validate.mjs` חייב לעבור.
-7. ה-UI בעברית RTL; תוויות המפה באנגלית (השכבה הווקטורית ממירה ל-name:en/name:latin — לא לגעת בשכבות shield עם ref).
+7. יעדי ניווט (destination) בקישורי Google Maps הם תמיד לפי *שם* (destRef) — כך פספוס פין לא שולח את המשתמש למקום לא נכון. לא לשנות לקואורדינטות.
+8. ה-UI בעברית RTL; תוויות המפה באנגלית (השכבה הווקטורית ממירה ל-name:en/name:latin — לא לגעת בשכבות shield עם ref).
 
 ## ארכיטקטורה
 ```
 index.html            שלד + מודאלים; גרסאות נכסים ?v=N
 css/style.css         עיצוב v2 (Heebo self-hosted, RTL, bottom-sheet במובייל)
 js/config.js          חיבור סנכרון אופציונלי (ריק = רדום, בלי רשת)
-js/data.js            כל הנתונים: DAYS, PLACES, COORDS, CATALOG (+ll/addr/k), JA (שמות+כתובות ביפנית),
+js/data.js            כל הנתונים: DAYS, PLACES, COORDS, SEGMENTS (מדינה←יעד←ימים), CATALOG (+ll/addr/k), JA (שמות+כתובות ביפנית),
                       LUGGAGE, FLIGHTS, QUICKLINKS, EMERGENCY, TIPS, HOTELS, CITY_CENTERS
 js/storage.js         מצב: localStorage, undo, דיף-שיתוף gzip+base64url, checked/visited
 js/sync.js            סנכרון fetch+polling מול Supabase RPCs (רדום עד מילוי config)
