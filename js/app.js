@@ -578,9 +578,28 @@ function renderMap() {
 function focusStop(placeId) {
   const p = Store.getPlace(placeId);
   if (!p) return;
-  map.flyTo([p.lat, p.lng], Math.max(map.getZoom(), 15), { duration: 0.6 });
-  routeLayer.eachLayer(l => { if (l._placeId === placeId && l.openPopup) setTimeout(() => l.openPopup(), 650); });
+  const target = L.latLng(p.lat, p.lng);
+  const zoom = Math.max(map.getZoom(), 15);
+  const openPopup = () => routeLayer.eachLayer(l => { if (l._placeId === placeId && l.openPopup) l.openPopup(); });
+  // מרחק גדול — קפיצה בלי אנימציה: flyTo ארוך מפעיל בספארי באג ציור שמעלים את הסיכות
+  if (map.getCenter().distanceTo(target) > 4000) {
+    map.setView(target, zoom, { animate: false });
+    setTimeout(openPopup, 80);
+    return;
+  }
+  map.once("moveend", openPopup);
+  map.flyTo(target, zoom, { duration: 0.6 });
 }
+
+/* ספארי/WebKit מפסיק לפעמים לצייר את שכבת הסמנים אחרי זום — כפיית ריענון ציור */
+const IS_WEBKIT = /AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chromium|Edg\//.test(navigator.userAgent);
+if (IS_WEBKIT) map.on("zoomend moveend", () => {
+  const pane = map.getPane("markerPane");
+  if (!pane) return;
+  const prev = pane.style.transform;
+  pane.style.transform = prev ? prev + " translateZ(0)" : "translateZ(0)";
+  requestAnimationFrame(() => { pane.style.transform = prev; });
+});
 
 /* ---------- סרגל ימים ---------- */
 function dayChip(d) {
@@ -1283,6 +1302,10 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || ["localho
 window.addEventListener("offline", () => toast("📴 אין אינטרנט — המסלול והמפות השמורות ממשיכים לעבוד", 4000));
 window.addEventListener("online", () => toast("📶 חזרתם לרשת ✓"));
 $("#mPreload").onclick = () => { hideModal("menuModal"); preloadOffline(); };
+
+/* שגיאות לא-צפויות — להציג למשתמש במקום להיכשל בשקט */
+window.addEventListener("error", e => { try { toast("⚠️ תקלה: " + (e.message || "שגיאה לא ידועה")); } catch (_) {} });
+window.addEventListener("unhandledrejection", e => { try { toast("⚠️ תקלה: " + ((e.reason && e.reason.message) || e.reason || "שגיאה לא ידועה")); } catch (_) {} });
 
 if (TODAY_ID && !location.hash) {
   curDay = TODAY_ID;
