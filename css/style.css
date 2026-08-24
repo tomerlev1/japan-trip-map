@@ -498,3 +498,100 @@ header h1 { font-weight: 800; }
   font-family: "FrankRuhl", "Heebo", serif; font-weight: 700; font-size: 15px;
   background: var(--washi); border: 1px solid rgba(34,28,21,.10);
 }
+
+/* ═══════ עיצוב מזרחי — כל האתר ═══════ */
+
+/* רקע הפאנל — נייר ושי */
+#panel { background: #f3eee4; }
+#panel::-webkit-scrollbar { width: 10px; }
+#panel::-webkit-scrollbar-thumb { background: rgba(34,28,21,.14); border-radius: 8px; border: 3px solid #f3eee4; }
+
+/* צ'יפי ימים ויעדים */
+.dchip { background: #fdfbf6; border-color: rgba(34,28,21,.12); }
+.dchip .dt { font-variant-numeric: tabular-nums; }
+.dchip.seg b { font-family: "FrankRuhl", "Heebo", serif; }
+
+/* שורות יעד (רמה 2) */
+.dayrow { background: #fdfbf6; border-color: rgba(34,28,21,.09); }
+.dayrow .dr-main b { font-family: "FrankRuhl", "Heebo", serif; font-size: 15px; }
+
+/* כרטיסי עצירה */
+.stop { background: #fdfbf6; border-color: rgba(34,28,21,.09); border-radius: 14px; }
+.stop:hover { border-color: rgba(194,65,59,.35); }
+.stop.start { background: linear-gradient(180deg, #fdf8ef, #fdfbf6); }
+
+/* מספר עצירה — חותם האנקו */
+.num {
+  font-family: "FrankRuhl", serif; font-weight: 900;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5), 0 1px 3px rgba(34,28,21,.25);
+  transform: rotate(-3deg);
+}
+.stop:hover .num { transform: rotate(0deg) scale(1.06); transition: transform .18s ease; }
+
+/* תגי הזמנה — חותמות */
+.bk {
+  border: 1px solid rgba(138,90,16,.4); background: none; color: var(--warn-ink);
+  border-radius: 4px; transform: rotate(-1.5deg); font-weight: 700; letter-spacing: .2px;
+}
+.bk.done {
+  border: 1.5px solid var(--verm); color: var(--verm); background: none;
+  border-radius: 6px; transform: rotate(-2deg);
+  font-family: "FrankRuhl", serif; font-weight: 800;
+}
+
+/* קאנג'י של חלק היום */
+.pk { font-style: normal; color: rgba(194,65,59,.45); margin-inline-start: 5px; font-size: 10.5px; }
+
+/* חלקי יום בפופאפ ובשורות */
+.s-part { letter-spacing: .1px; }
+
+/* כפתור הוספה — מכחול מקווקו */
+.addbtn { border: 1.5px dashed rgba(194,65,59,.4); color: var(--verm-deep); border-radius: 14px; background: rgba(253,251,246,.6); }
+.addbtn:hover { background: #fdf1ef; }
+
+/* מודאלים — ושי עם פס עליון */
+.modal { background: #faf7f1; border-top: 4px solid var(--verm); }
+body[data-c="TH"] .modal { border-top-color: var(--thai-gold); }
+.m-head h2 { font-size: 20px; }
+.menubtn { background: #fdfbf6; border-color: rgba(34,28,21,.10); }
+
+/* משימות וטיפים */
+.bookrow { background: #fdfbf6; border: 1px solid rgba(34,28,21,.08); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+.bookrow.done { background: #f6f1e7; }
+#tipsBody h3, #infoBody h3 { font-family: "FrankRuhl", "Heebo", serif; font-size: 17px; color: var(--ink); }
+.progress { height: 8px; border-radius: 6px; background: rgba(34,28,21,.08); overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, var(--verm), #d97706); }
+
+/* 🚕 כרטיס נהג — מינצ'ו יפני */
+.modal.taxi { background: #fdfbf6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cg fill='none' stroke='%23c2413b' stroke-opacity='.05' stroke-width='1.4'%3E%3Ccircle cx='20' cy='40' r='18'/%3E%3Ccircle cx='20' cy='40' r='12'/%3E%3Ccircle cx='60' cy='40' r='18'/%3E%3Ccircle cx='60' cy='40' r='12'/%3E%3Ccircle cx='0' cy='20' r='18'/%3E%3Ccircle cx='40' cy='20' r='18'/%3E%3Ccircle cx='40' cy='20' r='12'/%3E%3Ccircle cx='80' cy='20' r='18'/%3E%3C/g%3E%3C/svg%3E") repeat; }
+.taxi-please {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "FrankRuhl", serif;
+  font-size: 22px; color: var(--verm-deep); margin: 8px 0 18px;
+  border-bottom: 1px solid rgba(194,65,59,.25); padding-bottom: 14px;
+}
+.taxi-name { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 38px; font-weight: 600; }
+.taxi-addr { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 24px; }
+
+/* ספירה לאחור — חותם 出発 */
+.countdown { position: relative; overflow: hidden; }
+.countdown::before {
+  content: "出発"; position: absolute; top: 50%; left: 12px; transform: translateY(-50%);
+  writing-mode: vertical-rl; font-family: "Hiragino Mincho ProN", serif;
+  font-size: 15px; color: rgba(194,65,59,.28); letter-spacing: 3px; pointer-events: none;
+}
+
+/* צד תאילנדי — הופך לזהב */
+body[data-c="TH"] .pn-head h2::after { background: linear-gradient(-90deg, var(--thai-gold), var(--thai-gold) 60%, transparent); }
+body[data-c="TH"] .countdown { border-color: rgba(184,134,59,.4); }
+body[data-c="TH"] .countdown::before { content: "ไทย"; font-family: inherit; color: rgba(184,134,59,.35); letter-spacing: 0; }
+body[data-c="TH"] .addbtn { border-color: rgba(184,134,59,.45); color: #8a6420; }
+body[data-c="TH"] .addbtn:hover { background: #fbf4e4; }
+
+/* חיפוש ותאריכים — התאמות קטנות */
+.srch-row { background: #fdfbf6; border: 1px solid rgba(34,28,21,.08); border-radius: 12px; padding: 11px 12px; margin-bottom: 8px; }
+.dt-row { border-bottom-color: rgba(34,28,21,.08); }
+.dt-row .dt-name b { font-family: "FrankRuhl", "Heebo", serif; }
+
+/* פופאפ במפה */
+.leaflet-popup-content-wrapper { background: #fdfbf6; border-radius: 14px; box-shadow: 0 6px 24px rgba(34,28,21,.18); }
+.pop-t { font-family: "FrankRuhl", "Heebo", serif; font-weight: 800; }

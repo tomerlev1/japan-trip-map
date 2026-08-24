@@ -41,6 +41,8 @@ const $ = s => document.querySelector(s);
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 function dayById(id) { return DAYS.find(d => d.id === id); }
+const PART_KANJI = { "בוקר": "朝", "צהריים": "昼", "אחה\"צ": "午後", "ערב": "夜", "לילה": "夜", "כל היום": "終日" };
+function partK(part) { const k = PART_KANJI[part]; return k ? '<i class="pk">' + k + "</i>" : ""; }
 function cityRef(p) { return (CITY_EN[p.city] || "") + (JP_CITIES.has(p.city) ? " Japan" : ""); }
 function gmapsUrl(p) {
   const q = p.addr ? p.addr : (p.en || p.n) + ", " + cityRef(p);
@@ -842,7 +844,7 @@ function renderPanel() {
       '<span class="num" style="background:' + d.color + '">' + (i + 1) + "</span>" +
       '<span class="s-ic">' + cat.icon + "</span>" +
       '<span class="s-main"><b>' + esc(p.n) + (p.approx ? ' <span class="approx-tag" title="מיקום משוער">≈</span>' : "") + "</b>" +
-      (p.part || p.book ? '<span class="s-part">' + esc(p.part || "") +
+      (p.part || p.book ? '<span class="s-part">' + esc(p.part || "") + partK(p.part) +
         (p.book ? (Store.isChecked(p.id) ? ' <span class="bk done">✓ הוזמן</span>' : ' <span class="bk">📌 להזמין</span>') : "") + "</span>" : "") + "</span>" +
       '<span class="s-acts">' +
       '<button class="ib vbtn' + (vis ? " on" : "") + '" data-a="vis" title="סמן שהיינו">✓</button>' +
@@ -1291,6 +1293,7 @@ function renderSyncModal() {
 function render() {
   applyTripDates(Store.getDates());
   TODAY_ID = todayDayId();
+  document.body.dataset.c = curCountry() || "";
   const h1 = document.querySelector("header h1"); if (h1) h1.textContent = TRIP.title;
   const tg = document.querySelector("header .tag");
   if (tg) tg.textContent = TRIP.fullRange + " · " + (DAYS.some(d => d.c === "TH") ? "יפן 🇯🇵 ← תאילנד 🇹🇭" : "🇯🇵 יפן");
