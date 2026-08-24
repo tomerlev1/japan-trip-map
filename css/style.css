@@ -410,3 +410,91 @@ label.bookrow { cursor: pointer; }
 .srch-rate { color: #c9862c; font-size: 12.5px; }
 .srch-addr { color: #888; font-size: 12px; margin-top: 2px; direction: ltr; text-align: right; }
 .srch-acts { margin-top: 7px; display: flex; gap: 8px; }
+
+/* ═══════ שפה ויזואלית מזרחית — Frank Ruhl Libre + ושי/ורמיליון ═══════ */
+@font-face {
+  font-family: "FrankRuhl"; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url("../vendor/fonts/frankruhl-hebrew.woff2") format("woff2");
+  unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+@font-face {
+  font-family: "FrankRuhl"; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url("../vendor/fonts/frankruhl-latin.woff2") format("woff2");
+}
+
+:root {
+  --ink: #221c15;
+  --verm: #c2413b;
+  --verm-deep: #9c2f2a;
+  --thai-gold: #b8863b;
+  --washi: #faf7f1;
+  --seigaiha: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cg fill='none' stroke='%23c2413b' stroke-opacity='.10' stroke-width='1.4'%3E%3Ccircle cx='20' cy='40' r='18'/%3E%3Ccircle cx='20' cy='40' r='12'/%3E%3Ccircle cx='20' cy='40' r='6'/%3E%3Ccircle cx='60' cy='40' r='18'/%3E%3Ccircle cx='60' cy='40' r='12'/%3E%3Ccircle cx='60' cy='40' r='6'/%3E%3Ccircle cx='0' cy='20' r='18'/%3E%3Ccircle cx='0' cy='20' r='12'/%3E%3Ccircle cx='0' cy='20' r='6'/%3E%3Ccircle cx='40' cy='20' r='18'/%3E%3Ccircle cx='40' cy='20' r='12'/%3E%3Ccircle cx='40' cy='20' r='6'/%3E%3Ccircle cx='80' cy='20' r='18'/%3E%3Ccircle cx='80' cy='20' r='12'/%3E%3Ccircle cx='80' cy='20' r='6'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* כותרות בסריף — תחושת קליגרפיה */
+.pn-head h2, header h1, .m-head h2, .dayrow.big .dr-main b {
+  font-family: "FrankRuhl", "Heebo", serif;
+  color: var(--ink);
+}
+.pn-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -.2px; position: relative; padding-bottom: 10px; }
+.pn-head h2::after {
+  content: ""; position: absolute; bottom: 2px; right: 2px; width: 44px; height: 4px;
+  background: linear-gradient(-90deg, var(--verm), var(--verm) 60%, transparent);
+  border-radius: 3px 0 0 3px;
+}
+header h1 { font-weight: 800; }
+
+/* לוגו הטורי בכותרת */
+.logo { background: none !important; padding: 0; display: flex; align-items: center; justify-content: center; }
+.logo img { width: 40px; height: 40px; border-radius: 11px; box-shadow: 0 2px 8px rgba(156, 47, 42, .25); display: block; }
+
+/* ספירה לאחור — חותם */
+.countdown {
+  background: var(--washi);
+  background-image: var(--seigaiha);
+  border: 1.5px solid rgba(194, 65, 59, .35);
+  border-radius: 14px; padding: 13px 16px;
+  font-family: "FrankRuhl", "Heebo", serif; font-size: 15px; color: var(--ink);
+}
+.countdown b { font-size: 21px; color: var(--verm); }
+
+/* כרטיסי מדינה — ושי עם ווטרמארק קליגרפי */
+.dayrow.big {
+  position: relative; overflow: hidden;
+  background: var(--washi);
+  border: 1px solid rgba(34, 28, 21, .09);
+  border-right: 4px solid var(--verm);
+  border-radius: 16px; padding: 18px 16px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.dayrow.big[data-c="TH"] { border-right-color: var(--thai-gold); }
+.dayrow.big:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(34, 28, 21, .10); }
+.dayrow.big::before {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 42px;
+  background-image: var(--seigaiha); background-position: bottom; opacity: .55; pointer-events: none;
+}
+.dayrow.big .dr-mark {
+  position: absolute; top: 8px; left: 12px;
+  font-family: "FrankRuhl", serif; font-size: 30px; font-weight: 900;
+  color: var(--verm); opacity: .10; pointer-events: none; line-height: 1;
+  writing-mode: vertical-rl;
+}
+.dayrow.big[data-c="TH"] .dr-mark { color: var(--thai-gold); opacity: .14; }
+.dayrow.big .flag { font-size: 30px; filter: drop-shadow(0 1px 2px rgba(0,0,0,.12)); }
+.dayrow.big .dr-main b { font-size: 18px; font-weight: 800; display: block; }
+.dayrow.big .dr-meta {
+  display: block; margin-top: 3px; font-size: 13.5px; font-weight: 600; color: var(--verm-deep);
+  font-variant-numeric: tabular-nums;
+}
+.dayrow.big[data-c="TH"] .dr-meta { color: #8a6420; }
+.dayrow.big .dr-route { display: block; margin-top: 4px; font-size: 12.5px; color: var(--mut); white-space: normal; line-height: 1.5; }
+.dayrow.big .dr-city { font-size: 22px; color: rgba(34,28,21,.35); }
+
+/* רמז תחתון — עדין, בלי מסגרת */
+.pn-hint { background: none; border: none; box-shadow: none; color: var(--mut); font-size: 12.5px; padding: 4px 8px; }
+
+/* צ'יפי מדינה עליונים */
+.dchip.country {
+  font-family: "FrankRuhl", "Heebo", serif; font-weight: 700; font-size: 15px;
+  background: var(--washi); border: 1px solid rgba(34,28,21,.10);
+}

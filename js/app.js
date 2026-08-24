@@ -754,15 +754,21 @@ function renderPanel() {
     }
     // רמה 1: כל הטיול — שתי מדינות
     pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>" + countdownHtml()));
-    const jpN = DAYS.filter(d => d.c !== "TH").length, thN = DAYS.filter(d => d.c === "TH").length;
+    const jpDays = DAYS.filter(d => d.c !== "TH"), thDays = DAYS.filter(d => d.c === "TH");
+    const jpMeta = jpDays[0].date + "–" + jpDays[jpDays.length - 1].date + " · " + jpDays.length + " ימים";
     const cards = [
-      ["JP", "🇯🇵", "יפן", TRIP.jpRange + " · " + jpN + " ימים", "טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו"],
+      ["JP", "🇯🇵", "יפן", jpMeta, "טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו", "日本"],
     ];
-    if (thN) cards.push(["TH", "🇹🇭", "תאילנד", TRIP.thRange + " · " + thN + " יעדים", "קראבי → קופנגן → קוסמוי → בנגקוק"]);
-    for (const [key, flag, name, meta, route] of cards) {
+    if (thDays.length) {
+      const thFirst = thDays[0], thLast = thDays[thDays.length - 1];
+      const thCount = Math.round((thLast._e - thFirst._s) / 86400e3);
+      cards.push(["TH", "🇹🇭", "תאילנד", TRIP.thRange + " · " + thCount + " ימים · " + thDays.length + " יעדים", "קראבי → קופנגן → קוסמוי → בנגקוק", "ไทย"]);
+    }
+    for (const [key, flag, name, meta, route, mark] of cards) {
       const row = el("button", "dayrow big");
-      row.innerHTML = '<span class="flag">' + flag + '</span>' +
-        '<span class="dr-main"><b>' + name + " · " + meta + "</b><span>" + route + "</span></span><span class='dr-city'>›</span>";
+      row.dataset.c = key;
+      row.innerHTML = '<span class="dr-mark">' + mark + '</span><span class="flag">' + flag + '</span>' +
+        '<span class="dr-main"><b>' + name + '</b><span class="dr-meta">' + meta + '</span><span class="dr-route">' + route + "</span></span><span class='dr-city'>›</span>";
       row.onclick = () => selectDay(key);
       pn.appendChild(row);
     }
