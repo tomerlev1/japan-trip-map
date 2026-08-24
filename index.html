@@ -13,9 +13,9 @@
 <link rel="icon" href="icon-64.png" sizes="64x64" type="image/png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=23">
-<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=23">
-<link rel="stylesheet" href="css/style.css?v=23">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=24">
+<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=24">
+<link rel="stylesheet" href="css/style.css?v=24">
 </head>
 <body>
 <header id="top">
@@ -25,6 +25,7 @@
   </div>
   <div class="tools">
     <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)">↩️</button>
+    <button id="btnSearch" class="tb" title="חיפוש מסעדה, אטרקציה או כתובת (גוגל)">🔍</button>
     <button id="btnSync" class="tb" title="סנכרון חי" hidden>☁️<span id="syncDot" class="sdot off"></span></button>
     <button id="btnInfo" class="tb" title="טיפים, טיסות וקישורים">💡</button>
     <button id="btnTips" class="tb" title="משימות: הזמנות ומזוודות">📋<span id="bkBadge" class="badge"></span></button>
@@ -76,6 +77,15 @@
     <p class="hint">🧭 מיקום לא מדויק? גררו את הסיכה שלו על המפה.</p>
   </div>
   <div class="m-foot"><button id="edSave" class="addbtn">שמירה</button></div>
+</div>
+
+<div class="modal" id="searchModal" role="dialog">
+  <div class="m-head"><h2>🔍 חיפוש מקום</h2><button class="x" data-close="searchModal">✕</button></div>
+  <div class="m-body">
+    <div class="srch-bar"><input id="srchInput" placeholder="שם מסעדה, אטרקציה או כתובת…"><button id="srchGo" class="mini on">חיפוש</button></div>
+    <label class="srch-day">הוספה ליום <select id="srchDay"></select></label>
+    <div id="srchResults"></div>
+  </div>
 </div>
 
 <div class="modal" id="auditModal" role="dialog">
@@ -150,13 +160,13 @@
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=23"></script>
-<script src="vendor/maplibre/maplibre-gl.js?v=23"></script>
-<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=23"></script>
-<script src="js/config.js?v=23"></script>
-<script src="js/data.js?v=23"></script>
-<script src="js/storage.js?v=23"></script>
-<script src="js/sync.js?v=23"></script>
-<script src="js/app.js?v=23"></script>
+<script src="vendor/leaflet/leaflet.js?v=24"></script>
+<script src="vendor/maplibre/maplibre-gl.js?v=24"></script>
+<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=24"></script>
+<script src="js/config.js?v=24"></script>
+<script src="js/data.js?v=24"></script>
+<script src="js/storage.js?v=24"></script>
+<script src="js/sync.js?v=24"></script>
+<script src="js/app.js?v=24"></script>
 </body>
 </html>

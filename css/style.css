@@ -400,3 +400,13 @@ label.bookrow { cursor: pointer; }
 .aud-row { padding: 10px 2px; border-bottom: 1px solid rgba(0,0,0,.07); font-size: 13.5px; }
 .aud-row .aud-city { color: #999; font-size: 12px; margin-inline-start: 8px; }
 .aud-row .aud-st { margin-top: 4px; color: #555; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* חיפוש גוגל */
+.srch-bar { display: flex; gap: 8px; }
+.srch-bar input { flex: 1; }
+.srch-day { display: block; margin-top: 10px; font-size: 13px; color: #666; }
+.srch-day select { margin-inline-start: 6px; max-width: 70%; }
+.srch-row { padding: 11px 2px; border-bottom: 1px solid rgba(0,0,0,.07); font-size: 14px; }
+.srch-rate { color: #c9862c; font-size: 12.5px; }
+.srch-addr { color: #888; font-size: 12px; margin-top: 2px; direction: ltr; text-align: right; }
+.srch-acts { margin-top: 7px; display: flex; gap: 8px; }

@@ -289,8 +289,9 @@ map.addControl(new FoodControl());
 const WX_EMOJI = c =>
   c === 0 ? "☀️" : c <= 2 ? "🌤️" : c === 3 ? "☁️" : c <= 48 ? "🌫️" : c <= 57 ? "🌦️" :
   c <= 67 ? "🌧️" : c <= 77 ? "🌨️" : c <= 81 ? "🌦️" : c === 82 ? "⛈️" : c <= 86 ? "🌨️" : "⛈️";
+const GWX_EMOJI = t => /THUNDER/.test(t) ? "⛈️" : /SNOW|HAIL/.test(t) ? "🌨️" : /HEAVY_RAIN|RAIN_PERIODICALLY/.test(t) ? "🌧️" : /RAIN|SHOWER|DRIZZLE/.test(t) ? "🌦️" : t === "CLEAR" ? "☀️" : /CLEAR/.test(t) ? "🌤️" : /PARTLY/.test(t) ? "⛅" : /CLOUD|OVERCAST/.test(t) ? "☁️" : /WIND/.test(t) ? "💨" : "🌤️";
 let wxCache = {};
-try { wxCache = JSON.parse(localStorage.getItem("jtm.wx") || "{}"); } catch (e) {}
+try { wxCache = JSON.parse(localStorage.getItem("jtm.wx2") || "{}"); } catch (e) {}
 function dayISO(d) {
   const t = (d.dfrom || d.date || "").split("–")[0];
   if (!/^\d\d\.\d\d$/.test(t)) return null;
@@ -310,12 +311,32 @@ async function fetchWx(city) {
   (j.daily?.time || []).forEach((t, i) => {
     d[t] = { c: j.daily.weather_code[i], hi: Math.round(j.daily.temperature_2m_max[i]), lo: Math.round(j.daily.temperature_2m_min[i]), pp: j.daily.precipitation_probability_max[i] };
   });
+  // תחזית גוגל — מחליפה את הימים שהיא מכסה (זמינה בתאילנד; ביפן אין כיסוי — רישוי JMA)
+  const gkey = (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || "";
+  if (gkey && !JP_CITIES.has(city)) {
+    try {
+      const gr = await fetch("https://weather.googleapis.com/v1/forecast/days:lookup?key=" + gkey +
+        "&location.latitude=" + lat + "&location.longitude=" + lng + "&days=10");
+      const gj = await gr.json();
+      for (const f of gj.forecastDays || []) {
+        const dd = f.displayDate || {};
+        const iso = dd.year + "-" + String(dd.month).padStart(2, "0") + "-" + String(dd.day).padStart(2, "0");
+        const day = f.daytimeForecast || {};
+        d[iso] = {
+          g: (day.weatherCondition && day.weatherCondition.type) || "",
+          hi: Math.round((f.maxTemperature || {}).degrees),
+          lo: Math.round((f.minTemperature || {}).degrees),
+          pp: ((day.precipitation || {}).probability || {}).percent || 0,
+        };
+      }
+    } catch (e) { /* offline */ }
+  }
   wxCache[city] = { t: Date.now(), d };
-  try { localStorage.setItem("jtm.wx", JSON.stringify(wxCache)); } catch (e) {}
+  try { localStorage.setItem("jtm.wx2", JSON.stringify(wxCache)); } catch (e) {}
   return d;
 }
 function wxHtml(w) {
-  return WX_EMOJI(w.c) + " " + w.lo + "–" + w.hi + "°" + (w.pp >= 20 ? " · 💧" + w.pp + "%" : "");
+  return (w.g ? GWX_EMOJI(w.g) : WX_EMOJI(w.c)) + " " + w.lo + "–" + w.hi + "°" + (w.pp >= 20 ? " · 💧" + w.pp + "%" : "");
 }
 function fillWx(day, sel) {
   const iso = dayISO(day), city = wxCity(day);
@@ -1362,6 +1383,96 @@ async function runPinAudit() {
     body.appendChild(row);
   }
 }
+/* 🔍 חיפוש מקום דרך גוגל מתוך המפה */
+async function googleSearchList(q) {
+  const key = (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || "";
+  if (!key) return null;
+  const ctr = map.getCenter();
+  const r = await fetch("https://places.googleapis.com/v1/places:searchText", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask": "places.id,places.location,places.formattedAddress,places.displayName,places.types,places.rating,places.userRatingCount" },
+    body: JSON.stringify({ textQuery: q, languageCode: "en", pageSize: 6,
+      locationBias: { circle: { center: { latitude: ctr.lat, longitude: ctr.lng }, radius: 50000 } } }),
+  });
+  const j = await r.json();
+  return j.places || [];
+}
+function cityForLatLng(lat, lng) {
+  for (const [city, bb] of Object.entries(GEO_BBOX)) if (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]) return city;
+  let best = null, bd = Infinity;
+  for (const [city, ll] of Object.entries(CITY_CENTERS)) { const d = haversine([lat, lng], ll); if (d < bd) { bd = d; best = city; } }
+  return best;
+}
+let previewMarker = null;
+function previewSpot(lat, lng, name) {
+  if (previewMarker) map.removeLayer(previewMarker);
+  previewMarker = L.marker([lat, lng], { icon: L.divIcon({ className: "", html: '<div class="pin" style="--c:#0ea5e9">★</div>', iconSize: [30, 30], iconAnchor: [15, 15] }) }).addTo(map);
+  if (name) previewMarker.bindTooltip(name);
+  map.flyTo([lat, lng], Math.max(map.getZoom(), 15), { duration: 0.6 });
+  setTimeout(() => { if (previewMarker) { map.removeLayer(previewMarker); previewMarker = null; } }, 15000);
+}
+async function addSearchResult(g) {
+  const dayId = $("#srchDay").value;
+  const lat = g.location.latitude, lng = g.location.longitude;
+  const city = cityForLatLng(lat, lng);
+  const en = (g.displayName && g.displayName.text) || "מקום";
+  const t = g.types || [];
+  const cat = t.some(x => /restaurant|food|cafe|bakery|bar|meal/.test(x)) ? "food"
+    : t.includes("lodging") ? "hotel"
+    : t.some(x => /store|shopping/.test(x)) ? "shop" : "site";
+  const place = { id: slug(en), n: en, en, city, cat, d: "", part: "", book: "", site: "", klook: "",
+    addr: (g.formattedAddress || "").replace(/^日本、?\s*/, ""), lat, lng, approx: false };
+  if (JP_CITIES.has(city) && g.id) {
+    try { // שם וכתובת ביפנית — לכרטיס הנהג
+      const r = await fetch("https://places.googleapis.com/v1/places/" + g.id + "?languageCode=ja&fields=displayName,formattedAddress&key=" + JTM_CONFIG.gmapsKey);
+      const j = await r.json();
+      if (j.displayName) place.jaName = j.displayName.text;
+      if (j.formattedAddress) place.addr = j.formattedAddress.replace(/^日本、?\s*/, "");
+    } catch (e) {}
+  }
+  Store.upsertPlace(place);
+  Store.addStop(dayId, place.id, null);
+  hideModal("searchModal");
+  toast("„" + place.n + "” נוסף למסלול ✓");
+  if (curDay !== dayId) selectDay(dayId);
+  focusStop(place.id);
+}
+async function runSearch() {
+  const q = $("#srchInput").value.trim();
+  if (!q) return;
+  const box = $("#srchResults");
+  box.innerHTML = "<p class='hint'>מחפש בגוגל…</p>";
+  let list = null;
+  try { list = await googleSearchList(q); } catch (e) {}
+  if (!list) { box.innerHTML = "<p class='hint'>החיפוש נכשל — בדקו חיבור לאינטרנט.</p>"; return; }
+  if (!list.length) { box.innerHTML = "<p class='hint'>לא נמצא. נסו שם באנגלית או כתובת מלאה.</p>"; return; }
+  box.innerHTML = "";
+  for (const g of list) {
+    const row = el("div", "srch-row");
+    row.innerHTML = "<b>" + esc((g.displayName && g.displayName.text) || "?") + "</b>" +
+      (g.rating ? ' <span class="srch-rate">★ ' + g.rating + (g.userRatingCount ? " · " + g.userRatingCount + " דירוגים" : "") + "</span>" : "") +
+      '<div class="srch-addr">' + esc(g.formattedAddress || "") + "</div>";
+    const acts = el("div", "srch-acts");
+    const bAdd = el("button", "mini on", "➕ הוסף ליום");
+    bAdd.onclick = () => addSearchResult(g);
+    const bMap = el("button", "mini", "👁 הצג במפה");
+    bMap.onclick = () => { hideModal("searchModal"); previewSpot(g.location.latitude, g.location.longitude, (g.displayName && g.displayName.text) || ""); };
+    acts.append(bAdd, bMap);
+    row.appendChild(acts);
+    box.appendChild(row);
+  }
+}
+$("#btnSearch").onclick = () => {
+  const sel = $("#srchDay");
+  sel.innerHTML = DAYS.map(d => '<option value="' + d.id + '"' + (curDay === d.id ? " selected" : "") + ">" + esc(dayTitleLine(d)) + "</option>").join("");
+  $("#srchResults").innerHTML = "";
+  showModal("searchModal");
+  setTimeout(() => $("#srchInput").focus(), 60);
+};
+$("#srchGo").onclick = runSearch;
+$("#srchInput") && $("#srchInput").addEventListener("keydown", e => { if (e.key === "Enter") runSearch(); });
+
 $("#mAudit").onclick = () => { hideModal("menuModal"); runPinAudit(); };
 $("#mDates").onclick = () => { hideModal("menuModal"); openDates(); };
 $("#dtSave").onclick = () => {
