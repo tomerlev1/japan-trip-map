@@ -491,7 +491,9 @@ function popupContent(p, day, idx) {
   if (p.d) html += '<div class="pop-d">' + esc(p.d) + "</div>";
   if (p.book) html += '<div class="pop-book' + (Store.isChecked(p.id) ? " done" : "") + '">' + (Store.isChecked(p.id) ? "✅ הוזמן! " : "📌 ") + esc(p.book) + "</div>";
   if (p.approx) html += '<div class="pop-approx">⚠️ מיקום משוער — קישור הניווט מדויק (לפי שם). אפשר לגרור את הסיכה למיקום הנכון.</div>';
+  html += '<div class="gwarn"></div>';
   c.innerHTML = html;
+  if (Store.isCustom(p.id)) verifyPinVsGoogle(p, c.querySelector(".gwarn"));
 
   const links = el("div", "pop-links");
   links.appendChild(linkBtn("🗺️ במפות Google", gmapsUrl(p)));
@@ -520,8 +522,8 @@ function popupContent(p, day, idx) {
       acts.appendChild(bB);
     }
     if (p.approx || Store.isCustom(p.id)) {
-      const bG = el("button", "mini", "📍 עגן לפי GPS");
-      bG.onclick = () => { map.closePopup(); anchorToGps(p.id, p.n); };
+      const bG = el("button", "mini", "📍 תיקון מיקום לפי גוגל");
+      bG.onclick = () => { map.closePopup(); fixPinViaGoogle(p.id); };
       acts.appendChild(bG);
     }
     const bE = el("button", "mini", "✎ עריכה");
@@ -1335,16 +1337,46 @@ function openDates() {
   }
   showModal("datesModal");
 }
-/* 📍 עיגון סיכה למיקום ה-GPS הנוכחי — לתיקון מדויק בשטח */
-function anchorToGps(placeId, name) {
-  if (!navigator.geolocation) { toast("אין GPS בדפדפן הזה"); return; }
-  toast("📡 מאתר אותך…", 8000);
-  navigator.geolocation.getCurrentPosition(pos => {
-    const acc = Math.round(pos.coords.accuracy || 0);
-    if (!confirm('לקבע את „' + name + '” למיקום הנוכחי שלך? (דיוק ~' + acc + " מ')")) return;
-    Store.setCoords(placeId, pos.coords.latitude, pos.coords.longitude);
-    toast("📍 „" + name + "” עוגן למיקום שלך ✓");
-  }, () => toast("לא הצלחתי לקבל מיקום — בדקו הרשאת מיקום לאתר"), { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+/* 📍 אימות ותיקון סיכות מול גוגל */
+let gchk = {};
+try { gchk = JSON.parse(localStorage.getItem("jtm.gchk") || "{}"); } catch (e) {}
+function gchkKey(p) { return p.lat.toFixed(4) + "," + p.lng.toFixed(4); }
+function gchkSave(id, p, dist) {
+  gchk[id] = { k: gchkKey(p), d: dist, t: Date.now() };
+  try { localStorage.setItem("jtm.gchk", JSON.stringify(gchk)); } catch (e) {}
+}
+function fmtDist(d) { return d >= 1000 ? (d / 1000).toFixed(1) + " ק״מ" : d + " מ'"; }
+/* בדיקה שקטה בפתיחת כרטיסייה: אם גוגל חולק על המיקום — הערה + כפתור תיקון (נשמר בקאש לכל מיקום) */
+async function verifyPinVsGoogle(p, slot) {
+  if (!slot || !(window.JTM_CONFIG && JTM_CONFIG.gmapsKey)) return;
+  const cached = gchk[p.id];
+  let dist;
+  if (cached && cached.k === gchkKey(p)) dist = cached.d;
+  else {
+    const g = await googlePlaces(p.addr || p.en || p.n, p.city);
+    dist = g ? Math.round(haversine([p.lat, p.lng], g.ll)) : -1;
+    gchkSave(p.id, p, dist);
+  }
+  if (dist > 150) {
+    slot.innerHTML = '<div class="pop-approx">⚠️ לפי גוגל המקום נמצא ~' + fmtDist(dist) + ' מהסיכה — לחצו "📍 תיקון מיקום לפי גוגל"</div>';
+  }
+}
+async function fixPinViaGoogle(placeId) {
+  const p = Store.getPlace(placeId);
+  if (!p) return;
+  toast("🔍 בודק את „" + p.n + "” מול גוגל…", 6000);
+  const g = await googlePlaces(p.addr || p.en || p.n, p.city);
+  if (!g) { toast("גוגל לא מצא את המקום — הוסיפו כתובת בעריכה ✎ ונסו שוב"); return; }
+  const d = Math.round(haversine([p.lat, p.lng], g.ll));
+  if (d <= 60) { gchkSave(placeId, p, d); toast("✓ הסיכה כבר תואמת לגוגל (סטייה " + d + " מ')"); return; }
+  if (!confirm("גוגל ממקם את „" + p.n + "” במרחק " + fmtDist(d) + " מהסיכה הנוכחית. לעדכן למיקום של גוגל?")) return;
+  const cur = { ...p };
+  cur.lat = +g.ll[0].toFixed(5); cur.lng = +g.ll[1].toFixed(5); cur.approx = false;
+  if (g.addr && !cur.addr) cur.addr = g.addr;
+  if (g.jaName && !cur.jaName) cur.jaName = g.jaName;
+  Store.upsertPlace(cur);
+  gchkSave(placeId, cur, 0);
+  toast("📍 „" + p.n + "” עודכן למיקום של גוגל ✓");
 }
 
 /* 🧭 בדיקת מקומות שהוסיף המשתמש — מאמת סיכות מול הכתובות השמורות */
