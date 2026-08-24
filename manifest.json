@@ -9,9 +9,14 @@
  "theme_color": "#c2413b",
  "icons": [
   {
-   "src": "icon.svg",
+   "src": "torii.svg",
    "sizes": "any",
    "type": "image/svg+xml"
+  },
+  {
+   "src": "torii-180.png",
+   "sizes": "180x180",
+   "type": "image/png"
   }
  ]
 }
