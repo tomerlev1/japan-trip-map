@@ -34,7 +34,7 @@ function dayTitleLine(d) { return d.label ? d.label : "יום " + d.n + " · " +
 let lastFitKey = null;
 let dragIdx = null;
 let catalogCtx = null;      // {mode:'add'|'replace', dayId, idx}
-const TODAY_ID = todayDayId();
+let TODAY_ID = todayDayId();
 
 /* ---------- עזרים ---------- */
 const $ = s => document.querySelector(s);
@@ -554,10 +554,11 @@ function renderMap() {
     }
     stops.forEach((p, i) => {
       if (single) {
-        const m = L.marker([p.lat, p.lng], { icon: numIcon(i + 1, day.color, p.approx, Store.isVisited(p.id)), draggable: !!p.approx, riseOnHover: true }).addTo(routeLayer);
+        const canDrag = !!p.approx || Store.isCustom(p.id);
+        const m = L.marker([p.lat, p.lng], { icon: numIcon(i + 1, day.color, p.approx, Store.isVisited(p.id)), draggable: canDrag, riseOnHover: true }).addTo(routeLayer);
         if (!IS_TOUCH) m.bindTooltip(p.n, { direction: "top", offset: [0, -14] });
         m.bindPopup(() => popupContent(Store.getPlace(p.id) || p, day, i), { maxWidth: 300 });
-        if (p.approx) m.on("dragend", () => {
+        if (canDrag) m.on("dragend", () => {
           const ll = m.getLatLng();
           Store.setCoords(p.id, ll.lat, ll.lng);
           toast("המיקום של „" + p.n + "” עודכן ✓");
@@ -1208,6 +1209,11 @@ function renderSyncModal() {
 
 /* ---------- אתחול ---------- */
 function render() {
+  applyTripDates(Store.getDates());
+  TODAY_ID = todayDayId();
+  const h1 = document.querySelector("header h1"); if (h1) h1.textContent = TRIP.title;
+  const tg = document.querySelector("header .tag");
+  if (tg) tg.textContent = TRIP.fullRange + " · " + (DAYS.some(d => d.c === "TH") ? "יפן 🇯🇵 ← תאילנד 🇹🇭" : "🇯🇵 יפן");
   renderDaybar(); renderPanel(); renderMap();
   updateGpsNext();
   const items = bookingItems();
@@ -1242,6 +1248,32 @@ $("#catCity").onchange = renderCatalog;
 $("#catCat").onchange = renderCatalog;
 $("#catNew").onclick = () => { hideModal("catModal"); openEdit(null, catalogCtx.dayId, null); };
 $("#edSave").onclick = saveEdit;
+function openDates() {
+  $("#dtStart").value = TRIP.start;
+  $("#dtFly").value = TRIP.flyDate;
+  const box = $("#dtNights");
+  box.innerHTML = "";
+  for (const d of DAYS) {
+    if (!d._baseNights) continue;
+    const row = el("div", "dt-row");
+    row.dataset.day = d.id;
+    row.innerHTML = '<span class="dt-name"><b>' + esc(d.ln || d.city) + '</b> · ' + esc(d.title) + '</span>' +
+      '<span class="dt-ctl"><button class="ib" data-a="minus">−</button><b class="dt-n">' + d.nights + '</b><button class="ib" data-a="plus">＋</button><span class="dt-lbl">לילות</span></span>';
+    row.querySelector('[data-a="minus"]').onclick = () => { const b = row.querySelector(".dt-n"); b.textContent = Math.max(1, +b.textContent - 1); };
+    row.querySelector('[data-a="plus"]').onclick = () => { const b = row.querySelector(".dt-n"); b.textContent = Math.min(30, +b.textContent + 1); };
+    box.appendChild(row);
+  }
+  showModal("datesModal");
+}
+$("#mDates").onclick = () => { hideModal("menuModal"); openDates(); };
+$("#dtSave").onclick = () => {
+  const nights = {};
+  document.querySelectorAll("#dtNights [data-day]").forEach(r => { nights[r.dataset.day] = +r.querySelector(".dt-n").textContent; });
+  Store.setDates({ start: $("#dtStart").value || undefined, flyDate: $("#dtFly").value || undefined, nights });
+  hideModal("datesModal");
+  toast("🗓 התאריכים עודכנו בכל המפה ✓");
+};
+$("#dtReset").onclick = () => { Store.setDates(null); hideModal("datesModal"); toast("חזרנו לתאריכים המקוריים ↺"); };
 $("#shareCopy").onclick = async () => {
   $("#shareUrl").select();
   try { await navigator.clipboard.writeText($("#shareUrl").value); toast("הועתק ✓"); }
@@ -1370,11 +1402,6 @@ window.addEventListener("offline", () => toast("📴 אין אינטרנט — �
 window.addEventListener("online", () => toast("📶 חזרתם לרשת ✓"));
 $("#mPreload").onclick = () => { hideModal("menuModal"); preloadOffline(); };
 
-{
-  const h1 = document.querySelector("header h1"); if (h1) h1.textContent = TRIP.title;
-  const tg = document.querySelector("header .tag");
-  if (tg) tg.textContent = TRIP.fullRange + " · " + (DAYS.some(d => d.c === "TH") ? "יפן 🇯🇵 ← תאילנד 🇹🇭" : "🇯🇵 יפן");
-}
 { const vl = $("#verLine"); if (vl) vl.textContent = "גרסת אפליקציה: v" + ((document.querySelector('script[src*="app.js"]') || { src: "" }).src.split("v=")[1] || "dev"); }
 
 /* שגיאות לא-צפויות — להציג למשתמש במקום להיכשל בשקט */

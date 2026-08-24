@@ -386,3 +386,12 @@ label.bookrow { cursor: pointer; }
 /* Safari/WebKit: מניעת היעלמות סיכות אחרי רצף זום (באג קומפוזיציה) */
 .leaflet-marker-pane { -webkit-transform: translateZ(0); transform: translateZ(0); }
 .leaflet-marker-icon { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+
+/* מודאל עריכת תאריכים */
+.dt-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 2px; border-bottom: 1px solid rgba(0,0,0,.06); }
+.dt-row .dt-name { font-size: 13.5px; }
+.dt-ctl { display: flex; align-items: center; gap: 8px; }
+.dt-ctl .dt-n { min-width: 22px; text-align: center; font-size: 15px; }
+.dt-ctl .ib { width: 30px; height: 30px; font-size: 16px; }
+.dt-lbl { font-size: 12px; color: #888; }
+.dt-foot { display: flex; gap: 10px; justify-content: space-between; align-items: center; }

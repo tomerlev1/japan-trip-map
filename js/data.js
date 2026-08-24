@@ -469,9 +469,9 @@ DAYS.push(
     hotel: "hotel-hansar",
     transit: "מעבורת קופנגן ← סמוי ~45 דק', ומשם נסיעה קצרה לבופוט.",
     stops: ["ferry-phangan-samui", "hotel-hansar"] },
-  { id: "t5", nights: 1, open: true, ln: "בנגקוק", n: 21, c: "TH", label: "בנגקוק · 13.10 ←", short: "בנגקוק", date: "13.10 והלאה", dfrom: "13.10", dto: "14.10",
+  { id: "t5", nights: 1, ln: "בנגקוק", n: 21, c: "TH", label: "בנגקוק · 13.10 ←", short: "בנגקוק", date: "13.10 והלאה", dfrom: "13.10", dto: "14.10",
     city: "בנגקוק", color: "#6d28d9", title: "בנגקוק — וטיסה הביתה",
-    sum: "טיסה מסמוי לבנגקוק והמשך לישראל. תאריך הטיסה הביתה טרם ודאי — לבדוק בכרטיס.",
+    sum: "נחיתה בבנגקוק, לילה אחד — וב-14.10 הטיסה הביתה.",
     hotel: null,
     stops: ["flight-usm-bkk", "bkk-airport"] }
 );
@@ -776,7 +776,7 @@ const FLIGHTS = [
   { r: "טוקיו ← קראבי", d: "26.09", note: "קבלה 1357764 · bookaflight.co.il" },
   { r: "קראבי ← קוסמוי", d: "01.10 · המראה 14:00 · PG266", note: "Bangkok Airways · ישירה 50 דק' · מושבים 9A/9B · הזמנה FF7LFU" },
   { r: "קוסמוי ← בנגקוק", d: "13.10 — טרם הוזמן", note: "לסגור מול טיסת ההמשך" },
-  { r: "בנגקוק ← תל אביב", d: "אחרי 13.10 — לוודא בכרטיס", note: "כלול בהזמנה 63900" },
+  { r: "בנגקוק ← תל אביב", d: "14.10", note: "כלול בהזמנה 63900 · לוודא בכרטיס" },
 ];
 
 /* קישורים מהירים */
@@ -815,7 +815,15 @@ const SEGMENTS = [
 /* ---------- 🗓 תאריכים דינמיים ----------
    כל התאריכים (ימים, יעדים, מלונות, כותרות) נגזרים מ-TRIP.start ומ-nights של ימי-הטווח.
    כדי להזיז את כל הטיול — משנים רק את TRIP.start (ו-flyDate); ערכי date/dow/label/sub שכתובים למעלה נדרסים. */
-(function deriveDates() {
+function applyTripDates(ov) {
+  ov = ov || {};
+  if (TRIP._baseStart === undefined) {
+    TRIP._baseStart = TRIP.start; TRIP._baseFly = TRIP.flyDate;
+    for (const d of DAYS) if (d.nights) d._baseNights = d.nights;
+  }
+  TRIP.start = ov.start || TRIP._baseStart;
+  TRIP.flyDate = ov.flyDate || TRIP._baseFly;
+  for (const d of DAYS) if (d._baseNights) d.nights = (ov.nights && ov.nights[d.id]) || d._baseNights;
   const DOW = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
   const pad = n => String(n).padStart(2, "0");
   const fmt = d => pad(d.getDate()) + "." + pad(d.getMonth() + 1);
@@ -861,4 +869,5 @@ const SEGMENTS = [
   TRIP.sub = TRIP.fullRange + " · " + TRIP.route;
   const iso = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
   TRIP.endISO = iso(DAYS[DAYS.length - 1]._e);
-})();
+}
+applyTripDates();

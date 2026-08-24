@@ -84,6 +84,8 @@ const Store = (() => {
     mutate(s => { if (s.checked[placeId]) delete s.checked[placeId]; else s.checked[placeId] = true; });
   }
   function isChecked(placeId) { return !!state.checked[placeId]; }
+  function getDates() { return state.dates || null; }
+  function setDates(d) { mutate(s => { if (d && Object.keys(d).length) s.dates = d; else delete s.dates; }); }
   function toggleVisited(placeId) {
     mutate(s => { if (s.visited[placeId]) delete s.visited[placeId]; else s.visited[placeId] = true; });
   }
@@ -123,6 +125,16 @@ const Store = (() => {
     if (s.visited && typeof s.visited === "object") {
       for (const [id, v] of Object.entries(s.visited)) if (v === true) clean.visited[id] = true;
     }
+    if (s.dates && typeof s.dates === "object") {
+      const d = s.dates, out = {};
+      if (typeof d.start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d.start)) out.start = d.start;
+      if (typeof d.flyDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d.flyDate)) out.flyDate = d.flyDate;
+      if (d.nights && typeof d.nights === "object") {
+        out.nights = {};
+        for (const [k, v] of Object.entries(d.nights)) if (Number.isInteger(v) && v >= 1 && v <= 30) out.nights[k] = v;
+      }
+      if (Object.keys(out).length) clean.dates = out;
+    }
     // הסר עצירות שמצביעות למקום לא קיים
     for (const d of DAYS) clean.dayStops[d.id] = clean.dayStops[d.id].filter(id => clean.custom[id] || PLACES[id]);
     return clean;
@@ -143,6 +155,7 @@ const Store = (() => {
     const d = { v: TRIP.version, dayStops: {}, custom: state.custom };
     if (Object.keys(state.checked || {}).length) d.checked = state.checked;
     if (Object.keys(state.visited || {}).length) d.visited = state.visited;
+    if (state.dates && Object.keys(state.dates).length) d.dates = state.dates;
     const def = defaultDayStops();
     for (const day of DAYS) {
       if (JSON.stringify(state.dayStops[day.id]) !== JSON.stringify(def[day.id]))
@@ -155,6 +168,7 @@ const Store = (() => {
     if (d.custom) s.custom = d.custom;
     if (d.checked) s.checked = d.checked;
     if (d.visited) s.visited = d.visited;
+    if (d.dates) s.dates = d.dates;
     if (d.dayStops) for (const [k, v] of Object.entries(d.dayStops)) if (s.dayStops[k]) s.dayStops[k] = v;
     const clean = validate(s);
     if (!clean) throw new Error("bad diff");
@@ -232,7 +246,8 @@ const Store = (() => {
   function emit(source) { for (const fn of listeners) fn(source); }
 
   load();
-  return { getPlace, dayStops, upsertPlace, removeStop, addStop, replaceStop, moveStop, moveStopToDay,
+  function isCustom(id) { return !!state.custom[id]; }
+  return { getPlace, dayStops, upsertPlace, removeStop, addStop, replaceStop, moveStop, moveStopToDay, getDates, setDates, isCustom,
     setCoords, resetAll, undo, canUndo, encodeShare, decodeShare, applyDiff, isDirty,
     exportJSON, importJSON, onChange, defaultPlace,
     toggleChecked, isChecked, toggleVisited, isVisited, snapshotState, replaceState };

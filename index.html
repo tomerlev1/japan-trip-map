@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="המפה שלנו">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=17">
-<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=17">
-<link rel="stylesheet" href="css/style.css?v=17">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=18">
+<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=18">
+<link rel="stylesheet" href="css/style.css?v=18">
 </head>
 <body>
 <header id="top">
@@ -76,6 +76,19 @@
   <div class="m-foot"><button id="edSave" class="addbtn">שמירה</button></div>
 </div>
 
+<div class="modal" id="datesModal" role="dialog">
+  <div class="m-head"><h2>🗓 עריכת תאריכי הטיול</h2><button class="x" data-close="datesModal">✕</button></div>
+  <div class="m-body form">
+    <div class="row2">
+      <label>תאריך הנחיתה ביפן <input type="date" id="dtStart"></label>
+      <label>תאריך ההמראה מהארץ <input type="date" id="dtFly"></label>
+    </div>
+    <div id="dtNights"></div>
+    <p class="hint">שינוי מספר לילות ביעד דוחף אוטומטית את כל התאריכים שאחריו; שינוי תאריך הנחיתה מזיז את כל הטיול. ימים, יעדים, מלונות והספירה לאחור מתעדכנים לבד. 💡 תאריכי הטיסות בפאנל המידע מתעדכנים ידנית.</p>
+  </div>
+  <div class="m-foot dt-foot"><button id="dtReset" class="menubtn">↺ תאריכים מקוריים</button><button id="dtSave" class="addbtn">שמירה</button></div>
+</div>
+
 <div class="modal" id="shareModal" role="dialog">
   <div class="m-head"><h2>🔗 שיתוף המסלול</h2><button class="x" data-close="shareModal">✕</button></div>
   <div class="m-body">
@@ -119,6 +132,7 @@
 <div class="modal" id="menuModal" role="dialog">
   <div class="m-head"><h2>גיבוי ואיפוס</h2><button class="x" data-close="menuModal">✕</button></div>
   <div class="m-body menu">
+    <button id="mDates" class="menubtn">🗓 עריכת תאריכי הטיול</button>
     <button id="mPreload" class="menubtn">📥 הורדת מפות הטיול לאופליין</button>
     <button id="mExport" class="menubtn">⬇️ ייצוא לקובץ גיבוי (JSON)</button>
     <button id="mImport" class="menubtn">⬆️ ייבוא מקובץ גיבוי</button>
@@ -128,13 +142,13 @@
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=17"></script>
-<script src="vendor/maplibre/maplibre-gl.js?v=17"></script>
-<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=17"></script>
-<script src="js/config.js?v=17"></script>
-<script src="js/data.js?v=17"></script>
-<script src="js/storage.js?v=17"></script>
-<script src="js/sync.js?v=17"></script>
-<script src="js/app.js?v=17"></script>
+<script src="vendor/leaflet/leaflet.js?v=18"></script>
+<script src="vendor/maplibre/maplibre-gl.js?v=18"></script>
+<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=18"></script>
+<script src="js/config.js?v=18"></script>
+<script src="js/data.js?v=18"></script>
+<script src="js/storage.js?v=18"></script>
+<script src="js/sync.js?v=18"></script>
+<script src="js/app.js?v=18"></script>
 </body>
 </html>
