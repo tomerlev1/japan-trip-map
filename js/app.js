@@ -894,15 +894,16 @@ async function pickCatalog(it) {
   if (it.kind === "place") placeId = it.id;
   else {
     placeId = slug(it.en || it.n);
-    let geo = it.src && it.src.ll ? it.src.ll : null;
+    let geo = it.src && it.src.ll ? it.src.ll : null, geoAddr = (it.src && it.src.addr) || "";
     if (!geo) {
       toast("מאתר את „" + it.n + "”…", 6000);
-      geo = await geocodeClient(it.en || it.n, it.city);
+      const loc = await locatePlace(it.en || it.n, it.city);
+      if (loc) { geo = loc.ll; geoAddr = geoAddr || loc.addr; }
     }
     const place = {
       id: placeId, n: it.n, en: it.en || "", city: it.city, cat: it.cat,
       d: it.note || "", part: "", book: it.book ? "להזמין מראש" : "", site: "", klook: it.klook || "",
-      addr: (it.src && it.src.addr) || "",
+      addr: geoAddr,
       lat: geo ? geo[0] : (CITY_CENTERS[it.city] || [35.68, 139.75])[0],
       lng: geo ? geo[1] : (CITY_CENTERS[it.city] || [35.68, 139.75])[1],
       approx: !geo,
@@ -922,8 +923,48 @@ const GEO_BBOX = {
   "קראבי": [7.8, 8.5, 98.5, 99.2], "קופנגן": [9.65, 9.85, 99.9, 100.15],
   "קוסמוי": [9.4, 9.62, 99.85, 100.12], "בנגקוק": [13.4, 14.05, 100.3, 100.95],
 };
-/* גיאוקוד כתובת מדויקת — קודם GSI (שירות הכתובות הרשמי של יפן), נפילה ל-Photon */
+/* Google Places (New) — כשמוגדר מפתח ב-config: איתור ברמת גוגל-מפות + כתובת יפנית אוטומטית */
+async function googlePlaces(q, city) {
+  const key = (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || "";
+  if (!key) return null;
+  const bb = GEO_BBOX[city];
+  try {
+    const ctl = new AbortController();
+    setTimeout(() => ctl.abort(), 7000);
+    const r = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      signal: ctl.signal,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": key,
+        "X-Goog-FieldMask": "places.location,places.formattedAddress,places.displayName",
+      },
+      body: JSON.stringify(Object.assign({
+        textQuery: q + " " + (CITY_EN[city] || ""),
+        languageCode: "ja",
+        pageSize: 1,
+      }, CITY_CENTERS[city] ? { locationBias: { circle: { center: { latitude: CITY_CENTERS[city][0], longitude: CITY_CENTERS[city][1] }, radius: 30000 } } } : {})),
+    });
+    const j = await r.json();
+    const p = j.places && j.places[0];
+    if (!p || !p.location) return null;
+    const lat = p.location.latitude, lng = p.location.longitude;
+    if (bb && !(lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3])) return null;
+    return { ll: [lat, lng], addr: (p.formattedAddress || "").replace(/^日本、?\s*/, ""), jaName: (p.displayName && p.displayName.text) || "" };
+  } catch (e) { return null; }
+}
+/* איתור מקום לפי שם — גוגל קודם (אם יש מפתח), אחרת השרשרת החופשית */
+async function locatePlace(q, city) {
+  const g = await googlePlaces(q, city);
+  if (g) return g;
+  const ll = await geocodeClient(q, city);
+  return ll ? { ll, addr: "", jaName: "" } : null;
+}
+
+/* גיאוקוד כתובת מדויקת — גוגל (אם יש מפתח) → GSI (שירות הכתובות הרשמי של יפן) → Photon */
 async function geocodeAddress(addr, city) {
+  const g = await googlePlaces(addr, city);
+  if (g) return g.ll;
   try {
     const ctl = new AbortController();
     setTimeout(() => ctl.abort(), 6000);
@@ -1030,9 +1071,12 @@ function saveEdit() {
   const newDay = $("#edDay").value;
   if (isNew) {
     Store.addStop(newDay, p.id, null);
-    (addr ? geocodeAddress(addr, p.city) : geocodeClient(p.en || p.n, p.city)).then(geo => {
-      if (geo) { Store.setCoords(p.id, geo[0], geo[1]); toast("„" + p.n + "” אותר על המפה ✓" + (addr ? " (לפי הכתובת)" : "")); }
-      else toast("לא מצאתי את „" + p.n + "” במפה (≈ במרכז העיר) — פתחו עריכה ✎ והדביקו כתובת מדויקת, או גררו את הסיכה", 6000);
+    (addr ? geocodeAddress(addr, p.city).then(ll => ll && { ll, addr: "" }) : locatePlace(p.en || p.n, p.city)).then(geo => {
+      if (geo) {
+        Store.setCoords(p.id, geo.ll[0], geo.ll[1]);
+        if (!addr && geo.addr) { const cur = { ...Store.getPlace(p.id) }; cur.addr = geo.addr; Store.upsertPlace(cur); }
+        toast("„" + p.n + "” אותר על המפה ✓" + (addr ? " (לפי הכתובת)" : ""));
+      } else toast("לא מצאתי את „" + p.n + "” במפה (≈ במרכז העיר) — פתחו עריכה ✎ והדביקו כתובת מדויקת, או גררו את הסיכה", 6000);
     });
   } else if (addr && addr !== prevAddr) {
     geocodeAddress(addr, p.city).then(geo => {
