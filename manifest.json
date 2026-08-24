@@ -1,11 +1,17 @@
 {
-  "name": "יפן–תאילנד 2026 · המפה שלנו",
-  "short_name": "המפה שלנו",
-  "start_url": ".",
-  "display": "standalone",
-  "dir": "rtl",
-  "lang": "he",
-  "background_color": "#f7f6f3",
-  "theme_color": "#c2413b",
-  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+ "name": "הטיול של תומר ורזי · יפן–תאילנד 2026",
+ "short_name": "תומר ורזי",
+ "start_url": ".",
+ "display": "standalone",
+ "dir": "rtl",
+ "lang": "he",
+ "background_color": "#f7f6f3",
+ "theme_color": "#c2413b",
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml"
+  }
+ ]
 }

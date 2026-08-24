@@ -498,6 +498,11 @@ function popupContent(p, day, idx) {
       bB.onclick = () => { map.closePopup(); Store.toggleChecked(p.id); toast(Store.isChecked(p.id) ? "סומן שהוזמן ✅" : "הסימון בוטל"); };
       acts.appendChild(bB);
     }
+    if (p.approx || Store.isCustom(p.id)) {
+      const bG = el("button", "mini", "📍 עגן לפי GPS");
+      bG.onclick = () => { map.closePopup(); anchorToGps(p.id, p.n); };
+      acts.appendChild(bG);
+    }
     const bE = el("button", "mini", "✎ עריכה");
     bE.onclick = () => { map.closePopup(); openEdit(p.id, day.id, idx); };
     const bR = el("button", "mini", "⇄ החלפה");
@@ -1265,6 +1270,55 @@ function openDates() {
   }
   showModal("datesModal");
 }
+/* 📍 עיגון סיכה למיקום ה-GPS הנוכחי — לתיקון מדויק בשטח */
+function anchorToGps(placeId, name) {
+  if (!navigator.geolocation) { toast("אין GPS בדפדפן הזה"); return; }
+  toast("📡 מאתר אותך…", 8000);
+  navigator.geolocation.getCurrentPosition(pos => {
+    const acc = Math.round(pos.coords.accuracy || 0);
+    if (!confirm('לקבע את „' + name + '” למיקום הנוכחי שלך? (דיוק ~' + acc + " מ')")) return;
+    Store.setCoords(placeId, pos.coords.latitude, pos.coords.longitude);
+    toast("📍 „" + name + "” עוגן למיקום שלך ✓");
+  }, () => toast("לא הצלחתי לקבל מיקום — בדקו הרשאת מיקום לאתר"), { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+}
+
+/* 🧭 בדיקת מקומות שהוסיף המשתמש — מאמת סיכות מול הכתובות השמורות */
+async function runPinAudit() {
+  const body = $("#auditBody");
+  body.innerHTML = "<p class='hint'>בודק את המקומות שהוספתם מול הכתובות…</p>";
+  showModal("auditModal");
+  const inTrip = new Set();
+  for (const d of DAYS) for (const id of Store.dayStops(d.id)) inTrip.add(id);
+  const customs = Object.entries(Store.snapshotState().custom).filter(([id]) => inTrip.has(id));
+  if (!customs.length) { body.innerHTML = "<p>לא נמצאו מקומות שהוספתם או ערכתם — הכול מהמסלול המקורי ✓</p>"; return; }
+  body.innerHTML = "";
+  for (const [id, p] of customs) {
+    const row = el("div", "aud-row");
+    let html = "<b>" + esc(p.n) + "</b><span class='aud-city'>" + esc(p.city) + "</span><div class='aud-st'>";
+    const cc = CITY_CENTERS[p.city];
+    const atCenter = cc && haversine([p.lat, p.lng], cc) < 40;
+    if (p.addr) {
+      row.innerHTML = html + "⏳ בודק מול הכתובת…</div>";
+      body.appendChild(row);
+      const geo = await geocodeAddress(p.addr, p.city);
+      if (geo) {
+        const d = Math.round(haversine([p.lat, p.lng], geo));
+        if (d > 150) {
+          row.querySelector(".aud-st").innerHTML = "⚠️ הסיכה רחוקה ~" + d + " מ' מהכתובת השמורה ";
+          const fix = el("button", "mini", "תקן לפי הכתובת");
+          fix.onclick = () => { Store.setCoords(id, geo[0], geo[1]); row.querySelector(".aud-st").textContent = "✓ תוקן לפי הכתובת"; };
+          row.querySelector(".aud-st").appendChild(fix);
+        } else row.querySelector(".aud-st").textContent = "✓ תואם לכתובת השמורה (" + d + " מ')";
+      } else row.querySelector(".aud-st").textContent = "❔ הכתובת השמורה לא אותרה — ודאו מול גוגל או עגנו ב-GPS";
+      continue;
+    }
+    if (atCenter) html += "⚠️ לא אותר במפות — הסיכה במרכז העיר. פתחו עריכה ✎ והדביקו כתובת, או עגנו ב-GPS כשתהיו שם";
+    else html += "🖐 מוקם ידנית או לפי שם — אין כתובת לאימות. מומלץ להוסיף כתובת בעריכה ✎";
+    row.innerHTML = html + "</div>";
+    body.appendChild(row);
+  }
+}
+$("#mAudit").onclick = () => { hideModal("menuModal"); runPinAudit(); };
 $("#mDates").onclick = () => { hideModal("menuModal"); openDates(); };
 $("#dtSave").onclick = () => {
   const nights = {};

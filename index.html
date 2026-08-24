@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>יפן–תאילנד 2026 · המפה שלנו</title>
+<title>הטיול של תומר ורזי · יפן–תאילנד 2026</title>
 <meta name="description" content="מפת המסלול היומי של הטיול ליפן ותאילנד — ספטמבר-אוקטובר 2026">
 <meta name="theme-color" content="#f7f6f3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="המפה שלנו">
+<meta name="apple-mobile-web-app-title" content="תומר ורזי">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=18">
-<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=18">
-<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="icon" href="icon-64.png" sizes="64x64" type="image/png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=19">
+<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=19">
+<link rel="stylesheet" href="css/style.css?v=19">
 </head>
 <body>
 <header id="top">
@@ -76,6 +78,11 @@
   <div class="m-foot"><button id="edSave" class="addbtn">שמירה</button></div>
 </div>
 
+<div class="modal" id="auditModal" role="dialog">
+  <div class="m-head"><h2>🧭 בדיקת המקומות שהוספתם</h2><button class="x" data-close="auditModal">✕</button></div>
+  <div class="m-body" id="auditBody"></div>
+</div>
+
 <div class="modal" id="datesModal" role="dialog">
   <div class="m-head"><h2>🗓 עריכת תאריכי הטיול</h2><button class="x" data-close="datesModal">✕</button></div>
   <div class="m-body form">
@@ -116,11 +123,11 @@
 <div class="modal taxi" id="taxiModal" role="dialog">
   <div class="m-head"><h2>🚕 להראות לנהג</h2><button class="x" data-close="taxiModal">✕</button></div>
   <div class="m-body taxi-body">
-    <div class="taxi-please">すみません、ここまでお願いします：🙏</div>
+    <div class="taxi-please">こちらまでお願いいたします 🙏</div>
     <div id="taxiName" class="taxi-name"></div>
     <div id="taxiAddr" class="taxi-addr"></div>
     <div id="taxiHeName" class="taxi-he"></div>
-    <p class="hint">"סליחה, עד לכאן בבקשה" — מציגים את המסך לנהג, ואם צריך גם את הנעיצה במפה.</p>
+    <p class="hint">"בבקשה ממך, אני צריך להגיע לכאן" (בקיגו מכבד) — מציגים את המסך לנהג, ואם צריך גם את הנעיצה במפה.</p>
   </div>
 </div>
 
@@ -133,6 +140,7 @@
   <div class="m-head"><h2>גיבוי ואיפוס</h2><button class="x" data-close="menuModal">✕</button></div>
   <div class="m-body menu">
     <button id="mDates" class="menubtn">🗓 עריכת תאריכי הטיול</button>
+    <button id="mAudit" class="menubtn">🧭 בדיקת המקומות שהוספתם</button>
     <button id="mPreload" class="menubtn">📥 הורדת מפות הטיול לאופליין</button>
     <button id="mExport" class="menubtn">⬇️ ייצוא לקובץ גיבוי (JSON)</button>
     <button id="mImport" class="menubtn">⬆️ ייבוא מקובץ גיבוי</button>
@@ -142,13 +150,13 @@
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=18"></script>
-<script src="vendor/maplibre/maplibre-gl.js?v=18"></script>
-<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=18"></script>
-<script src="js/config.js?v=18"></script>
-<script src="js/data.js?v=18"></script>
-<script src="js/storage.js?v=18"></script>
-<script src="js/sync.js?v=18"></script>
-<script src="js/app.js?v=18"></script>
+<script src="vendor/leaflet/leaflet.js?v=19"></script>
+<script src="vendor/maplibre/maplibre-gl.js?v=19"></script>
+<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=19"></script>
+<script src="js/config.js?v=19"></script>
+<script src="js/data.js?v=19"></script>
+<script src="js/storage.js?v=19"></script>
+<script src="js/sync.js?v=19"></script>
+<script src="js/app.js?v=19"></script>
 </body>
 </html>
