@@ -522,6 +522,7 @@ const CATALOG = [
   { n: "Nemuro Hanamaru Ginza", en: "Kaitenzushi Nemuro Hanamaru Ginza", city: "טוקיו", cat: "food", note: "סושי מסוע איכותי" , k: "sushi", ll: [35.67177, 139.76219] , addr: "1, Ginza, Chuo" },
   { n: "Sushi Kenshin (אביסו)", en: "Sushi Kenshin Ebisu", city: "טוקיו", cat: "food", note: "אומקסה, אפשרי ללא פירות ים — להזמין מראש", book: true , k: "other" },
   { n: "Jikasei MENSHO", en: "Jikasei Mensho Shibuya", city: "טוקיו", cat: "food", note: "ראמן בשיבויה" , k: "ramen", ll: [35.66200, 139.69889] , addr: "1, Udagawachō, Shibuya" },
+  { n: "Sushi Atsuya", en: "Sushi Atsuya Osaka", city: "אוסקה", cat: "food", note: "סושי אומקסה — אבנו, ליד הרוקאס", book: true , k: "sushi", ll: [34.64475, 135.51321] , addr: "1-2-17 Abenosuji, Tomoe Bldg B1F, Abeno-ku, Osaka" },
   { n: "Ramen Break Beats", en: "Ramen Break Beats Meguro", city: "טוקיו", cat: "food", note: "ראמן" , k: "ramen", ll: [35.63353, 139.69876] , addr: "Aburadzura-dori, Meguro" },
   { n: "Afuri", en: "Afuri Ramen Ebisu", city: "טוקיו", cat: "food", note: "ראמן יוזו — רשת מומלצת 🌱" , k: "ramen" },
   { n: "Bills Ginza", en: "Bills Ginza", city: "טוקיו", cat: "food", note: "ארוחת בוקר" , k: "sweets", ll: [35.67328, 139.76658] , addr: "Ginza Gasutou-dori Street, Ginza, Chuo" },

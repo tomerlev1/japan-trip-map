@@ -4,27 +4,27 @@
   "city": "טוקיו",
   "approx": false,
   "stored": [
-   35.66351,
-   139.7587
+   35.66443,
+   139.76067
   ],
   "best": {
-   "name": "ロイヤルパークホテル ザ 汐留",
-   "t": "hotel",
+   "name": "BIZcomfort ザ ロイヤルパークホテル アイコニック 東京汐留",
+   "t": "coworking",
    "ll": [
-    35.66406,
-    139.76041
+    35.66443,
+    139.76067
    ],
    "sc": 0,
-   "dist": 166
+   "dist": 1
   }
  },
  {
   "id": "toriyaki-ohana",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.666,
-   139.756
+   35.64385,
+   139.71564
   ],
   "best": {
    "name": "La Ohana",
@@ -34,7 +34,7 @@
     139.82721
    ],
    "sc": 0.5,
-   "dist": 6512
+   "dist": 10663
   }
  },
  {
@@ -88,10 +88,10 @@
  {
   "id": "onodera-omotesando",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.6671,
-   139.7086
+   35.66572,
+   139.71013
   ],
   "best": {
    "t": "restaurant",
@@ -100,7 +100,7 @@
     139.71013
    ],
    "sc": 0,
-   "dist": 205
+   "dist": 3
   }
  },
  {
@@ -277,10 +277,10 @@
  {
   "id": "setsugetsuka",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.6717,
-   139.765
+   35.67157,
+   139.76204
   ],
   "best": null
  },
@@ -324,10 +324,10 @@
  {
   "id": "hotel-nohga",
   "city": "קיוטו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   34.9932,
-   135.7727
+   34.99525,
+   135.77415
   ],
   "best": {
    "name": "The Hotel Seiryu Kyoto Kiyomizu",
@@ -337,7 +337,7 @@
     135.77946
    ],
    "sc": 0.67,
-   "dist": 785
+   "dist": 548
   }
  },
  {
@@ -368,14 +368,14 @@
    135.7481
   ],
   "best": {
-   "name": "二条城",
-   "t": "attraction",
+   "name": "鈴 プレミアム 二条城北（Rinn Premium Nijo Castle North）",
+   "t": "hotel",
    "ll": [
-    35.01401,
-    135.74854
+    35.01747,
+    135.7475
    ],
-   "sc": 0,
-   "dist": 45
+   "sc": 1,
+   "dist": 367
   }
  },
  {
@@ -400,10 +400,10 @@
  {
   "id": "onodera-kyoto",
   "city": "קיוטו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.008,
-   135.769
+   35.00294,
+   135.76949
   ],
   "best": null
  },
@@ -582,10 +582,10 @@
  {
   "id": "maikoya",
   "city": "קיוטו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.0043,
-   135.7625
+   35.00797,
+   135.76625
   ],
   "best": {
    "name": "KIMONO PRIVATE TEA CEREMONY MAIKOYA GION",
@@ -595,16 +595,16 @@
     135.77414
    ],
    "sc": 0.75,
-   "dist": 1257
+   "dist": 1300
   }
  },
  {
   "id": "in-the-moon",
   "city": "קיוטו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.008,
-   135.769
+   35.00399,
+   135.77277
   ],
   "best": null
  },
@@ -706,10 +706,10 @@
  {
   "id": "marutomi",
   "city": "קיוטו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.004,
-   135.768
+   35.0036,
+   135.76985
   ],
   "best": {
    "name": "Kyoto Yakiniku Suzuki",
@@ -719,7 +719,7 @@
     135.771
    ],
    "sc": 0.5,
-   "dist": 274
+   "dist": 122
   }
  },
  {
@@ -860,8 +860,8 @@
   "city": "אוסקה",
   "approx": false,
   "stored": [
-   34.6633,
-   135.4966
+   34.66148,
+   135.49673
   ],
   "best": {
    "name": "難波八坂神社",
@@ -871,16 +871,16 @@
     135.49673
    ],
    "sc": 0,
-   "dist": 203
+   "dist": 0
   }
  },
  {
   "id": "rikuros",
   "city": "אוסקה",
-  "approx": true,
+  "approx": false,
   "stored": [
-   34.6659,
-   135.5013
+   34.66614,
+   135.50151
   ],
   "best": null
  },
@@ -965,8 +965,8 @@
   "city": "נארה",
   "approx": false,
   "stored": [
-   34.6892,
-   135.8365
+   34.68547,
+   135.83792
   ],
   "best": {
    "name": "依水園",
@@ -976,7 +976,7 @@
     135.83792
    ],
    "sc": 0,
-   "dist": 435
+   "dist": 0
   }
  },
  {
@@ -1041,8 +1041,8 @@
   "city": "אוסקה",
   "approx": false,
   "stored": [
-   34.7025,
-   135.4959
+   34.7335,
+   135.5002
   ],
   "best": {
    "name": "O-STAY Shin-Osaka Station Hotel Apartment",
@@ -1052,7 +1052,7 @@
     135.50278
    ],
    "sc": 1,
-   "dist": 3417
+   "dist": 252
   }
  },
  {
@@ -1077,10 +1077,10 @@
  {
   "id": "hotel-suiun",
   "city": "האקונה",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.2317,
-   139.1056
+   35.2477,
+   139.0477
   ],
   "best": {
    "name": "Mikawaya Ryokan",
@@ -1090,7 +1090,7 @@
     139.04702
    ],
    "sc": 0.5,
-   "dist": 5349
+   "dist": 1231
   }
  },
  {
@@ -1222,8 +1222,8 @@
   "city": "טוקיו",
   "approx": false,
   "stored": [
-   35.6604,
-   139.7413
+   35.662,
+   139.74342
   ],
   "best": null
  },
@@ -1306,20 +1306,20 @@
  {
   "id": "flippers-shimokita",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.6607,
-   139.6676
+   35.66277,
+   139.66698
   ],
   "best": null
  },
  {
   "id": "shirohige",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.656,
-   139.6689
+   35.65894,
+   139.66276
   ],
   "best": null
  },
@@ -1345,20 +1345,20 @@
  {
   "id": "cois-cafe",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.6938,
-   139.7034
+   35.68844,
+   139.71062
   ],
   "best": {
-   "name": "SQUARE ENIX cafe & Shop SHINJUKU",
+   "name": "Cois Espresso Club",
    "t": "cafe",
    "ll": [
-    35.6898,
-    139.702
+    35.68815,
+    139.7109
    ],
    "sc": 0.5,
-   "dist": 462
+   "dist": 41
   }
  },
  {
@@ -1450,10 +1450,10 @@
  {
   "id": "x-coffee",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.669,
-   139.7649
+   35.67277,
+   139.76921
   ],
   "best": {
    "name": "Janai Coffee",
@@ -1463,7 +1463,7 @@
     139.70735
    ],
    "sc": 0.5,
-   "dist": 5816
+   "dist": 6355
   }
  },
  {
@@ -1507,10 +1507,10 @@
  {
   "id": "ginza-ramen",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.6719,
-   139.7659
+   35.67227,
+   139.76521
   ],
   "best": {
    "name": "Ginza Noodles むぎとオリーブ Clam Ramen",
@@ -1520,7 +1520,7 @@
     139.76434
    ],
    "sc": 0.5,
-   "dist": 353
+   "dist": 373
   }
  },
  {
@@ -1564,10 +1564,10 @@
  {
   "id": "hakkoku",
   "city": "טוקיו",
-  "approx": true,
+  "approx": false,
   "stored": [
-   35.6726,
-   139.764
+   35.67046,
+   139.76283
   ],
   "best": null
  },
@@ -1595,18 +1595,18 @@
   "city": "טוקיו",
   "approx": true,
   "stored": [
-   35.5494,
-   139.7798
+   35.5449,
+   139.7694
   ],
   "best": {
-   "name": "羽田空港第1・第2ターミナル",
-   "t": "stop",
+   "name": "羽田空港第3ターミナル",
+   "t": "station",
    "ll": [
-    35.5499,
-    139.78605
+    35.54389,
+    139.76865
    ],
    "sc": 0,
-   "dist": 568
+   "dist": 131
   }
  },
  {
@@ -1614,8 +1614,8 @@
   "city": "טוקיו",
   "approx": true,
   "stored": [
-   35.6486,
-   139.7027
+   35.64656,
+   139.70839
   ],
   "best": {
    "name": "Soup Curry UDON",
@@ -1625,7 +1625,7 @@
     139.71978
    ],
    "sc": 0.67,
-   "dist": 3056
+   "dist": 2621
   }
  }
 ]

@@ -896,6 +896,7 @@ async function pickCatalog(it) {
     const place = {
       id: placeId, n: it.n, en: it.en || "", city: it.city, cat: it.cat,
       d: it.note || "", part: "", book: it.book ? "להזמין מראש" : "", site: "", klook: it.klook || "",
+      addr: (it.src && it.src.addr) || "",
       lat: geo ? geo[0] : (CITY_CENTERS[it.city] || [35.68, 139.75])[0],
       lng: geo ? geo[1] : (CITY_CENTERS[it.city] || [35.68, 139.75])[1],
       approx: !geo,
@@ -931,19 +932,54 @@ async function geocodeAddress(addr, city) {
   } catch (e) { /* offline */ }
   return geocodeClient(addr, city);
 }
+const GEO_STOP = new Set(["tokyo","kyoto","osaka","nara","hakone","japan","station","the","at","no","and","of","restaurant","cafe","shop","store","bangkok","krabi","samui","phangan","thailand"]);
+function geoTokens(s) {
+  return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w && !GEO_STOP.has(w));
+}
+function geoScore(q, name) {
+  const a = geoTokens(q), b = new Set(geoTokens(name));
+  if (!a.length) return 0;
+  let hit = 0; for (const w of a) if (b.has(w)) hit++;
+  return hit / a.length;
+}
+/* גיאוקוד לפי שם — Photon עם ניקוד התאמת-שם וסינון תוצאות עיר, ואז Nominatim תחום-אזור כגיבוי.
+   מחזיר null כשאין התאמה אמיתית (ואז המקום נשאר ≈ במרכז העיר — עדיף מסיכה בטוחה-אך-שגויה). */
 async function geocodeClient(q, city) {
+  const bb = GEO_BBOX[city];
+  const inBB = (lat, lng) => !bb || (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]);
   try {
     const ctl = new AbortController();
     setTimeout(() => ctl.abort(), 6000);
-    const r = await fetch("https://photon.komoot.io/api/?limit=3&q=" + encodeURIComponent(q + " " + (CITY_EN[city] || "Japan")), { signal: ctl.signal });
+    const r = await fetch("https://photon.komoot.io/api/?limit=6&lang=en&q=" + encodeURIComponent(q + " " + (CITY_EN[city] || "Japan")), { signal: ctl.signal });
     const j = await r.json();
-    const bb = GEO_BBOX[city];
-    const hit = (j.features || []).find(f => {
+    let best = null;
+    for (const f of j.features || []) {
       const [lng, lat] = f.geometry.coordinates;
-      return !bb || (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]);
-    });
-    if (hit) return [hit.geometry.coordinates[1], hit.geometry.coordinates[0]];
+      const pr = f.properties || {};
+      if (!inBB(lat, lng)) continue;
+      if (pr.osm_key === "place" || pr.osm_key === "boundary") continue;
+      const sc = geoScore(q, (pr.name || "") + " " + (pr.street || ""));
+      if (sc >= 0.5 && (!best || sc > best.sc)) best = { ll: [lat, lng], sc };
+    }
+    if (best) return best.ll;
   } catch (e) { /* offline / timeout */ }
+  try {
+    if (bb) {
+      const ctl = new AbortController();
+      setTimeout(() => ctl.abort(), 6000);
+      const r = await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=6&bounded=1&viewbox=" + bb[2] + "," + bb[1] + "," + bb[3] + "," + bb[0] + "&q=" + encodeURIComponent(q), { signal: ctl.signal });
+      const j = await r.json();
+      let best = null;
+      for (const it of j || []) {
+        const lat = +it.lat, lng = +it.lon;
+        if (!inBB(lat, lng)) continue;
+        if (it.class === "boundary" || it.class === "place") continue;
+        const sc = geoScore(q, it.display_name || "");
+        if (sc >= 0.5 && (!best || sc > best.sc)) best = { ll: [lat, lng], sc };
+      }
+      if (best) return best.ll;
+    }
+  } catch (e) { /* offline */ }
   return null;
 }
 
@@ -990,7 +1026,7 @@ function saveEdit() {
     Store.addStop(newDay, p.id, null);
     (addr ? geocodeAddress(addr, p.city) : geocodeClient(p.en || p.n, p.city)).then(geo => {
       if (geo) { Store.setCoords(p.id, geo[0], geo[1]); toast("„" + p.n + "” אותר על המפה ✓" + (addr ? " (לפי הכתובת)" : "")); }
-      else toast("לא הצלחתי לאתר — גררו את הסיכה ≈ למיקום הנכון");
+      else toast("לא מצאתי את „" + p.n + "” במפה (≈ במרכז העיר) — פתחו עריכה ✎ והדביקו כתובת מדויקת, או גררו את הסיכה", 6000);
     });
   } else if (addr && addr !== prevAddr) {
     geocodeAddress(addr, p.city).then(geo => {
