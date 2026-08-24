@@ -8,5 +8,5 @@ window.JTM_CONFIG = Object.assign({
   syncUrl: "",
   syncKey: "",
   pollMs: 12000,
-  gmapsKey: "",   // מפתח Google Maps (מוגבל-לאתר) — איתור מקומות מדויק מגוגל בהוספה ידנית
+  gmapsKey: "AIzaSyDiKTuXUf2QYdxh9R0fnhHpkIn1xk8-MCA",   // מפתח Google Maps (מוגבל-לאתר) — איתור מקומות מדויק מגוגל בהוספה ידנית
 }, window.JTM_CONFIG || {});
