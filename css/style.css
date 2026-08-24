@@ -595,3 +595,19 @@ body[data-c="TH"] .addbtn:hover { background: #fbf4e4; }
 /* פופאפ במפה */
 .leaflet-popup-content-wrapper { background: #fdfbf6; border-radius: 14px; box-shadow: 0 6px 24px rgba(34,28,21,.18); }
 .pop-t { font-family: "FrankRuhl", "Heebo", serif; font-weight: 800; }
+
+/* ═══════ פסים עליונים — ושי, ואייקוני קו מזרחיים ═══════ */
+#top { background: linear-gradient(180deg, #faf7f0, #f5efe4); border-bottom: 1px solid rgba(34,28,21,.10); }
+#daybar { background: #f5efe4; border-bottom: 1px solid rgba(34,28,21,.08); }
+.tb { background: #fdfbf6; border-color: rgba(34,28,21,.13); color: #6b6257; }
+.tb:hover { color: var(--verm); border-color: rgba(194,65,59,.45); background: #fdf6f0; }
+.tb svg { width: 19px; height: 19px; display: block; }
+.tb.main svg { width: 17px; height: 17px; }
+.tb.main { display: inline-flex; align-items: center; gap: 7px; }
+
+/* כרטיס כותרת היום — ושי וסריף */
+.pn-day { background: #fdfbf6; border-color: rgba(34,28,21,.10); }
+.pn-day h2 { font-family: "FrankRuhl", "Heebo", serif; font-size: 19px; }
+.pn-day .pn-title { font-weight: 600; }
+.mini { background: #fdfbf6; border-color: rgba(34,28,21,.13); }
+.mini:hover { border-color: rgba(194,65,59,.4); }

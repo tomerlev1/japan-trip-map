@@ -10,27 +10,27 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="תומר ורזי">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="torii-64.png?v=29" sizes="64x64" type="image/png">
-<link rel="icon" href="torii.svg?v=29" type="image/svg+xml">
-<link rel="apple-touch-icon" href="torii-180.png?v=29">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=29">
-<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=29">
-<link rel="stylesheet" href="css/style.css?v=29">
+<link rel="icon" href="torii-64.png?v=30" sizes="64x64" type="image/png">
+<link rel="icon" href="torii.svg?v=30" type="image/svg+xml">
+<link rel="apple-touch-icon" href="torii-180.png?v=30">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=30">
+<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=30">
+<link rel="stylesheet" href="css/style.css?v=30">
 </head>
 <body>
 <header id="top">
   <div class="brand">
-    <span class="logo"><img src="torii.svg?v=29" alt="⛩"></span>
+    <span class="logo"><img src="torii.svg?v=30" alt="⛩"></span>
     <div><h1>יפן–תאילנד 2026 · המפה שלנו</h1><span class="tag">10.09–13.10 · יפן 🇯🇵 ← תאילנד 🇹🇭</span></div>
   </div>
   <div class="tools">
-    <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)">↩️</button>
-    <button id="btnSearch" class="tb" title="חיפוש מסעדה, אטרקציה או כתובת (גוגל)">🔍</button>
+    <button id="btnUndo" class="tb" title="ביטול פעולה אחרונה (Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h9.5a6.5 6.5 0 0 1 0 13H10"/></svg></button>
+    <button id="btnSearch" class="tb" title="חיפוש מסעדה, אטרקציה או כתובת (גוגל)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="6.2"/><path d="m20.5 20.5-4.8-4.8"/></svg></button>
     <button id="btnSync" class="tb" title="סנכרון חי" hidden>☁️<span id="syncDot" class="sdot off"></span></button>
-    <button id="btnInfo" class="tb" title="טיפים, טיסות וקישורים">💡</button>
-    <button id="btnTips" class="tb" title="משימות: הזמנות ומזוודות">📋<span id="bkBadge" class="badge"></span></button>
-    <button id="btnMenu" class="tb" title="גיבוי ואיפוס">⋯</button>
-    <button id="btnShare" class="tb main">🔗 שיתוף</button>
+    <button id="btnInfo" class="tb" title="טיפים, טיסות וקישורים"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9.5 3h5"/><path d="M12 3v2"/><ellipse cx="12" cy="12.5" rx="7.5" ry="7"/><path d="M8 7c-1.4 3.5-1.4 7.5 0 11M16 7c1.4 3.5 1.4 7.5 0 11"/><path d="M10 21.5h4"/></svg></button>
+    <button id="btnTips" class="tb" title="משימות: הזמנות ומזוודות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7"/><path d="M7 4a2.5 2.5 0 0 0 0 5V4zM7 15a2.5 2.5 0 0 0 0 5v-5z"/><path d="M11 9h5M11 13h5"/></svg><span id="bkBadge" class="badge"></span></button>
+    <button id="btnMenu" class="tb" title="גיבוי, תאריכים ובדיקות"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg></button>
+    <button id="btnShare" class="tb main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z"/><path d="M10 13l4.5-4.5"/></svg> שיתוף</button>
   </div>
 </header>
 <div id="shareBanner"></div>
@@ -160,13 +160,13 @@
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=29"></script>
-<script src="vendor/maplibre/maplibre-gl.js?v=29"></script>
-<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=29"></script>
-<script src="js/config.js?v=29"></script>
-<script src="js/data.js?v=29"></script>
-<script src="js/storage.js?v=29"></script>
-<script src="js/sync.js?v=29"></script>
-<script src="js/app.js?v=29"></script>
+<script src="vendor/leaflet/leaflet.js?v=30"></script>
+<script src="vendor/maplibre/maplibre-gl.js?v=30"></script>
+<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=30"></script>
+<script src="js/config.js?v=30"></script>
+<script src="js/data.js?v=30"></script>
+<script src="js/storage.js?v=30"></script>
+<script src="js/sync.js?v=30"></script>
+<script src="js/app.js?v=30"></script>
 </body>
 </html>
