@@ -8,7 +8,10 @@
 
 const TRIP = {
   title: "יפן–תאילנד 2026 · המפה שלנו",
-  sub: "10.09–13.10+ · 🇯🇵 טוקיו → קיוטו → אוסקה → נארה → האקונה → 🇹🇭 קראבי → קופנגן → קוסמוי → בנגקוק",
+  start: "2026-09-10",     // 🗓 יום הנחיתה — כל התאריכים במפה נגזרים ממנו אוטומטית (deriveDates בסוף הקובץ)
+  flyDate: "2026-09-09",   // המראה מהארץ (לספירה לאחור)
+  route: "🇯🇵 טוקיו → קיוטו → אוסקה → נארה → האקונה → 🇹🇭 קראבי → קופנגן → קוסמוי → בנגקוק",
+  sub: "",                 // מחושב אוטומטית
   version: 1,
   klookCode: "OMERINJAPAN",
 };
@@ -407,6 +410,7 @@ const DAYS = [
     hotel: "hotel-shiodome",
     stops: ["tsukiji", "x-coffee", "uniqlo-ginza", "mitsukoshi-ginza", "ginza-ramen", "nissan-ginzasix", "ginza-sand", "teamlab-planets", "hakkoku", "akihabara"] },
   { id: "d16", n: 16, date: "26.09", dow: "שבת", city: "טוקיו", color: "#475569",
+    overlap: true, // יום הטיסה חופף ליום הראשון בקראבי — לא מקדם את לוח השנה
     title: "טיסה לתאילנד",
     sum: "צ'ק-אאוט וטיסה טוקיו ← קראבי. להגיע לשדה 3 שעות לפני.",
     hotel: null,
@@ -442,30 +446,30 @@ Object.assign(PLACES, {
 });
 
 DAYS.push(
-  { id: "t1", n: 17, c: "TH", label: "קראבי · 26–28.09", short: "קראבי א׳", date: "26–28.09", dfrom: "26.09", dto: "27.09",
+  { id: "t1", nights: 2, ln: "קראבי", n: 17, c: "TH", label: "קראבי · 26–28.09", short: "קראבי א׳", date: "26–28.09", dfrom: "26.09", dto: "27.09",
     city: "קראבי", color: "#0284c7", title: "נחיתה בקראבי — The Tubkaak",
     sum: "נחיתה מטוקיו וצ'ק-אין בטובקק. חוף, בריכה והתאוששות מהקצב של יפן. אטרקציות יתווספו בהמשך.",
     hotel: "hotel-tubkaak",
     transit: "משדה התעופה של קראבי ~40 דק' נסיעה למלון — לתאם הסעה מראש.",
     stops: ["arr-kbv", "hotel-tubkaak"] },
-  { id: "t2", n: 18, c: "TH", label: "קראבי · 28.09–01.10", short: "קראבי ב׳", date: "28.09–01.10", dfrom: "28.09", dto: "30.09",
+  { id: "t2", nights: 3, ln: "קראבי", n: 18, c: "TH", label: "קראבי · 28.09–01.10", short: "קראבי ב׳", date: "28.09–01.10", dfrom: "28.09", dto: "30.09",
     city: "קראבי", color: "#0f766e", title: "Banyan Tree קראבי",
     sum: "מעבר לבניאן טרי — בריכה, ספא ושקיעות. רעיונות להמשך: שייט 4 איים, לגונת האמרלד, ריילי ביץ'.",
     hotel: "hotel-banyan",
     stops: ["hotel-banyan"] },
-  { id: "t3", n: 19, c: "TH", label: "קופנגן · 01–06.10", short: "קופנגן", date: "01–06.10", dfrom: "01.10", dto: "05.10",
+  { id: "t3", nights: 5, ln: "קופנגן", n: 19, c: "TH", label: "קופנגן · 01–06.10", short: "קופנגן", date: "01–06.10", dfrom: "01.10", dto: "05.10",
     city: "קופנגן", color: "#15803d", title: "Panviman קופנגן",
     sum: "טיסה קצרה לסמוי, מעבורת לקופנגן — 5 לילות בפנווימאן שמעל מפרץ תונג נאי פאן.",
     hotel: "hotel-panviman",
     transit: "PG266 בשעה 14:00 (50 דק') ← נמל בנגרק ← מעבורת לקופנגן.",
     stops: ["flight-kbv-usm", "ferry-samui-phangan", "hotel-panviman"] },
-  { id: "t4", n: 20, c: "TH", label: "קוסמוי · 06–13.10", short: "קוסמוי", date: "06–13.10", dfrom: "06.10", dto: "12.10",
+  { id: "t4", nights: 7, ln: "קוסמוי", n: 20, c: "TH", label: "קוסמוי · 06–13.10", short: "קוסמוי", date: "06–13.10", dfrom: "06.10", dto: "12.10",
     city: "קוסמוי", color: "#b45309", title: "Hansar קוסמוי",
     sum: "שבוע בהאנסר על חוף בופוט — שווקי לילה, Fisherman's Village והמון בריכה.",
     hotel: "hotel-hansar",
     transit: "מעבורת קופנגן ← סמוי ~45 דק', ומשם נסיעה קצרה לבופוט.",
     stops: ["ferry-phangan-samui", "hotel-hansar"] },
-  { id: "t5", n: 21, c: "TH", label: "בנגקוק · 13.10 ←", short: "בנגקוק", date: "13.10 והלאה", dfrom: "13.10", dto: "14.10",
+  { id: "t5", nights: 1, open: true, ln: "בנגקוק", n: 21, c: "TH", label: "בנגקוק · 13.10 ←", short: "בנגקוק", date: "13.10 והלאה", dfrom: "13.10", dto: "14.10",
     city: "בנגקוק", color: "#6d28d9", title: "בנגקוק — וטיסה הביתה",
     sum: "טיסה מסמוי לבנגקוק והמשך לישראל. תאריך הטיסה הביתה טרם ודאי — לבדוק בכרטיס.",
     hotel: null,
@@ -806,3 +810,54 @@ const SEGMENTS = [
   { id: "samui",   c: "TH", n: "קוסמוי", sub: "06–13.10", days: ["t4"] },
   { id: "bangkok", c: "TH", n: "בנגקוק", sub: "13.10 ←", days: ["t5"] },
 ];
+
+/* ---------- 🗓 תאריכים דינמיים ----------
+   כל התאריכים (ימים, יעדים, מלונות, כותרות) נגזרים מ-TRIP.start ומ-nights של ימי-הטווח.
+   כדי להזיז את כל הטיול — משנים רק את TRIP.start (ו-flyDate); ערכי date/dow/label/sub שכתובים למעלה נדרסים. */
+(function deriveDates() {
+  const DOW = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+  const pad = n => String(n).padStart(2, "0");
+  const fmt = d => pad(d.getDate()) + "." + pad(d.getMonth() + 1);
+  const add = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const range = (a, b) => a.getMonth() === b.getMonth() ? pad(a.getDate()) + "–" + fmt(b) : fmt(a) + "–" + fmt(b);
+  let cur = new Date(TRIP.start + "T12:00:00");
+  for (const d of DAYS) {
+    d._s = new Date(cur);
+    if (d.nights) {              // יום-טווח (יעד של כמה לילות)
+      d._e = add(cur, d.nights);
+      d.dfrom = fmt(d._s); d.dto = fmt(add(d._e, d.open ? 0 : -1)); d.dcheckout = fmt(d._e);
+      d.date = d.open ? fmt(d._s) + " והלאה" : range(d._s, d._e);
+      d.label = (d.ln || d.city) + " · " + (d.open ? fmt(d._s) + " ←" : d.date);
+    } else {                     // יום רגיל
+      d._e = add(cur, 1);
+      d.date = fmt(d._s); d.dow = DOW[d._s.getDay()];
+    }
+    cur = d.overlap ? d._s : d._e;
+  }
+  for (const sg of SEGMENTS) {
+    const ds = sg.days.map(id => DAYS.find(d => d.id === id)).filter(Boolean);
+    if (!ds.length) continue;
+    const a = ds[0], b = ds[ds.length - 1];
+    if (b.open) sg.sub = fmt(a._s) + " ←";
+    else if (ds.some(d => d.nights)) sg.sub = range(a._s, b._e);
+    else sg.sub = ds.length === 1 ? a.date : range(a._s, b._s);
+  }
+  for (const [hid, meta] of Object.entries(HOTELS)) {
+    const runs = [];
+    for (const d of DAYS) {
+      if (d.hotel !== hid) continue;
+      const last = runs[runs.length - 1];
+      if (last && +last.e === +d._s) { last.e = d._e; last.n += d.nights || 1; last.th = last.th || !!d.nights; }
+      else runs.push({ s: d._s, e: d._e, n: d.nights || 1, th: !!d.nights });
+    }
+    if (runs.length) meta.nights = runs.map(r => range(r.s, r.e) + (r.th ? " · " + r.n + " לילות" : "")).join(" + ");
+  }
+  const jp = DAYS.filter(d => d.c !== "TH"), th = DAYS.filter(d => d.c === "TH");
+  const thLast = th[th.length - 1];
+  TRIP.jpRange = range(jp[0]._s, jp[jp.length - 1]._s);
+  TRIP.thRange = th.length ? fmt(th[0]._s) + "–" + (thLast.open ? fmt(thLast._s) + "+" : fmt(thLast._e)) : "";
+  TRIP.fullRange = fmt(jp[0]._s) + "–" + (th.length ? (thLast.open ? fmt(thLast._s) + "+" : fmt(thLast._e)) : fmt(jp[jp.length - 1]._s));
+  TRIP.sub = TRIP.fullRange + " · " + TRIP.route;
+  const iso = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  TRIP.endISO = iso(DAYS[DAYS.length - 1]._e);
+})();

@@ -384,12 +384,12 @@ function updateGpsNext() {
 /* ---------- ספירה לאחור ---------- */
 function countdownHtml() {
   const now = new Date(new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem" }).format(new Date()) + "T12:00:00");
-  const fly = new Date("2026-09-09T12:00:00");
-  const end = new Date("2026-10-14T12:00:00");
+  const fly = new Date(TRIP.flyDate + "T12:00:00");
+  const end = new Date(TRIP.endISO + "T12:00:00");
   const days = Math.round((fly - now) / 86400e3);
   if (days > 0) return '<div class="countdown">✈️ עוד <b>' + days + '</b> ימים לטיסה!</div>';
   if (now <= end) {
-    const n = Math.round((now - new Date("2026-09-10T12:00:00")) / 86400e3) + 1;
+    const n = Math.round((now - new Date(TRIP.start + "T12:00:00")) / 86400e3) + 1;
     return '<div class="countdown">🎌 יום <b>' + n + '</b> לטיול — תהנו!</div>';
   }
   return "";
@@ -626,7 +626,8 @@ function renderDaybar() {
   };
   if (!country) {
     // רמה 1: מדינות
-    for (const [key, txt] of [["JP", "🇯🇵 יפן"], ["TH", "🇹🇭 תאילנד"]]) {
+    const countries = [["JP", "🇯🇵 יפן"]].concat(DAYS.some(d => d.c === "TH") ? [["TH", "🇹🇭 תאילנד"]] : []);
+    for (const [key, txt] of countries) {
       const b = el("button", "dchip country", txt);
       b.onclick = () => selectDay(key);
       bar.appendChild(b);
@@ -697,7 +698,7 @@ function renderPanel() {
     if (country) {
       // רמה 2: מדינה — היעדים שלה
       pn.appendChild(el("div", "pn-head", "<h2>" + (country === "JP" ? "🇯🇵 יפן" : "🇹🇭 תאילנד") + "</h2><div class='pn-sub'>" +
-        (country === "JP" ? "10–26.09 · טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו" : "26.09–13.10+ · קראבי → קופנגן → קוסמוי → בנגקוק") + "</div>"));
+        (country === "JP" ? TRIP.jpRange + " · טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו" : TRIP.thRange + " · קראבי → קופנגן → קוסמוי → בנגקוק") + "</div>"));
       for (const seg of SEGMENTS.filter(x => x.c === country)) {
         const firstDay = dayById(seg.days[0]);
         const nStops = seg.days.reduce((a, id) => a + Store.dayStops(id).length, 0);
@@ -713,10 +714,11 @@ function renderPanel() {
     }
     // רמה 1: כל הטיול — שתי מדינות
     pn.appendChild(el("div", "pn-head", "<h2>" + esc(TRIP.title) + "</h2><div class='pn-sub'>" + esc(TRIP.sub) + "</div>" + countdownHtml()));
+    const jpN = DAYS.filter(d => d.c !== "TH").length, thN = DAYS.filter(d => d.c === "TH").length;
     const cards = [
-      ["JP", "🇯🇵", "יפן", "10–26.09 · 17 ימים", "טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו"],
-      ["TH", "🇹🇭", "תאילנד", "26.09–13.10+ · 5 יעדים", "קראבי → קופנגן → קוסמוי → בנגקוק"],
+      ["JP", "🇯🇵", "יפן", TRIP.jpRange + " · " + jpN + " ימים", "טוקיו → קיוטו → אוסקה → נארה → האקונה → טוקיו"],
     ];
+    if (thN) cards.push(["TH", "🇹🇭", "תאילנד", TRIP.thRange + " · " + thN + " יעדים", "קראבי → קופנגן → קוסמוי → בנגקוק"]);
     for (const [key, flag, name, meta, route] of cards) {
       const row = el("button", "dayrow big");
       row.innerHTML = '<span class="flag">' + flag + '</span>' +
@@ -1332,6 +1334,11 @@ window.addEventListener("offline", () => toast("📴 אין אינטרנט — �
 window.addEventListener("online", () => toast("📶 חזרתם לרשת ✓"));
 $("#mPreload").onclick = () => { hideModal("menuModal"); preloadOffline(); };
 
+{
+  const h1 = document.querySelector("header h1"); if (h1) h1.textContent = TRIP.title;
+  const tg = document.querySelector("header .tag");
+  if (tg) tg.textContent = TRIP.fullRange + " · " + (DAYS.some(d => d.c === "TH") ? "יפן 🇯🇵 ← תאילנד 🇹🇭" : "🇯🇵 יפן");
+}
 { const vl = $("#verLine"); if (vl) vl.textContent = "גרסת אפליקציה: v" + ((document.querySelector('script[src*="app.js"]') || { src: "" }).src.split("v=")[1] || "dev"); }
 
 /* שגיאות לא-צפויות — להציג למשתמש במקום להיכשל בשקט */
