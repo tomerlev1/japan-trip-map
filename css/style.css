@@ -382,3 +382,7 @@ label.bookrow { cursor: pointer; }
 
 /* ---- מקור ההמלצה ---- */
 .pop-src { background: #f3eefa; border-radius: 9px; padding: 6px 9px; font-size: 11.5px; color: #5b3f8f; margin-bottom: 6px; line-height: 1.5; }
+
+/* Safari/WebKit: מניעת היעלמות סיכות אחרי רצף זום (באג קומפוזיציה) */
+.leaflet-marker-pane { -webkit-transform: translateZ(0); transform: translateZ(0); }
+.leaflet-marker-icon { -webkit-backface-visibility: hidden; backface-visibility: hidden; }

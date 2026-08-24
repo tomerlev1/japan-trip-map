@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="המפה שלנו">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=14">
-<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=14">
-<link rel="stylesheet" href="css/style.css?v=14">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=15">
+<link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css?v=15">
+<link rel="stylesheet" href="css/style.css?v=15">
 </head>
 <body>
 <header id="top">
@@ -59,6 +59,7 @@
   <div class="m-body form">
     <label>שם (עברית) <input id="edName" required></label>
     <label>שם באנגלית — לניווט מדויק <input id="edEn" placeholder="Sushi Kenshin Ebisu"></label>
+    <label>כתובת מדויקת (אופציונלי) — הסיכה והניווט יכוונו בדיוק אליה <input id="edAddr" placeholder="למשל: 1-2-3 Ginza, Chuo City, Tokyo או 東京都中央区銀座1-2-3"></label>
     <div class="row2">
       <label>עיר <select id="edCity"><option>טוקיו</option><option>קיוטו</option><option>אוסקה</option><option>נארה</option><option>האקונה</option><option>קראבי</option><option>קופנגן</option><option>קוסמוי</option><option>בנגקוק</option></select></label>
       <label>סוג <select id="edCat"><option value="site">⛩️ אתר</option><option value="food">🍜 אוכל</option><option value="shop">🛍️ קניות</option><option value="exp">✨ חוויה</option><option value="transit">🚄 תחבורה</option><option value="hotel">🏨 לינה</option></select></label>
@@ -102,7 +103,7 @@
 <div class="modal taxi" id="taxiModal" role="dialog">
   <div class="m-head"><h2>🚕 להראות לנהג</h2><button class="x" data-close="taxiModal">✕</button></div>
   <div class="m-body taxi-body">
-    <div class="taxi-please">すみません、ここまでお願いします 🙏</div>
+    <div class="taxi-please">すみません、ここまでお願いします：🙏</div>
     <div id="taxiName" class="taxi-name"></div>
     <div id="taxiAddr" class="taxi-addr"></div>
     <div id="taxiHeName" class="taxi-he"></div>
@@ -122,17 +123,18 @@
     <button id="mExport" class="menubtn">⬇️ ייצוא לקובץ גיבוי (JSON)</button>
     <button id="mImport" class="menubtn">⬆️ ייבוא מקובץ גיבוי</button>
     <button id="mReset" class="menubtn danger">🗑 איפוס למסלול המקורי</button>
+    <p class="hint" id="verLine"></p>
   </div>
 </div>
 <input type="file" id="importFile" accept="application/json" hidden>
 
-<script src="vendor/leaflet/leaflet.js?v=14"></script>
-<script src="vendor/maplibre/maplibre-gl.js?v=14"></script>
-<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=14"></script>
-<script src="js/config.js?v=14"></script>
-<script src="js/data.js?v=14"></script>
-<script src="js/storage.js?v=14"></script>
-<script src="js/sync.js?v=14"></script>
-<script src="js/app.js?v=14"></script>
+<script src="vendor/leaflet/leaflet.js?v=15"></script>
+<script src="vendor/maplibre/maplibre-gl.js?v=15"></script>
+<script src="vendor/maplibre/leaflet-maplibre-gl.js?v=15"></script>
+<script src="js/config.js?v=15"></script>
+<script src="js/data.js?v=15"></script>
+<script src="js/storage.js?v=15"></script>
+<script src="js/sync.js?v=15"></script>
+<script src="js/app.js?v=15"></script>
 </body>
 </html>

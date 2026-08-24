@@ -41,15 +41,18 @@ const $ = s => document.querySelector(s);
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 function dayById(id) { return DAYS.find(d => d.id === id); }
+function cityRef(p) { return (CITY_EN[p.city] || "") + (JP_CITIES.has(p.city) ? " Japan" : ""); }
 function gmapsUrl(p) {
-  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((p.en || p.n) + ", " + (CITY_EN[p.city] || "") + " Japan");
+  const q = p.addr ? p.addr : (p.en || p.n) + ", " + cityRef(p);
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 }
-function pointRef(p) { return p.approx ? (p.en || p.n) + ", " + (CITY_EN[p.city] || "") + " Japan" : p.lat + "," + p.lng; }
-/* יעד ניווט — תמיד לפי שם (גוגל מזהה POI מדויק); קואורדינטות רק כשאין שם */
+function pointRef(p) { return p.approx ? (p.en || p.n) + ", " + cityRef(p) : p.lat + "," + p.lng; }
+/* יעד ניווט — כתובת מדויקת אם הוזנה; אחרת לפי שם (גוגל מזהה POI מדויק); קואורדינטות רק כשאין שם */
 function destRef(p) {
-  if (p.en) return p.en + ", " + (CITY_EN[p.city] || "") + " Japan";
+  if (p.addr) return p.addr;
+  if (p.en) return p.en + ", " + cityRef(p);
   if (!p.approx) return p.lat + "," + p.lng;
-  return p.n + ", " + (CITY_EN[p.city] || "");
+  return p.n + ", " + cityRef(p);
 }
 function navUrl(from, to) {
   return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(pointRef(from)) +
@@ -335,7 +338,7 @@ function openTaxi(placeId) {
   if (!p) return;
   const ja = (typeof JA !== "undefined" && JA[placeId]) || {};
   const name = ja.n || "";
-  const addr = ja.a || "";
+  const addr = ja.a || p.addr || "";
   $("#taxiName").textContent = name || addr || (p.en || p.n);
   $("#taxiAddr").textContent = name ? addr : "";
   $("#taxiHeName").textContent = p.n + (!name && !addr ? " · אין שם יפני שמור — הראו לנהג גם את הנעיצה במפה" : "");
@@ -910,6 +913,22 @@ const GEO_BBOX = {
   "קראבי": [7.8, 8.5, 98.5, 99.2], "קופנגן": [9.65, 9.85, 99.9, 100.15],
   "קוסמוי": [9.4, 9.62, 99.85, 100.12], "בנגקוק": [13.4, 14.05, 100.3, 100.95],
 };
+/* גיאוקוד כתובת מדויקת — קודם GSI (שירות הכתובות הרשמי של יפן), נפילה ל-Photon */
+async function geocodeAddress(addr, city) {
+  try {
+    const ctl = new AbortController();
+    setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch("https://msearch.gsi.go.jp/address-search/AddressSearch?q=" + encodeURIComponent(addr), { signal: ctl.signal });
+    const j = await r.json();
+    const bb = GEO_BBOX[city];
+    const hit = (j || []).find(f => {
+      const [lng, lat] = f.geometry.coordinates;
+      return !bb || (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]);
+    });
+    if (hit) return [hit.geometry.coordinates[1], hit.geometry.coordinates[0]];
+  } catch (e) { /* offline */ }
+  return geocodeClient(addr, city);
+}
 async function geocodeClient(q, city) {
   try {
     const ctl = new AbortController();
@@ -940,6 +959,7 @@ function openEdit(placeId, dayId, idx) {
   $("#edDesc").value = p ? p.d : "";
   $("#edBook").value = p ? p.book : "";
   $("#edSite").value = p ? p.site : "";
+  $("#edAddr").value = p ? (p.addr || "") : "";
   $("#edDay").innerHTML = DAYS.map(d => '<option value="' + d.id + '"' + (d.id === dayId ? " selected" : "") + ">" + esc(dayTitleLine(d)) + " · " + esc(d.title) + "</option>").join("");
   $("#edDayWrap").style.display = idx == null && placeId == null ? "none" : "";
   showModal("edModal");
@@ -950,6 +970,8 @@ function saveEdit() {
   const ctx = editCtx;
   let p = ctx.placeId ? { ...Store.getPlace(ctx.placeId) } : null;
   const isNew = !p;
+  const addr = $("#edAddr").value.trim();
+  const prevAddr = p ? (p.addr || "") : "";
   if (isNew) {
     const city = $("#edCity").value;
     const cc = CITY_CENTERS[city] || [35.68, 139.75];
@@ -958,16 +980,23 @@ function saveEdit() {
   Object.assign(p, {
     n: name, en: $("#edEn").value.trim(), city: $("#edCity").value, cat: $("#edCat").value,
     part: $("#edPart").value, d: $("#edDesc").value.trim(), book: $("#edBook").value.trim(), site: $("#edSite").value.trim(),
+    addr,
   });
   Store.upsertPlace(p);
   const newDay = $("#edDay").value;
   if (isNew) {
     Store.addStop(newDay, p.id, null);
-    geocodeClient(p.en || p.n, p.city).then(geo => {
-      if (geo) { Store.setCoords(p.id, geo[0], geo[1]); toast("„" + p.n + "” אותר על המפה ✓"); }
+    (addr ? geocodeAddress(addr, p.city) : geocodeClient(p.en || p.n, p.city)).then(geo => {
+      if (geo) { Store.setCoords(p.id, geo[0], geo[1]); toast("„" + p.n + "” אותר על המפה ✓" + (addr ? " (לפי הכתובת)" : "")); }
       else toast("לא הצלחתי לאתר — גררו את הסיכה ≈ למיקום הנכון");
     });
-  } else if (ctx.idx != null && newDay !== ctx.dayId) {
+  } else if (addr && addr !== prevAddr) {
+    geocodeAddress(addr, p.city).then(geo => {
+      if (geo) { Store.setCoords(p.id, geo[0], geo[1]); toast("הסיכה עודכנה לכתובת המדויקת ✓"); }
+      else toast("לא הצלחתי לאתר את הכתובת — גררו את הסיכה למקום הנכון");
+    });
+  }
+  if (!isNew && ctx.idx != null && newDay !== ctx.dayId) {
     Store.moveStopToDay(ctx.dayId, ctx.idx, newDay);
     selectDay(newDay);
   }
@@ -1302,6 +1331,8 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || ["localho
 window.addEventListener("offline", () => toast("📴 אין אינטרנט — המסלול והמפות השמורות ממשיכים לעבוד", 4000));
 window.addEventListener("online", () => toast("📶 חזרתם לרשת ✓"));
 $("#mPreload").onclick = () => { hideModal("menuModal"); preloadOffline(); };
+
+{ const vl = $("#verLine"); if (vl) vl.textContent = "גרסת אפליקציה: v" + ((document.querySelector('script[src*="app.js"]') || { src: "" }).src.split("v=")[1] || "dev"); }
 
 /* שגיאות לא-צפויות — להציג למשתמש במקום להיכשל בשקט */
 window.addEventListener("error", e => { try { toast("⚠️ תקלה: " + (e.message || "שגיאה לא ידועה")); } catch (_) {} });
