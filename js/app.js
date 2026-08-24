@@ -64,6 +64,17 @@ function toast(msg, ms) {
   clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), ms || 2600);
 }
 
+/* עזרי רשת ותצוגה משותפים */
+function gmapsKey() { return (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || ""; }
+function fetchT(url, ms, opts) {
+  const ctl = new AbortController();
+  setTimeout(() => ctl.abort(), ms || 6000);
+  return fetch(url, Object.assign({ signal: ctl.signal }, opts || {}));
+}
+function dayOptionsHtml(selectedId) {
+  return DAYS.map(d => '<option value="' + d.id + '"' + (d.id === selectedId ? " selected" : "") + ">" + esc(dayTitleLine(d)) + "</option>").join("");
+}
+
 /* ---------- מפה ---------- */
 const map = L.map("map", { zoomControl: false, worldCopyJump: true });
 L.control.zoom({ position: "bottomleft" }).addTo(map);
@@ -312,7 +323,7 @@ async function fetchWx(city) {
     d[t] = { c: j.daily.weather_code[i], hi: Math.round(j.daily.temperature_2m_max[i]), lo: Math.round(j.daily.temperature_2m_min[i]), pp: j.daily.precipitation_probability_max[i] };
   });
   // תחזית גוגל — מחליפה את הימים שהיא מכסה (זמינה בתאילנד; ביפן אין כיסוי — רישוי JMA)
-  const gkey = (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || "";
+  const gkey = gmapsKey();
   if (gkey && !JP_CITIES.has(city)) {
     try {
       const gr = await fetch("https://weather.googleapis.com/v1/forecast/days:lookup?key=" + gkey +
@@ -948,15 +959,12 @@ const GEO_BBOX = {
 };
 /* Google Places (New) — כשמוגדר מפתח ב-config: איתור ברמת גוגל-מפות + כתובת יפנית אוטומטית */
 async function googlePlaces(q, city) {
-  const key = (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || "";
+  const key = gmapsKey();
   if (!key) return null;
   const bb = GEO_BBOX[city];
   try {
-    const ctl = new AbortController();
-    setTimeout(() => ctl.abort(), 7000);
-    const r = await fetch("https://places.googleapis.com/v1/places:searchText", {
+    const r = await fetchT("https://places.googleapis.com/v1/places:searchText", 7000, {
       method: "POST",
-      signal: ctl.signal,
       headers: {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": key,
@@ -989,9 +997,7 @@ async function geocodeAddress(addr, city) {
   const g = await googlePlaces(addr, city);
   if (g) return g.ll;
   try {
-    const ctl = new AbortController();
-    setTimeout(() => ctl.abort(), 6000);
-    const r = await fetch("https://msearch.gsi.go.jp/address-search/AddressSearch?q=" + encodeURIComponent(addr), { signal: ctl.signal });
+    const r = await fetchT("https://msearch.gsi.go.jp/address-search/AddressSearch?q=" + encodeURIComponent(addr), 6000);
     const j = await r.json();
     const bb = GEO_BBOX[city];
     const hit = (j || []).find(f => {
@@ -1018,9 +1024,7 @@ async function geocodeClient(q, city) {
   const bb = GEO_BBOX[city];
   const inBB = (lat, lng) => !bb || (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]);
   try {
-    const ctl = new AbortController();
-    setTimeout(() => ctl.abort(), 6000);
-    const r = await fetch("https://photon.komoot.io/api/?limit=6&lang=en&q=" + encodeURIComponent(q + " " + (CITY_EN[city] || "Japan")), { signal: ctl.signal });
+    const r = await fetchT("https://photon.komoot.io/api/?limit=6&lang=en&q=" + encodeURIComponent(q + " " + (CITY_EN[city] || "Japan")), 6000);
     const j = await r.json();
     let best = null;
     for (const f of j.features || []) {
@@ -1035,9 +1039,7 @@ async function geocodeClient(q, city) {
   } catch (e) { /* offline / timeout */ }
   try {
     if (bb) {
-      const ctl = new AbortController();
-      setTimeout(() => ctl.abort(), 6000);
-      const r = await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=6&bounded=1&viewbox=" + bb[2] + "," + bb[1] + "," + bb[3] + "," + bb[0] + "&q=" + encodeURIComponent(q), { signal: ctl.signal });
+      const r = await fetchT("https://nominatim.openstreetmap.org/search?format=json&limit=6&bounded=1&viewbox=" + bb[2] + "," + bb[1] + "," + bb[3] + "," + bb[0] + "&q=" + encodeURIComponent(q), 6000);
       const j = await r.json();
       let best = null;
       for (const it of j || []) {
@@ -1068,7 +1070,7 @@ function openEdit(placeId, dayId, idx) {
   $("#edBook").value = p ? p.book : "";
   $("#edSite").value = p ? p.site : "";
   $("#edAddr").value = p ? (p.addr || "") : "";
-  $("#edDay").innerHTML = DAYS.map(d => '<option value="' + d.id + '"' + (d.id === dayId ? " selected" : "") + ">" + esc(dayTitleLine(d)) + " · " + esc(d.title) + "</option>").join("");
+  $("#edDay").innerHTML = dayOptionsHtml(dayId);
   $("#edDayWrap").style.display = idx == null && placeId == null ? "none" : "";
   showModal("edModal");
 }
@@ -1417,7 +1419,7 @@ async function runPinAudit() {
 }
 /* 🔍 חיפוש מקום דרך גוגל מתוך המפה */
 async function googleSearchList(q) {
-  const key = (window.JTM_CONFIG && JTM_CONFIG.gmapsKey) || "";
+  const key = gmapsKey();
   if (!key) return null;
   const ctr = map.getCenter();
   const r = await fetch("https://places.googleapis.com/v1/places:searchText", {
@@ -1497,7 +1499,7 @@ async function runSearch() {
 }
 $("#btnSearch").onclick = () => {
   const sel = $("#srchDay");
-  sel.innerHTML = DAYS.map(d => '<option value="' + d.id + '"' + (curDay === d.id ? " selected" : "") + ">" + esc(dayTitleLine(d)) + "</option>").join("");
+  sel.innerHTML = dayOptionsHtml(curDay);
   $("#srchResults").innerHTML = "";
   showModal("searchModal");
   setTimeout(() => $("#srchInput").focus(), 60);
