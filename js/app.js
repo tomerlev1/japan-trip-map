@@ -337,7 +337,7 @@ function openTaxi(placeId) {
   const p = Store.getPlace(placeId);
   if (!p) return;
   const ja = (typeof JA !== "undefined" && JA[placeId]) || {};
-  const name = ja.n || "";
+  const name = ja.n || p.jaName || "";
   const addr = ja.a || p.addr || "";
   $("#taxiName").textContent = name || addr || (p.en || p.n);
   $("#taxiAddr").textContent = name ? addr : "";
@@ -898,12 +898,12 @@ async function pickCatalog(it) {
     if (!geo) {
       toast("מאתר את „" + it.n + "”…", 6000);
       const loc = await locatePlace(it.en || it.n, it.city);
-      if (loc) { geo = loc.ll; geoAddr = geoAddr || loc.addr; }
+      if (loc) { geo = loc.ll; geoAddr = geoAddr || loc.addr; var geoJaName = loc.jaName || ""; }
     }
     const place = {
       id: placeId, n: it.n, en: it.en || "", city: it.city, cat: it.cat,
       d: it.note || "", part: "", book: it.book ? "להזמין מראש" : "", site: "", klook: it.klook || "",
-      addr: geoAddr,
+      addr: geoAddr, jaName: (typeof geoJaName !== "undefined" && geoJaName) || "",
       lat: geo ? geo[0] : (CITY_CENTERS[it.city] || [35.68, 139.75])[0],
       lng: geo ? geo[1] : (CITY_CENTERS[it.city] || [35.68, 139.75])[1],
       approx: !geo,
@@ -1074,7 +1074,7 @@ function saveEdit() {
     (addr ? geocodeAddress(addr, p.city).then(ll => ll && { ll, addr: "" }) : locatePlace(p.en || p.n, p.city)).then(geo => {
       if (geo) {
         Store.setCoords(p.id, geo.ll[0], geo.ll[1]);
-        if (!addr && geo.addr) { const cur = { ...Store.getPlace(p.id) }; cur.addr = geo.addr; Store.upsertPlace(cur); }
+        if (!addr && (geo.addr || geo.jaName)) { const cur = { ...Store.getPlace(p.id) }; if (geo.addr) cur.addr = geo.addr; if (geo.jaName) cur.jaName = geo.jaName; Store.upsertPlace(cur); }
         toast("„" + p.n + "” אותר על המפה ✓" + (addr ? " (לפי הכתובת)" : ""));
       } else toast("לא מצאתי את „" + p.n + "” במפה (≈ במרכז העיר) — פתחו עריכה ✎ והדביקו כתובת מדויקת, או גררו את הסיכה", 6000);
     });
