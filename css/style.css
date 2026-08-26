@@ -624,3 +624,16 @@ body[data-c="TH"] .addbtn:hover { background: #fbf4e4; }
 .chip.openno { background: #fdeaea; color: #b3372f; font-weight: 600; }
 .fpin.hot { box-shadow: 0 0 0 2.5px var(--kc), 0 3px 10px rgba(20, 20, 30, .3); transform: scale(1.12); }
 .fchip.refresh { border-color: var(--verm, #c2413b); color: var(--verm, #c2413b); font-weight: 700; }
+
+/* 📍 מעקב חי + פרטי המלצות מגוגל */
+.gpsbtn.follow { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+.gpsdot { position: relative; }
+.gpsdot .hdg { position: absolute; left: 50%; top: 50%; width: 0; height: 0; margin: -22px 0 0 -8px;
+  border: 8px solid transparent; border-bottom: 14px solid rgba(26, 115, 232, .5); transform-origin: 8px 22px; pointer-events: none; }
+.gd-type { font-weight: 700; margin-top: 8px; }
+.gd-sum { margin-top: 4px; font-size: 12.5px; color: var(--mut, #70707b); line-height: 1.45; }
+.gd-hours { margin-top: 6px; font-size: 12.5px; font-weight: 600; }
+.gd-week { margin-top: 4px; font-size: 12px; color: var(--mut, #70707b); }
+.gd-week summary { cursor: pointer; }
+.gd-day.today { font-weight: 700; color: var(--ink, #191920); }
+.gd-site { display: inline-block; margin-top: 6px; font-size: 12.5px; }

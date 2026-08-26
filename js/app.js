@@ -124,33 +124,28 @@ function fmtDist(m) { return m < 1000 ? Math.round(m / 10) * 10 + " מ'" : (m / 
    cat = הקטגוריה במסלול אם מוסיפים ליום. type שגוגל לא מכיר נופל אוטומטית לחיפוש טקסט. */
 const RECS = [
   { id: "food", he: "אוכל", icon: "🍽️", subs: [
-    { id: "best", he: "הכי מדורגים", icon: "🏆", types: ["restaurant"], cat: "food", color: "#c2413b" },
-    { id: "sushi", he: "סושי", icon: "🍣", types: ["sushi_restaurant"], cat: "food", color: "#d95468" },
-    { id: "ramen", he: "ראמן", icon: "🍜", types: ["ramen_restaurant"], cat: "food", color: "#e08a1e" },
-    { id: "meat", he: "בשר ויאקיניקו", icon: "🥩", q: "yakiniku wagyu steak restaurant", cat: "food", color: "#b5542a" },
-    { id: "fish", he: "דגים ופירות ים", icon: "🐟", types: ["seafood_restaurant"], cat: "food", color: "#1878a8" },
-    { id: "sweets", he: "קפה ומתוקים", icon: "☕", types: ["cafe", "coffee_shop", "bakery", "ice_cream_shop"], cat: "food", color: "#8d6e63" },
-    { id: "street", he: "אוכל רחוב ושווקים", icon: "🥡", q: "street food market", cat: "food", color: "#e0621e" },
+    { id: "best", he: "הכי מדורגים", icon: "🏆", types: ["restaurant"], cat: "food", color: "#c2413b", minR: 4.3, minC: 400 },
+    { id: "sushi", he: "סושי", icon: "🍣", types: ["sushi_restaurant"], cat: "food", color: "#d95468", minR: 4.2, minC: 200 },
+    { id: "ramen", he: "ראמן", icon: "🍜", types: ["ramen_restaurant"], cat: "food", color: "#e08a1e", minR: 4.2, minC: 200 },
+    { id: "meat", he: "בשר ויאקיניקו", icon: "🥩", q: "yakiniku wagyu steak restaurant", cat: "food", color: "#b5542a", minR: 4.2, minC: 200 },
+    { id: "sweets", he: "קפה ומתוקים", icon: "☕", types: ["cafe", "coffee_shop", "bakery", "dessert_shop", "ice_cream_shop"], cat: "food", color: "#8d6e63", minR: 4.3, minC: 150 },
   ]},
-  { id: "bars", he: "ברים", icon: "🍸", subs: [
-    { id: "bar", he: "ברים", icon: "🍸", types: ["bar", "wine_bar"], cat: "food", color: "#5c6bc0" },
-    { id: "izakaya", he: "איזקאיה", icon: "🏮", q: "izakaya", cat: "food", color: "#c2413b" },
-    { id: "cocktail", he: "קוקטיילים", icon: "🍹", q: "cocktail bar", cat: "food", color: "#7e57c2" },
+  { id: "fashion", he: "אופנה", icon: "👗", subs: [
+    { id: "clothes", he: "בגדים", icon: "👕", types: ["clothing_store"], cat: "shop", color: "#00838f", minR: 4.2, minC: 100 },
+    { id: "shoes", he: "נעליים", icon: "👟", types: ["shoe_store"], cat: "shop", color: "#5c6bc0", minR: 4.2, minC: 80 },
+    { id: "vintage", he: "וינטג' ויד שנייה", icon: "👖", q: "vintage clothing second hand shop", cat: "shop", color: "#7b5e2e", minR: 4.2, minC: 60 },
   ]},
-  { id: "shopping", he: "קניות", icon: "🛍️", subs: [
-    { id: "mall", he: "כלבו וקניונים", icon: "🏬", types: ["shopping_mall", "department_store"], cat: "shop", color: "#5c6bc0" },
-    { id: "fashion", he: "אופנה", icon: "👟", types: ["clothing_store", "shoe_store"], cat: "shop", color: "#00838f" },
-    { id: "vintage", he: "וינטג'", icon: "👖", q: "vintage clothing second hand shop", cat: "shop", color: "#7b5e2e" },
-    { id: "anime", he: "גיימינג ואנימה", icon: "🕹️", q: "anime figures game store", cat: "shop", color: "#e53935" },
-    { id: "kitchen", he: "סכינים וכלי מטבח", icon: "🔪", q: "japanese kitchen knives ceramics tableware shop", cat: "shop", color: "#455a64" },
-    { id: "gifts", he: "מתנות ומזכרות", icon: "🎁", types: ["gift_shop"], cat: "shop", color: "#8e24aa" },
+  { id: "kitchen", he: "מטבח", icon: "🔪", subs: [
+    { id: "knives", he: "חנויות סכינים", icon: "🔪", q: "japanese kitchen knives store", cat: "shop", color: "#455a64", minR: 4.4, minC: 100 },
+    { id: "utensils", he: "כלי מטבח וקרמיקה", icon: "🍶", q: "ceramics tableware pottery kitchenware shop", cat: "shop", color: "#8d6e63", minR: 4.3, minC: 60 },
   ]},
-  { id: "culture", he: "אטרקציות", icon: "✨", subs: [
-    { id: "attr", he: "אטרקציות", icon: "✨", types: ["tourist_attraction"], cat: "site", color: "#00897b" },
-    { id: "museum", he: "מוזיאונים וגלריות", icon: "🖼️", types: ["museum", "art_gallery"], cat: "site", color: "#6d4c41" },
-    { id: "temple", he: "מקדשים ומקומות קדושים", icon: "⛩️", q: "temple shrine", cat: "site", color: "#c2413b" },
-    { id: "park", he: "פארקים וגנים", icon: "🌳", types: ["park"], cat: "site", color: "#2e7d32" },
-    { id: "spa", he: "ספא ואונסן", icon: "🧖", types: ["spa"], cat: "exp", color: "#00838f" },
+  { id: "art", he: "אמנות", icon: "🖼️", subs: [
+    { id: "museum", he: "מוזיאונים", icon: "🖼️", types: ["museum"], cat: "site", color: "#6d4c41", minR: 4.3, minC: 500 },
+    { id: "gallery", he: "גלריות", icon: "🎨", types: ["art_gallery"], cat: "site", color: "#7e57c2", minR: 4.3, minC: 60 },
+  ]},
+  { id: "market", he: "שווקים", icon: "🧺", subs: [
+    { id: "foodmkt", he: "שוקי אוכל ורחוב", icon: "🍢", q: "street food market shotengai", cat: "site", color: "#c04a12", minR: 4.1, minC: 150 },
+    { id: "flea", he: "פשפשים ועתיקות", icon: "🏮", q: "flea market antique market", cat: "site", color: "#7b5e2e", minR: 4.1, minC: 60 },
   ]},
 ];
 const foodLayer = L.layerGroup().addTo(map);
@@ -175,7 +170,7 @@ async function gPlacesQuery(recipe, center, radius) {
     let r;
     if (recipe.types && !recipe._textOnly) {
       r = await post("https://places.googleapis.com/v1/places:searchNearby",
-        { includedTypes: recipe.types, maxResultCount: 20, rankPreference: "POPULARITY", languageCode: "en", locationRestriction: circle });
+        { includedPrimaryTypes: recipe.types, maxResultCount: 20, rankPreference: "POPULARITY", languageCode: "en", locationRestriction: circle });
       if (r.status === 400) { recipe._textOnly = true; return gPlacesQuery(recipe, center, radius); }
     } else {
       r = await post("https://places.googleapis.com/v1/places:searchText",
@@ -227,9 +222,12 @@ async function recSearch() {
     price: PRICE_HE[p.priceLevel] || "", type: p.primaryType || "",
     open: p.currentOpeningHours ? !!p.currentOpeningHours.openNow : null, gurl: p.googleMapsUri || "",
   }));
-  let strong = list.filter(p => p.rating >= 4 && p.count >= 30);
-  if (strong.length < 5) strong = list.filter(p => p.rating >= 3.7 && p.count >= 5);
+  const clean = list.filter(p => !/hotel|lodging|guest_house|hostel|ryokan/.test(p.type));
+  let strong = clean.filter(p => p.rating >= (recipe.minR || 4.2) && p.count >= (recipe.minC || 100));
+  if (strong.length < 4) strong = clean.filter(p => p.rating >= 4 && p.count >= 50);
+  if (strong.length < 4) strong = clean.filter(p => p.rating >= 3.8 && p.count >= 10);
   strong.sort((a, b) => recScore(b) - recScore(a));
+  strong = strong.slice(0, 12); // פחות עומס — רק המבוססים
   recPlaces = strong; recCenter = center;
   grecPut(key, strong);
   renderFood();
@@ -239,6 +237,42 @@ function cityFromLatLng(ll) {
   let best = null, bd = Infinity;
   for (const [city, c] of Object.entries(CITY_CENTERS)) { const d = haversine(ll, c); if (d < bd) { bd = d; best = city; } }
   return best || "טוקיו";
+}
+/* פרטים מקצועיים בעברית — נשלף פעם אחת כשפותחים כרטיסייה, קאש שבוע */
+const gdetMem = {};
+async function recDetails(id) {
+  if (gdetMem[id]) return gdetMem[id];
+  try {
+    const all = JSON.parse(localStorage.getItem("jtm.gdet") || "{}");
+    if (all[id] && Date.now() - all[id].t < 7 * 864e5) { gdetMem[id] = all[id].d; return all[id].d; }
+  } catch (e) {}
+  const key = gmapsKey(); if (!key) return null;
+  try {
+    const r = await fetchT("https://places.googleapis.com/v1/places/" + id + "?languageCode=he", 8000,
+      { headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": "primaryTypeDisplayName,editorialSummary,regularOpeningHours.weekdayDescriptions,websiteUri,reservable" } });
+    if (!r.ok) return null;
+    const j = await r.json();
+    const d = {
+      type: (j.primaryTypeDisplayName && j.primaryTypeDisplayName.text) || "",
+      sum: (j.editorialSummary && j.editorialSummary.text) || "",
+      hours: (j.regularOpeningHours && j.regularOpeningHours.weekdayDescriptions) || [],
+      site: j.websiteUri || "", resv: j.reservable === true,
+    };
+    gdetMem[id] = d;
+    try {
+      const all = JSON.parse(localStorage.getItem("jtm.gdet") || "{}");
+      all[id] = { t: Date.now(), d };
+      const keys = Object.keys(all).sort((a, b) => all[a].t - all[b].t);
+      while (keys.length > 80) delete all[keys.shift()];
+      localStorage.setItem("jtm.gdet", JSON.stringify(all));
+    } catch (e) {}
+    return d;
+  } catch (e) { return null; }
+}
+function recTodayIdx(ll) { // weekdayDescriptions מתחיל ביום שני; מחשבים לפי אזור הזמן של המקום
+  const tz = ll[1] < 110 ? "Asia/Bangkok" : "Asia/Tokyo";
+  const wd = new Intl.DateTimeFormat("en", { timeZone: tz, weekday: "short" }).format(new Date());
+  return { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 }[wd] ?? 0;
 }
 /* פרטי מקום ביפנית (שם+כתובת) — לכרטיס המונית, נשלף רק כשמוסיפים ליום */
 async function recJaDetails(id) {
@@ -262,7 +296,27 @@ function recPopup(p) {
   if (p.addr) h += '<div class="pop-dist">📍 ' + esc(p.addr) + "</div>";
   const from = gpsDot ? [gpsDot.getLatLng().lat, gpsDot.getLatLng().lng] : recCenter;
   if (from) h += '<div class="pop-dist">📏 ' + fmtDist(haversine(from, p.ll)) + (gpsDot ? " מכם" : " ממרכז החיפוש") + "</div>";
+  h += '<div class="gdet"><span class="hint">⏳ שולף פרטים מגוגל…</span></div>';
   box.innerHTML = h;
+  recDetails(p.id).then(det => {
+    const slot = box.querySelector(".gdet");
+    if (!slot) return;
+    if (!det) { slot.innerHTML = ""; return; }
+    let dh = "";
+    if (det.type) dh += '<div class="gd-type">' + recipe.icon + " " + esc(det.type) + "</div>";
+    if (det.sum) dh += '<div class="gd-sum">' + esc(det.sum) + "</div>";
+    if (det.hours.length === 7) {
+      const ti = recTodayIdx(p.ll);
+      dh += '<div class="gd-hours">🕐 היום: ' + esc(det.hours[ti].replace(/^[^:]+:\s*/, "")) + "</div>";
+      dh += '<details class="gd-week"><summary>שעות פתיחה כל השבוע</summary>' +
+        det.hours.map((x, i) => '<div class="gd-day' + (i === ti ? " today" : "") + '">' + esc(x) + "</div>").join("") + "</details>";
+    }
+    dh += det.resv
+      ? '<div class="pop-book">📌 מקבלים הזמנות מראש — בערב ובסופ"ש עדיף להזמין</div>'
+      : '<div class="pop-walkin">🚶 מגיעים ספונטנית — בלי הזמנה (בשעות שיא ייתכן תור)</div>';
+    if (det.site) dh += '<a class="gd-site" href="' + esc(det.site) + '" target="_blank" rel="noopener">🌐 אתר רשמי</a>';
+    slot.innerHTML = dh;
+  });
   const links = el("div", "pop-links");
   if (p.gurl) links.appendChild(linkBtn("🗺️ הדף במפות Google", p.gurl));
   links.appendChild(linkBtn("🧭 ניווט לשם עכשיו (הליכה)", "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(p.n) + "&travelmode=walking"));
@@ -513,45 +567,88 @@ function todayDayId(dateStr) {
 
 /* ---------- מיקום GPS ---------- */
 const gpsLayer = L.layerGroup().addTo(map);
-let gpsWatch = null, gpsDot = null, gpsRing = null, gpsFirstFix = false;
+let gpsWatch = null, gpsDot = null, gpsRing = null, gpsFirstFix = false, gpsFollow = false;
 const GpsControl = L.Control.extend({
   options: { position: "bottomleft" },
   onAdd() {
     const b = L.DomUtil.create("button", "gpsbtn");
-    b.innerHTML = "📍"; b.title = "המיקום שלי על המפה"; b.setAttribute("aria-label", "המיקום שלי");
+    b.innerHTML = "📍"; b.title = "המיקום שלי — מעקב חי";
+    this._btn = b;
     L.DomEvent.disableClickPropagation(b);
     L.DomEvent.on(b, "click", e => { L.DomEvent.stop(e); toggleGps(); });
-    this._btn = b;
     return b;
   },
 });
 const gpsCtl = new GpsControl();
 map.addControl(gpsCtl);
+map.on("dragstart", () => { // גרירה ידנית משחררת את המעקב (כמו בגוגל מפות) — הנקודה נשארת
+  if (gpsFollow) { gpsFollow = false; gpsCtl._btn.classList.remove("follow"); toast("המעקב הושהה — 📍 יחזיר אתכם למרכז"); }
+});
+function gpsPlot(ll, acc, heading) {
+  if (!gpsDot) {
+    gpsRing = L.circle(ll, { radius: acc || 30, color: "#1a73e8", weight: 1, opacity: .4, fillColor: "#1a73e8", fillOpacity: .12 }).addTo(gpsLayer);
+    gpsDot = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="gpsdot"><i class="hdg"></i></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, keyboard: false, zIndexOffset: 900 }).addTo(gpsLayer);
+  } else {
+    gpsDot.setLatLng(ll); gpsRing.setLatLng(ll); gpsRing.setRadius(acc || 30);
+  }
+  const elx = gpsDot.getElement && gpsDot.getElement();
+  if (elx) {
+    const cone = elx.querySelector(".hdg");
+    if (cone) {
+      const has = typeof heading === "number" && isFinite(heading);
+      cone.style.display = has ? "" : "none";
+      if (has) cone.style.transform = "rotate(" + heading + "deg)";
+    }
+  }
+}
 function toggleGps() {
-  if (gpsWatch != null) {
+  if (gpsWatch != null && gpsFollow) { // לחיצה שלישית: כיבוי
     navigator.geolocation.clearWatch(gpsWatch);
-    gpsWatch = null; gpsDot = gpsRing = null; gpsFirstFix = false;
+    gpsWatch = null; gpsDot = gpsRing = null; gpsFirstFix = false; gpsFollow = false;
     gpsLayer.clearLayers();
-    gpsCtl._btn.classList.remove("on");
+    gpsCtl._btn.classList.remove("on", "follow");
     return;
   }
-  if (!("geolocation" in navigator)) { toast("אין תמיכת מיקום בדפדפן הזה"); return; }
-  gpsCtl._btn.classList.add("on");
-  toast("מאתר אתכם… 📡");
+  if (gpsWatch != null) { // מעקב מושהה — חוזרים למיקום וממשיכים לעקוב
+    gpsFollow = true; gpsCtl._btn.classList.add("follow");
+    if (gpsDot) map.panTo(gpsDot.getLatLng(), { animate: true, duration: .6 });
+    toast("עוקב אחריכם חי 📡");
+    return;
+  }
+  if (!("geolocation" in navigator)) { gGeolocateFallback(); return; }
+  gpsCtl._btn.classList.add("on", "follow");
+  gpsFollow = true;
+  toast("מאתר אתכם… 📡 המפה תעקוב אחריכם תוך כדי הליכה; גרירה עוצרת את המעקב");
   gpsWatch = navigator.geolocation.watchPosition(pos => {
     const ll = [pos.coords.latitude, pos.coords.longitude];
-    if (!gpsDot) {
-      gpsRing = L.circle(ll, { radius: pos.coords.accuracy || 30, color: "#1a73e8", weight: 1, opacity: .4, fillColor: "#1a73e8", fillOpacity: .12 }).addTo(gpsLayer);
-      gpsDot = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="gpsdot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, keyboard: false }).addTo(gpsLayer);
-    } else {
-      gpsDot.setLatLng(ll); gpsRing.setLatLng(ll); gpsRing.setRadius(pos.coords.accuracy || 30);
-    }
-    if (!gpsFirstFix) { gpsFirstFix = true; map.flyTo(ll, Math.max(map.getZoom(), 15), { duration: .8 }); }
+    gpsPlot(ll, pos.coords.accuracy, pos.coords.heading);
+    if (!gpsFirstFix) { gpsFirstFix = true; map.flyTo(ll, Math.max(map.getZoom(), 16), { duration: .8 }); }
+    else if (gpsFollow) map.panTo(ll, { animate: true, duration: .5 });
     updateGpsNext();
   }, err => {
-    toast(err.code === 1 ? "אין הרשאת מיקום — אפשרו גישה לאתר בהגדרות הדפדפן" : "לא הצלחתי לקבל מיקום, מנסה שוב…");
-    if (err.code === 1) toggleGps();
-  }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
+    if (err.code === 1) {
+      toast("אין הרשאת מיקום — אפשרו גישה לאתר בהגדרות הדפדפן");
+      if (gpsWatch != null) { navigator.geolocation.clearWatch(gpsWatch); gpsWatch = null; }
+      gpsFollow = false; gpsFirstFix = false; gpsDot = gpsRing = null; gpsLayer.clearLayers();
+      gpsCtl._btn.classList.remove("on", "follow");
+    } else gGeolocateFallback();
+  }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 });
+}
+/* גיבוי: Google Geolocation API — איתור חד-פעמי לפי רשתות (בלי GPS) */
+async function gGeolocateFallback() {
+  const key = gmapsKey();
+  if (!key) { toast("לא הצלחתי לקבל מיקום מהמכשיר"); return; }
+  toast("GPS לא זמין — מנסה איתור דרך גוגל…");
+  try {
+    const r = await fetchT("https://www.googleapis.com/geolocation/v1/geolocate?key=" + key, 8000, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+    const j = await r.json();
+    if (j.location) {
+      const ll = [j.location.lat, j.location.lng];
+      gpsPlot(ll, j.accuracy || 500, null);
+      map.flyTo(ll, Math.max(map.getZoom(), 14), { duration: .8 });
+      toast("מיקום משוער לפי גוגל (דיוק ~" + fmtDist(j.accuracy || 500) + ")");
+    } else toast("גם גוגל לא הצליח לאתר אתכם כרגע");
+  } catch (e) { toast("גם גוגל לא הצליח לאתר אתכם כרגע"); }
 }
 
 function numIcon(n, color, approx, visited) {
