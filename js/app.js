@@ -537,11 +537,6 @@ function popupContent(p, day, idx) {
       bB.onclick = () => { map.closePopup(); Store.toggleChecked(p.id); toast(Store.isChecked(p.id) ? "סומן שהוזמן ✅" : "הסימון בוטל"); };
       acts.appendChild(bB);
     }
-    if (p.approx || Store.isCustom(p.id)) {
-      const bG = el("button", "mini", "📍 תיקון מיקום לפי גוגל");
-      bG.onclick = () => { map.closePopup(); fixPinViaGoogle(p.id); };
-      acts.appendChild(bG);
-    }
     const bE = el("button", "mini", "✎ עריכה");
     bE.onclick = () => { map.closePopup(); openEdit(p.id, day.id, idx); };
     const bR = el("button", "mini", "⇄ החלפה");
@@ -996,75 +991,16 @@ async function googlePlaces(q, city) {
     return { ll: [lat, lng], addr: (p.formattedAddress || "").replace(/^日本、?\s*/, ""), jaName: (p.displayName && p.displayName.text) || "" };
   } catch (e) { return null; }
 }
-/* איתור מקום לפי שם — גוגל קודם (אם יש מפתח), אחרת השרשרת החופשית */
+/* איתור מקום לפי שם — Google Places בלבד (מקור האמת לכל הסיכות).
+   אין תוצאה → המקום נשאר ≈ במרכז העיר, ניתן לגרירה. */
 async function locatePlace(q, city) {
-  const g = await googlePlaces(q, city);
-  if (g) return g;
-  const ll = await geocodeClient(q, city);
-  return ll ? { ll, addr: "", jaName: "" } : null;
+  return googlePlaces(q, city);
 }
 
-/* גיאוקוד כתובת מדויקת — גוגל (אם יש מפתח) → GSI (שירות הכתובות הרשמי של יפן) → Photon */
+/* גיאוקוד כתובת מדויקת — Google Places בלבד */
 async function geocodeAddress(addr, city) {
   const g = await googlePlaces(addr, city);
-  if (g) return g.ll;
-  try {
-    const r = await fetchT("https://msearch.gsi.go.jp/address-search/AddressSearch?q=" + encodeURIComponent(addr), 6000);
-    const j = await r.json();
-    const bb = GEO_BBOX[city];
-    const hit = (j || []).find(f => {
-      const [lng, lat] = f.geometry.coordinates;
-      return !bb || (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]);
-    });
-    if (hit) return [hit.geometry.coordinates[1], hit.geometry.coordinates[0]];
-  } catch (e) { /* offline */ }
-  return geocodeClient(addr, city);
-}
-const GEO_STOP = new Set(["tokyo","kyoto","osaka","nara","hakone","japan","station","the","at","no","and","of","restaurant","cafe","shop","store","bangkok","krabi","samui","phangan","thailand"]);
-function geoTokens(s) {
-  return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w && !GEO_STOP.has(w));
-}
-function geoScore(q, name) {
-  const a = geoTokens(q), b = new Set(geoTokens(name));
-  if (!a.length) return 0;
-  let hit = 0; for (const w of a) if (b.has(w)) hit++;
-  return hit / a.length;
-}
-/* גיאוקוד לפי שם — Photon עם ניקוד התאמת-שם וסינון תוצאות עיר, ואז Nominatim תחום-אזור כגיבוי.
-   מחזיר null כשאין התאמה אמיתית (ואז המקום נשאר ≈ במרכז העיר — עדיף מסיכה בטוחה-אך-שגויה). */
-async function geocodeClient(q, city) {
-  const bb = GEO_BBOX[city];
-  const inBB = (lat, lng) => !bb || (lat >= bb[0] && lat <= bb[1] && lng >= bb[2] && lng <= bb[3]);
-  try {
-    const r = await fetchT("https://photon.komoot.io/api/?limit=6&lang=en&q=" + encodeURIComponent(q + " " + (CITY_EN[city] || "Japan")), 6000);
-    const j = await r.json();
-    let best = null;
-    for (const f of j.features || []) {
-      const [lng, lat] = f.geometry.coordinates;
-      const pr = f.properties || {};
-      if (!inBB(lat, lng)) continue;
-      if (pr.osm_key === "place" || pr.osm_key === "boundary") continue;
-      const sc = geoScore(q, (pr.name || "") + " " + (pr.street || ""));
-      if (sc >= 0.5 && (!best || sc > best.sc)) best = { ll: [lat, lng], sc };
-    }
-    if (best) return best.ll;
-  } catch (e) { /* offline / timeout */ }
-  try {
-    if (bb) {
-      const r = await fetchT("https://nominatim.openstreetmap.org/search?format=json&limit=6&bounded=1&viewbox=" + bb[2] + "," + bb[1] + "," + bb[3] + "," + bb[0] + "&q=" + encodeURIComponent(q), 6000);
-      const j = await r.json();
-      let best = null;
-      for (const it of j || []) {
-        const lat = +it.lat, lng = +it.lon;
-        if (!inBB(lat, lng)) continue;
-        if (it.class === "boundary" || it.class === "place") continue;
-        const sc = geoScore(q, it.display_name || "");
-        if (sc >= 0.5 && (!best || sc > best.sc)) best = { ll: [lat, lng], sc };
-      }
-      if (best) return best.ll;
-    }
-  } catch (e) { /* offline */ }
-  return null;
+  return g ? g.ll : null;
 }
 
 /* ---------- עריכה ---------- */
@@ -1373,25 +1309,8 @@ async function verifyPinVsGoogle(p, slot) {
     gchkSave(p.id, p, dist);
   }
   if (dist > 150) {
-    slot.innerHTML = '<div class="pop-approx">⚠️ לפי גוגל המקום נמצא ~' + fmtDist(dist) + ' מהסיכה — לחצו "📍 תיקון מיקום לפי גוגל"</div>';
+    slot.innerHTML = '<div class="pop-approx">⚠️ לפי גוגל המקום נמצא ~' + fmtDist(dist) + ' מהסיכה — תקנו בעריכה ✎ (הדבקת כתובת) או גררו את הסיכה</div>';
   }
-}
-async function fixPinViaGoogle(placeId) {
-  const p = Store.getPlace(placeId);
-  if (!p) return;
-  toast("🔍 בודק את „" + p.n + "” מול גוגל…", 6000);
-  const g = await googlePlaces(p.addr || p.en || p.n, p.city);
-  if (!g) { toast("גוגל לא מצא את המקום — הוסיפו כתובת בעריכה ✎ ונסו שוב"); return; }
-  const d = Math.round(haversine([p.lat, p.lng], g.ll));
-  if (d <= 60) { gchkSave(placeId, p, d); toast("✓ הסיכה כבר תואמת לגוגל (סטייה " + d + " מ')"); return; }
-  if (!confirm("גוגל ממקם את „" + p.n + "” במרחק " + fmtDist(d) + " מהסיכה הנוכחית. לעדכן למיקום של גוגל?")) return;
-  const cur = { ...p };
-  cur.lat = +g.ll[0].toFixed(5); cur.lng = +g.ll[1].toFixed(5); cur.approx = false;
-  if (g.addr && !cur.addr) cur.addr = g.addr;
-  if (g.jaName && !cur.jaName) cur.jaName = g.jaName;
-  Store.upsertPlace(cur);
-  gchkSave(placeId, cur, 0);
-  toast("📍 „" + p.n + "” עודכן למיקום של גוגל ✓");
 }
 
 /* 🧭 בדיקת מקומות שהוסיף המשתמש — מאמת סיכות מול הכתובות השמורות */
