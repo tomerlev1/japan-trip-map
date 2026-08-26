@@ -128,12 +128,15 @@ const RECS = [
     { id: "sushi", he: "סושי", icon: "🍣", types: ["sushi_restaurant"], cat: "food", color: "#d95468", minR: 4.2, minC: 200 },
     { id: "ramen", he: "ראמן", icon: "🍜", types: ["ramen_restaurant"], cat: "food", color: "#e08a1e", minR: 4.2, minC: 200 },
     { id: "meat", he: "בשר ויאקיניקו", icon: "🥩", q: "yakiniku wagyu steak restaurant", cat: "food", color: "#b5542a", minR: 4.2, minC: 200 },
+    { id: "fish", he: "דגים ופירות ים", icon: "🐟", types: ["seafood_restaurant"], cat: "food", color: "#1878a8", minR: 4.2, minC: 150 },
     { id: "sweets", he: "קפה ומתוקים", icon: "☕", types: ["cafe", "coffee_shop", "bakery", "dessert_shop", "ice_cream_shop"], cat: "food", color: "#8d6e63", minR: 4.3, minC: 150 },
   ]},
   { id: "fashion", he: "אופנה", icon: "👗", subs: [
-    { id: "clothes", he: "בגדים", icon: "👕", types: ["clothing_store"], cat: "shop", color: "#00838f", minR: 4.2, minC: 100 },
+    { id: "clothes", he: "בגדים ורשתות", icon: "👕", types: ["clothing_store"], cat: "shop", color: "#00838f", minR: 4.2, minC: 100 },
     { id: "shoes", he: "נעליים", icon: "👟", types: ["shoe_store"], cat: "shop", color: "#5c6bc0", minR: 4.2, minC: 80 },
-    { id: "vintage", he: "וינטג' ויד שנייה", icon: "👖", q: "vintage clothing second hand shop", cat: "shop", color: "#7b5e2e", minR: 4.2, minC: 60 },
+    { id: "mall", he: "קניונים וכלבו", icon: "🏬", types: ["shopping_mall", "department_store"], cat: "shop", color: "#455a64", minR: 4.2, minC: 500 },
+    { id: "luxury", he: "מותגי־על", icon: "💎", q: "luxury designer brand boutique", cat: "shop", color: "#8e24aa", minR: 4.3, minC: 100 },
+    { id: "vintage", he: "וינטג' ויד שנייה יפנית", icon: "👖", q: "vintage clothing second hand shop", cat: "shop", color: "#7b5e2e", minR: 4.2, minC: 60 },
   ]},
   { id: "kitchen", he: "מטבח", icon: "🔪", subs: [
     { id: "knives", he: "חנויות סכינים", icon: "🔪", q: "japanese kitchen knives store", cat: "shop", color: "#455a64", minR: 4.4, minC: 100 },
@@ -144,8 +147,11 @@ const RECS = [
     { id: "gallery", he: "גלריות", icon: "🎨", types: ["art_gallery"], cat: "site", color: "#7e57c2", minR: 4.3, minC: 60 },
   ]},
   { id: "market", he: "שווקים", icon: "🧺", subs: [
-    { id: "foodmkt", he: "שוקי אוכל ורחוב", icon: "🍢", q: "street food market shotengai", cat: "site", color: "#c04a12", minR: 4.1, minC: 150 },
-    { id: "flea", he: "פשפשים ועתיקות", icon: "🏮", q: "flea market antique market", cat: "site", color: "#7b5e2e", minR: 4.1, minC: 60 },
+    { id: "foodmkt", he: "שוקי אוכל ורחוב", icon: "🍢", q: "street food market", cat: "site", color: "#c04a12", minR: 4.1, minC: 150 },
+    { id: "fishmkt", he: "שוקי דגים", icon: "🐟", q: "fish market", cat: "site", color: "#1878a8", minR: 4.1, minC: 100 },
+    { id: "shotengai", he: "רחובות מסחר (שוטנגאי)", icon: "🏮", q: "shotengai shopping street", cat: "site", color: "#c2413b", minR: 4.1, minC: 80 },
+    { id: "night", he: "שוקי לילה", icon: "🌙", q: "night market", cat: "site", color: "#6d28d9", minR: 4.1, minC: 150 },
+    { id: "flea", he: "פשפשים ועתיקות", icon: "🧳", q: "flea market antique market", cat: "site", color: "#7b5e2e", minR: 4.1, minC: 60 },
   ]},
 ];
 const foodLayer = L.layerGroup().addTo(map);
@@ -186,7 +192,7 @@ function grecKey(recipe, center, radius) { return recTop + ":" + recipe.id + ":"
 function grecGet(k) {
   if (grecMem[k]) return grecMem[k];
   try {
-    const e = (JSON.parse(localStorage.getItem("jtm.grec") || "{}"))[k];
+    const e = (JSON.parse(localStorage.getItem("jtm.grec2") || "{}"))[k];
     if (e && Date.now() - e.t < 864e5) { grecMem[k] = e.p; return e.p; }
   } catch (e) {}
   return null;
@@ -194,11 +200,11 @@ function grecGet(k) {
 function grecPut(k, p) {
   grecMem[k] = p;
   try {
-    const all = JSON.parse(localStorage.getItem("jtm.grec") || "{}");
+    const all = JSON.parse(localStorage.getItem("jtm.grec2") || "{}");
     all[k] = { t: Date.now(), p };
     const keys = Object.keys(all).sort((a, b) => all[a].t - all[b].t);
     while (keys.length > 30) delete all[keys.shift()];
-    localStorage.setItem("jtm.grec", JSON.stringify(all));
+    localStorage.setItem("jtm.grec2", JSON.stringify(all));
   } catch (e) {}
 }
 async function recSearch() {
@@ -219,10 +225,11 @@ async function recSearch() {
   const list = res.places.filter(p => p.location && p.displayName).map(p => ({
     id: p.id, n: p.displayName.text || "", ll: [p.location.latitude, p.location.longitude],
     addr: p.shortFormattedAddress || "", rating: p.rating || 0, count: p.userRatingCount || 0,
-    price: PRICE_HE[p.priceLevel] || "", type: p.primaryType || "",
+    price: PRICE_HE[(p.priceLevel || "").replace("PRICE_LEVEL_", "")] || "", type: p.primaryType || "",
     open: p.currentOpeningHours ? !!p.currentOpeningHours.openNow : null, gurl: p.googleMapsUri || "",
   }));
-  const clean = list.filter(p => !/hotel|lodging|guest_house|hostel|ryokan/.test(p.type));
+  let clean = list.filter(p => !/hotel|lodging|guest_house|hostel|ryokan/.test(p.type));
+  if (recipe.cat === "food") clean = clean.filter(p => p.price !== "$$$$" && p.type !== "fine_dining_restaurant"); // ספונטני בלבד — בלי מסעדות שדורשות הזמנה
   let strong = clean.filter(p => p.rating >= (recipe.minR || 4.2) && p.count >= (recipe.minC || 100));
   if (strong.length < 4) strong = clean.filter(p => p.rating >= 4 && p.count >= 50);
   if (strong.length < 4) strong = clean.filter(p => p.rating >= 3.8 && p.count >= 10);
@@ -238,12 +245,23 @@ function cityFromLatLng(ll) {
   for (const [city, c] of Object.entries(CITY_CENTERS)) { const d = haversine(ll, c); if (d < bd) { bd = d; best = city; } }
   return best || "טוקיו";
 }
+/* תרגום לעברית — Cloud Translation v2 עם אותו מפתח; נכשל בשקט אם ה-API לא פתוח */
+async function gTranslateHe(text) {
+  const key = gmapsKey(); if (!key || !text) return null;
+  try {
+    const r = await fetchT("https://translation.googleapis.com/language/translate/v2?key=" + key, 7000,
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ q: text, target: "he", format: "text" }) });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return (j.data && j.data.translations && j.data.translations[0] && j.data.translations[0].translatedText) || null;
+  } catch (e) { return null; }
+}
 /* פרטים מקצועיים בעברית — נשלף פעם אחת כשפותחים כרטיסייה, קאש שבוע */
 const gdetMem = {};
 async function recDetails(id) {
   if (gdetMem[id]) return gdetMem[id];
   try {
-    const all = JSON.parse(localStorage.getItem("jtm.gdet") || "{}");
+    const all = JSON.parse(localStorage.getItem("jtm.gdet2") || "{}");
     if (all[id] && Date.now() - all[id].t < 7 * 864e5) { gdetMem[id] = all[id].d; return all[id].d; }
   } catch (e) {}
   const key = gmapsKey(); if (!key) return null;
@@ -258,13 +276,14 @@ async function recDetails(id) {
       hours: (j.regularOpeningHours && j.regularOpeningHours.weekdayDescriptions) || [],
       site: j.websiteUri || "", resv: j.reservable === true,
     };
+    if (d.sum && !/[\u0590-\u05FF]/.test(d.sum)) { const t = await gTranslateHe(d.sum); if (t) d.sum = t; }
     gdetMem[id] = d;
     try {
-      const all = JSON.parse(localStorage.getItem("jtm.gdet") || "{}");
+      const all = JSON.parse(localStorage.getItem("jtm.gdet2") || "{}");
       all[id] = { t: Date.now(), d };
       const keys = Object.keys(all).sort((a, b) => all[a].t - all[b].t);
       while (keys.length > 80) delete all[keys.shift()];
-      localStorage.setItem("jtm.gdet", JSON.stringify(all));
+      localStorage.setItem("jtm.gdet2", JSON.stringify(all));
     } catch (e) {}
     return d;
   } catch (e) { return null; }
@@ -312,8 +331,8 @@ function recPopup(p) {
         det.hours.map((x, i) => '<div class="gd-day' + (i === ti ? " today" : "") + '">' + esc(x) + "</div>").join("") + "</details>";
     }
     dh += det.resv
-      ? '<div class="pop-book">📌 מקבלים הזמנות מראש — בערב ובסופ"ש עדיף להזמין</div>'
-      : '<div class="pop-walkin">🚶 מגיעים ספונטנית — בלי הזמנה (בשעות שיא ייתכן תור)</div>';
+      ? '<div class="pop-walkin">🚶📌 גם וגם — אפשר להגיע עכשיו ספונטנית (בשעות שיא ייתכן תור), ואפשר גם להזמין מראש</div>'
+      : '<div class="pop-walkin">🚶 מקום ספונטני — מגיעים בלי הזמנה</div>';
     if (det.site) dh += '<a class="gd-site" href="' + esc(det.site) + '" target="_blank" rel="noopener">🌐 אתר רשמי</a>';
     slot.innerHTML = dh;
   });
