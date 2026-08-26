@@ -43,6 +43,7 @@ function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.
 function dayById(id) { return DAYS.find(d => d.id === id); }
 const PART_KANJI = { "בוקר": "朝", "צהריים": "昼", "אחה\"צ": "午後", "ערב": "夜", "לילה": "夜", "כל היום": "終日" };
 function partK(part) { const k = PART_KANJI[part]; return k ? '<i class="pk">' + k + "</i>" : ""; }
+function stopHrs(dayId, placeId) { return (typeof SCHED !== "undefined" && SCHED[dayId] && SCHED[dayId][placeId]) || ""; }
 function cityRef(p) { return (CITY_EN[p.city] || "") + (JP_CITIES.has(p.city) ? " Japan" : ""); }
 function gmapsUrl(p) {
   const q = p.addr ? p.addr : (p.en || p.n) + ", " + cityRef(p);
@@ -499,6 +500,8 @@ function popupContent(p, day, idx) {
   let html = '<div class="pop-t">' + esc(p.n) + "</div>";
   if (p.en && p.en !== p.n) html += '<div class="pop-en">' + esc(p.en) + "</div>";
   html += '<div class="pop-chips"><span class="chip">' + cat.icon + " " + cat.he + "</span>";
+  const hh = day ? stopHrs(day.id, p.id) : "";
+  if (hh) html += '<span class="chip hrs">🕘 ' + esc(hh) + "</span>";
   if (p.part) html += '<span class="chip">' + esc(p.part) + "</span>";
   html += '<span class="chip">' + esc(p.city) + "</span></div>";
   if (p.d) html += '<div class="pop-d">' + esc(p.d) + "</div>";
@@ -837,6 +840,7 @@ function renderPanel() {
     if (!p) return;
     const cat = CATS[p.cat] || CATS.site;
     const vis = Store.isVisited(p.id);
+    const hrs = stopHrs(d.id, id);
     const row = el("div", "stop" + (d.id === TODAY_ID && p.part === currentPart(d) ? " nowpart" : "") + (vis ? " vdone" : ""));
     row.draggable = true;
     row.dataset.idx = i;
@@ -844,7 +848,7 @@ function renderPanel() {
       '<span class="num" style="background:' + d.color + '">' + (i + 1) + "</span>" +
       '<span class="s-ic">' + cat.icon + "</span>" +
       '<span class="s-main"><b>' + esc(p.n) + (p.approx ? ' <span class="approx-tag" title="מיקום משוער">≈</span>' : "") + "</b>" +
-      (p.part || p.book ? '<span class="s-part">' + esc(p.part || "") + partK(p.part) +
+      (hrs || p.part || p.book ? '<span class="s-part">' + (hrs ? '<span class="s-hrs">' + esc(hrs) + "</span>" : "") + esc(p.part || "") + partK(p.part) +
         (p.book ? (Store.isChecked(p.id) ? ' <span class="bk done">✓ הוזמן</span>' : ' <span class="bk">📌 להזמין</span>') : "") + "</span>" : "") + "</span>" +
       '<span class="s-acts">' +
       '<button class="ib vbtn' + (vis ? " on" : "") + '" data-a="vis" title="סמן שהיינו">✓</button>' +

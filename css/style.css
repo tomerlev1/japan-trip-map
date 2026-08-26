@@ -611,3 +611,9 @@ body[data-c="TH"] .addbtn:hover { background: #fbf4e4; }
 .pn-day .pn-title { font-weight: 600; }
 .mini { background: #fdfbf6; border-color: rgba(34,28,21,.13); }
 .mini:hover { border-color: rgba(194,65,59,.4); }
+
+/* 🕘 שעות מומלצות לעצירות (SCHED) */
+.s-hrs { direction: ltr; unicode-bidi: isolate; white-space: nowrap; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--verm, #c2413b); background: var(--acc-soft, #fbf1ef); border-radius: 6px; padding: 0 5px; }
+.s-part { flex-wrap: wrap; }
+.s-hrs::before { content: "🕘"; margin-inline-end: 3px; font-size: 10px; }
+.chip.hrs { direction: ltr; unicode-bidi: isolate; font-weight: 700; font-variant-numeric: tabular-nums; background: var(--acc-soft, #fbf1ef); color: var(--verm, #c2413b); }

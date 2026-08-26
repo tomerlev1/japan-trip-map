@@ -122,6 +122,7 @@ const COORDS = {
   "hotel-hansar":        [9.56154, 100.02578],
   "flight-usm-bkk":      [9.54883, 100.06320],
   "bkk-airport":         [13.6819, 100.74687],
+  "hotel-pathumwan":     [13.74320, 100.53014],
 };
 
 /* קטגוריות */
@@ -139,7 +140,7 @@ const CATS = {
    approx=מיקום משוער */
 const PLACES = {
   "hotel-shiodome": { n: "מלון Royal Park Iconic שיודומה", en: "The Royal Park Hotel Iconic Tokyo Shiodome", city: "טוקיו", cat: "hotel",
-    d: "המלון בטוקיו — שהות ראשונה 10–13.09 ושהות שנייה 22–26.09 (הוזמן ✔, Booking.com)." },
+    d: "המלון בטוקיו — שהות ראשונה 10–13.09 (₪2,338) ושהות שנייה 22–26.09 (₪4,026) · הוזמן ✔ Booking.com." },
   "toriyaki-ohana": { n: "Toriyaki Ohana — יקיטורי", en: "Toriyaki Ohana Tokyo", city: "טוקיו", cat: "food",
     d: "יקיטורי בסגנון אומקסה — הוזמן ל-20:00.", book: "להזמין מראש דרך הקבלה / OMAKASE.IN" },
   "meiji-shrine": { n: "מקדש מייג'י", en: "Meiji Jingu Shrine", city: "טוקיו", cat: "site", part: "בוקר",
@@ -175,7 +176,7 @@ const PLACES = {
   "kyoto-station": { n: "תחנת קיוטו — הגעה", en: "Kyoto Station", city: "קיוטו", cat: "transit",
     d: "מהתחנה למלון: מונית קצרה או אוטובוס. אפשר לשלוח מזוודות מהמלון הקודם." },
   "hotel-nohga": { n: "מלון Nohga קיומיזו", en: "Nohga Hotel Kiyomizu Kyoto", city: "קיוטו", cat: "hotel",
-    d: "המלון בקיוטו 13–17.09 (הוזמן ✔, Booking.com)." },
+    d: "המלון בקיוטו 13–17.09 (₪2,042 · הוזמן ✔ Booking.com)." },
   "kyoto-gyoen": { n: "גני הארמון — Kyoto Gyoen", en: "Kyoto Gyoen National Garden", city: "קיוטו", cat: "site", part: "צהריים",
     d: "פארק ענק עם גנים יפניים סביב ארמון הקיסר." },
   "nijo-castle": { n: "טירת ניג'ו", en: "Nijo Castle", city: "קיוטו", cat: "site", part: "אחה\"צ",
@@ -221,7 +222,7 @@ const PLACES = {
   "marutomi": { n: "Yakiniku MARUTOMI", en: "Yakiniku Marutomi Kyoto", city: "קיוטו", cat: "food", part: "ערב",
     d: "יאקיניקו מעולה במחיר טוב." },
   "hotel-flag": { n: "HOTEL THE FLAG שינסאיבאשי", en: "Hotel The Flag Shinsaibashi Osaka", city: "אוסקה", cat: "hotel",
-    d: "המלון באוסקה 17–21.09 (הוזמן ✔, Booking.com)." },
+    d: "המלון באוסקה 17–21.09 (₪2,556 · הוזמן ✔ Booking.com)." },
   "kaiyukan": { n: "אקווריום קאיוקאן", en: "Osaka Aquarium Kaiyukan", city: "אוסקה", cat: "site", part: "צהריים",
     d: "מהאקווריומים הגדולים והמרשימים באסיה — לווייתני-נמר ענקיים.", site: "https://www.kaiyukan.com/language/eng/", klook: "https://shorturl.at/6mC7v" },
   "yodobashi-umeda": { n: "Yodobashi Camera אומדה", en: "Yodobashi Umeda", city: "אוסקה", cat: "shop", part: "אחה\"צ",
@@ -248,7 +249,7 @@ const PLACES = {
   "todaiji": { n: "מקדש טודאי-ג'י", en: "Todaiji Temple Nara", city: "נארה", cat: "site", part: "בוקר",
     d: "בודהה הענק בהיכל העץ הגדול בעולם." },
   "isuien": { n: "גן איסוי-אן", en: "Isuien Garden Nara", city: "נארה", cat: "site", part: "בוקר",
-    d: "גן יפני קלאסי ושקט." },
+    d: "גן יפני קלאסי ושקט (9:30–16:30). ⚠️ בסוף ספטמבר הגן נסגר לעיתים לתחזוקה שנתית — לוודא באתר isuien.or.jp או בטלפון לפני; חלופה חינמית: גן יושיקי-אן הסמוך." },
   "kasuga-taisha": { n: "מקדש קסוגה טאישה", en: "Kasuga Taisha Nara", city: "נארה", cat: "site", part: "צהריים",
     d: "מקדש הפנסים בלב היער." },
   "nakatanidou": { n: "מוצ'י Nakatanidou", en: "Nakatanidou Mochi Nara", city: "נארה", cat: "food", part: "צהריים",
@@ -260,7 +261,7 @@ const PLACES = {
   "odawara-station": { n: "תחנת אודווארה — מעבר להאקונה", en: "Odawara Station", city: "האקונה", cat: "transit",
     d: "מכאן רכבת האקונה-טוזאן / אוטובוס אל אזור גורה. שליחת מזוודות מראש מומלצת." },
   "hotel-suiun": { n: "ריוקאן Suiun — לילה באונסן", en: "Hakone Suiun Ryokan", city: "האקונה", cat: "hotel",
-    d: "לילה אחד 21–22.09 (הוזמן ✔). ערב אונסן — להגיע לארוחת הערב בזמן!" },
+    d: "לילה אחד 21–22.09 (₪1,942 · הוזמן ✔). ערב אונסן — להגיע לארוחת הערב בזמן!" },
   "openair-museum": { n: "המוזיאון הפתוח של האקונה", en: "Hakone Open-Air Museum", city: "האקונה", cat: "site", part: "אחה\"צ",
     d: "פסלים ואמנות בטבע, אולם פיקאסו ומגדל הוויטראז'ים." },
   "gora-park": { n: "גני גורה", en: "Hakone Gora Park", city: "האקונה", cat: "site", part: "אחה\"צ",
@@ -294,7 +295,7 @@ const PLACES = {
   "shirohige": { n: "Shiro-Hige's — שו קרם טוטורו", en: "Shiro-Hige Cream Puff Factory", city: "טוקיו", cat: "food", part: "צהריים",
     d: "בית קפה בהשראת ג'יבלי — שו קרם בצורת טוטורו." },
   "shinjuku-gyoen": { n: "גן שינג'וקו גיואן", en: "Shinjuku Gyoen National Garden", city: "טוקיו", cat: "site", part: "אחה\"צ",
-    d: "גן המשלב סגנון יפני, צרפתי ואנגלי (נסגר ~17:30-18:00)." },
+    d: "גן המשלב סגנון יפני, צרפתי ואנגלי (9:00–18:00). ⚠️ ב-24.09 הגן סגור (יום סגירה חלופי אחרי סילבר-וויק) — לשקול להחליף בשיבויה סקיי / קניות, או להזיז את הביקור ל-22.09." },
   "cois-cafe": { n: "cois cafe — קרם ברולה", en: "cois cafe Shinjuku", city: "טוקיו", cat: "food", part: "אחה\"צ",
     d: "בית הקפה של הקרם-ברולה." },
   "uniqlo-shinjuku": { n: "UNIQLO שינג'וקו (דגל)", en: "UNIQLO Shinjuku Flagship", city: "טוקיו", cat: "shop", part: "אחה\"צ", approx: true,
@@ -324,7 +325,7 @@ const PLACES = {
   "akihabara": { n: "אקיהברה (אופציונלי)", en: "Akihabara Electric Town", city: "טוקיו", cat: "shop", part: "לילה",
     d: "אנימה, אלקטרוניקה וארקיידים (פתוחים עד ~23:00); Don Quijote 24/7. אפשר גם לשבץ ביום 13." },
   "airport-dep": { n: "טיסה לתאילנד ✈️", en: "Haneda Airport", city: "טוקיו", cat: "transit", approx: true,
-    d: "26.09 — טיסה טוקיו ← קראבי. לוודא בכרטיס: הנדה או נריטה, ולתזמן יציאה בהתאם." },
+    d: "26.09 · מונית מהמלון הוזמנה ✔ לשעה 07:00 (₪153, Booking.com) · להיות בהנדה טרמינל 3 עד ~07:30 · Thai Airways לבנגקוק (כנראה TG683 בשעה 10:35 ← בנגקוק 15:05) והמשך TG249 לקראבי — לוודא בכרטיס (הזמנה 63900)." },
 };
 
 /* הימים. stops = מזהי מקומות לפי סדר הביקור */
@@ -333,7 +334,7 @@ const DAYS = [
     title: "נחיתה בטוקיו",
     sum: "נחיתה בלילה, צ'ק-אין בשיודומה. אם נשאר כוח — יקיטורי „אוהאנה” באביסו (נסיעה קצרה).",
     hotel: "hotel-shiodome",
-    transit: "משדה התעופה: נריטה — Narita Express / לימוזין-באס; הנדה — מונית סבירה או רכבת.",
+    transit: "מונית מהשדה הוזמנה ✔ — איסוף 10.09 ב-22:20 ליורקוצ׳ו (צמוד לשיודומה) · ₪198 · Booking.com. אם הנחיתה מתעכבת — לעדכן בקישור ההזמנה.",
     stops: ["hotel-shiodome", "toriyaki-ohana"] },
   { id: "d1", n: 1, date: "11.09", dow: "שישי", city: "טוקיו", color: "#e11d48",
     title: "הרג'וקו ושיבויה",
@@ -430,25 +431,27 @@ PLACES["shodai"] = { n: "shodai — אודון קארי", en: "Curry Udon Shodai
 /* ---------- תאילנד 🇹🇭 (26.09–13.10+) ---------- */
 Object.assign(PLACES, {
   "arr-kbv": { n: "נחיתה בקראבי ✈️", en: "Krabi International Airport", city: "קראבי", cat: "transit",
-    d: "26.09 · טיסה מטוקיו (קבלה 1357764, bookaflight) — לוודא שעה בכרטיס. משדה התעופה ~40 דק' נסיעה למלון." },
+    d: "26.09 · נחיתה עם TG249 מבנגקוק (קבלה 1357764, bookaflight, קוד J3C-3YRZ9) · לפי לוח הטיסות TG249 נוחת ~19:45 בערב — אבל האיסוף הוזמן ל-15:00 ⚠️ לוודא שעת נחיתה בכרטיס ולעדכן את הנהג! (וואוצ׳ר JKX4NN-1): אחרי המכס — נקודת מפגש 1 בקפה Amazon (בינלאומי) או יציאה 15 (פנים־ארצי), שלט עם השם · חברת ההסעה Energy Infinittus ‎+66-83-871-3360 · ~40 דק׳ למלון · ⚠️ בנוסף: הוואוצ׳ר רשום על נוסע 1 ומזוודה 1 — לעדכן ל-2 בקישור ההזמנה." },
   "hotel-tubkaak": { n: "The Tubkaak Krabi Boutique Resort", en: "The Tubkaak Krabi Boutique Resort", city: "קראבי", cat: "hotel",
     d: "26–28.09 · הוזמן ✔ (Agoda 672013915) · כולל ארוחת בוקר · חוף טובקק השקט, מול איי הונג." },
   "hotel-banyan": { n: "Banyan Tree Krabi", en: "Banyan Tree Krabi", city: "קראבי", cat: "hotel",
     d: "28.09–01.10 · הוזמן ✔ (Agoda 2026155830) · סוויטת Partial Ocean Pool King + ארוחת בוקר · באותו חוף — מעבר קצר מהטובקק." },
   "flight-kbv-usm": { n: "טיסה קראבי ← קוסמוי ✈️ PG266", en: "Krabi International Airport", city: "קראבי", cat: "transit",
-    d: "01.10 · המראה 14:00 · Bangkok Airways, ישירה 50 דק' · מושבים 9A/9B · הזמנה FF7LFU (Booking.com)." },
+    d: "01.10 · המראה 14:00, נחיתה 14:50 · Bangkok Airways, ישירה 50 דק׳ · מושבים 9A/9B · הזמנה FF7LFU (Booking, לקוח 40-1065078789, קוד 8527) · כבודה: 2 מזוודות 20 ק\"ג + 2 טרולי 7 ק\"ג (אין תיק אישי נוסף!) · לצאת מהבניאן ~11:45, בשדה עד 12:30." },
   "ferry-samui-phangan": { n: "מעבורת לקופנגן ⛴", en: "Bangrak Pier Koh Samui", city: "קוסמוי", cat: "transit", approx: true,
-    d: "מנמל בנגרק (Lomprayah / Seatran) ~30 דק'. כדאי לתאם דרך המלון הסעה+מעבורת מראש." },
+    d: "01.10 · הטיסה נוחתת 14:50 — ההפלגה הנוחה: Lomprayah ממזח מאנאם (Pralarn) ב-16:30 ← תונג סאלה 17:00 (~15 דק׳ מהשדה למזח, צ׳ק-אין 30 דק׳ לפני). זו ההפלגה הנוחה האחרונה של היום! מתונג סאלה לפנווימאן ~40 דק׳ בדרך הרים — לתאם העברה מול המלון מראש." },
   "hotel-panviman": { n: "Panviman Resort קופנגן", en: "Panviman Resort Koh Phangan", city: "קופנגן", cat: "hotel",
     d: "01–06.10 · הוזמן ✔ (Agoda 2041089608) · חדר Deluxe Jacuzzi Grande + ארוחת בוקר · מפרץ תונג נאי פאן נוי." },
   "ferry-phangan-samui": { n: "מעבורת חזרה לסמוי ⛴", en: "Thong Sala Pier Koh Phangan", city: "קופנגן", cat: "transit", approx: true,
-    d: "06.10 · מנמל תונג סאלה ~30-45 דק' לסמוי." },
+    d: "06.10 · מומלץ: לצאת מפנווימאן ~09:15 (45 דק׳ לתונג סאלה), הפלגת Seatran/Lomprayah ב-10:30 ← מזח בנגרק ~11:05, ומשם 10 דק׳ להאנסר · לקנות כרטיסים מראש ולתאם הסעה מול המלון." },
   "hotel-hansar": { n: "Hansar Samui Resort", en: "Hansar Samui Resort", city: "קוסמוי", cat: "hotel",
     d: "06–13.10 · הוזמן ✔ (Agoda 2026143615) · 5 כוכבים על חוף בופוט · Fisherman's Village במרחק הליכה · ארוחת בוקר לשניים." },
-  "flight-usm-bkk": { n: "טיסה סמוי ← בנגקוק ✈️", en: "Samui International Airport", city: "קוסמוי", cat: "transit",
-    d: "13.10 · טרם נסגר — לתאם מול טיסת ההמשך לישראל.", book: "להזמין כשיתבררו פרטי הטיסה הביתה" },
+  "flight-usm-bkk": { n: "טיסה סמוי ← בנגקוק ✈️ PG106", en: "Samui International Airport", city: "קוסמוי", cat: "transit",
+    d: "13.10 · PG106 המראה 08:45, נחיתה 10:00 · הוזמן ✔ (Booking, לקוח 40-1081787024, קוד 0304, $234) · לצאת מההאנסר ~06:45, בשדה עד 07:15 · בבנגקוק מחכה נהג MPV ✔ (וואוצ׳ר 3WDN4P-1): שער 4, קומה 2, שלט עם השם · 192 Royal Logistics ‎+66-93-593-4992." },
   "bkk-airport": { n: "בנגקוק ← ישראל ✈️", en: "Suvarnabhumi Airport Bangkok", city: "בנגקוק", cat: "transit",
-    d: "כנראה אחרי 13.10 — התאריך המדויק לא מופיע בקבלות. לוודא בכרטיס האלקטרוני (הזמנה 63900)." },
+    d: "14.10 בלילה · איסוף מהמלון הוזמן ✔ ל-20:20 (MPV, וואוצ׳ר 3WDN4P-2) · ~50 דק׳ נסיעה — בשדה ~21:15 · מתאים לטיסת 23:55 (LY082); אם בכרטיס מופיעה 22:25 (LY086) — להקדים את האיסוף ל-18:45! לוודא בהזמנה 63900." },
+  "hotel-pathumwan": { n: "מלון Pathumwan Princess בנגקוק", en: "Pathumwan Princess Hotel Bangkok", city: "בנגקוק", cat: "hotel",
+    d: "13–15.10 · הוזמן ✔ (Agoda 2044232993) · גרנד דלוקס קינג פינתי 42 מ\"ר · צ׳ק-אין 15:00, צ׳ק-אאוט 12:00 · מחובר לקניון MBK · חיוב ‎9,873 באט ב-04.10, ביטול חינם עד 05.10." },
 });
 
 DAYS.push(
@@ -475,11 +478,12 @@ DAYS.push(
     hotel: "hotel-hansar",
     transit: "מעבורת קופנגן ← סמוי ~45 דק', ומשם נסיעה קצרה לבופוט.",
     stops: ["ferry-phangan-samui", "hotel-hansar"] },
-  { id: "t5", nights: 1, ln: "בנגקוק", n: 21, c: "TH", label: "בנגקוק · 13.10 ←", short: "בנגקוק", date: "13.10 והלאה", dfrom: "13.10", dto: "14.10",
+  { id: "t5", nights: 2, ln: "בנגקוק", n: 21, c: "TH", label: "בנגקוק · 13–15.10", short: "בנגקוק", date: "13–15.10", dfrom: "13.10", dto: "14.10",
     city: "בנגקוק", color: "#6d28d9", title: "בנגקוק — וטיסה הביתה",
-    sum: "נחיתה בבנגקוק, לילה אחד — וב-14.10 הטיסה הביתה.",
-    hotel: null,
-    stops: ["flight-usm-bkk", "bkk-airport"] }
+    sum: "נחיתה 10:00, צ׳ק-אין בפתומוואן פרינסס (על קניון MBK) — יום וחצי של בנגקוק וקניות, וב-14.10 ב-20:20 איסוף לשדה וטיסה הביתה.",
+    hotel: "hotel-pathumwan",
+    transit: "PG106 ‏08:45←10:00 · נהג MPV מחכה בשער 4 קומה 2 ✔ · חזרה: איסוף מהמלון 14.10 ב-20:20 ✔",
+    stops: ["flight-usm-bkk", "hotel-pathumwan", "bkk-airport"] }
 );
 
 /* מלונות — לתצוגת כרטיס היום */
@@ -492,6 +496,7 @@ const HOTELS = {
   "hotel-banyan":   { nights: "28.09–01.10 · 3 לילות", booked: true },
   "hotel-panviman": { nights: "01–06.10 · 5 לילות", booked: true },
   "hotel-hansar":   { nights: "06–13.10 · 7 לילות", booked: true },
+  "hotel-pathumwan": { nights: "13–15.10 · 2 לילות", booked: true },
 };
 
 /* =========================================================
@@ -779,11 +784,11 @@ const JA = {
 
 /* הטיסות — לתצוגה בפאנל המידע */
 const FLIGHTS = [
-  { r: "תל אביב ← טוקיו", d: "09.09 בלילה · נחיתה 10.09 בערב", note: "הזמנה 63900 · סוכן: עמר חן (ברון טורס) · לוודא שעות בכרטיס האלקטרוני" },
-  { r: "טוקיו ← קראבי", d: "26.09", note: "קבלה 1357764 · bookaflight.co.il" },
-  { r: "קראבי ← קוסמוי", d: "01.10 · המראה 14:00 · PG266", note: "Bangkok Airways · ישירה 50 דק' · מושבים 9A/9B · הזמנה FF7LFU" },
-  { r: "קוסמוי ← בנגקוק", d: "13.10 — טרם הוזמן", note: "לסגור מול טיסת ההמשך" },
-  { r: "בנגקוק ← תל אביב", d: "14.10", note: "כלול בהזמנה 63900 · לוודא בכרטיס" },
+  { r: "תל אביב ← טוקיו", d: "09.09 בלילה · נחיתה 10.09 בערב", note: "הזמנה 63900 · סוכן: עמר חן (ברון טורס) 052-4447462 · שולם $3,654 (קבלה 20836994) · לוודא שעות בכרטיס · מונית מהשדה 22:20 הוזמנה ✔ (₪198)" },
+  { r: "טוקיו ← קראבי (דרך בנגקוק)", d: "26.09 בבוקר · המשך TG249 לקראבי", note: "קבלה 1357764 · bookaflight (J3C-3YRZ9) · $345 לנוסע · מונית לשדה 07:00 ✔ (₪153) · נהג בקראבי מ-15:00 ✔ (JKX4NN-1)" },
+  { r: "קראבי ← קוסמוי", d: "01.10 · PG266 · ‏14:00←14:50", note: "Bangkok Airways · מושבים 9A/9B · הזמנה FF7LFU (לקוח 40-1065078789, קוד 8527) · כבודה 2×20 ק\"ג + 2 טרולי 7 ק\"ג" },
+  { r: "קוסמוי ← בנגקוק", d: "13.10 · PG106 · ‏08:45←10:00", note: "הוזמן ✔ Booking (לקוח 40-1081787024, קוד 0304) · $234 · נהג MPV מחכה בשדה ✔ (3WDN4P-1)" },
+  { r: "בנגקוק ← תל אביב", d: "14.10 בלילה", note: "כלול בהזמנה 63900 · לוודא שעה בכרטיס · איסוף מהמלון לשדה 20:20 ✔ (3WDN4P-2)" },
 ];
 
 /* קישורים מהירים */
@@ -878,3 +883,50 @@ function applyTripDates(ov) {
   TRIP.endISO = iso(DAYS[DAYS.length - 1]._e);
 }
 applyTripDates();
+
+/* =========================================================
+   🕘 SCHED — שעות מומלצות לכל עצירה, לפי יום (מוצג בפאנל היום ובפופאפ).
+   נבנה מנתוני שעות פתיחה + עומסים (ספטמבר 2026, כולל Silver Week 19–23.09).
+   מפתח: SCHED[dayId][placeId] = טקסט חופשי (טווח שעות / הערה).
+   ========================================================= */
+const SCHED = {
+  d0: { "hotel-shiodome": "מ-22:45" },
+  d1: { "meiji-shrine": "08:45–10:00", "takeshita-st": "10:15–11:15", "omotesando": "11:15–12:15",
+        "onodera-omotesando": "12:15–13:45", "hachiko": "14:15–14:45", "sbux-tsutaya": "14:45–15:30",
+        "shibuya-parco": "15:30–17:30", "nikutarashi": "19:00–21:00" },
+  d2: { "sensoji": "07:30–08:45", "nakamise": "08:45–09:45", "kappabashi": "10:00–11:15",
+        "ueno-park": "11:45–13:30", "skytree": "17:00–19:00", "savoy": "20:00–21:30" },
+  d3: { "tokyo-station": "08:30–09:00", "kyoto-station": "11:15–11:45", "hotel-nohga": "12:15–13:00",
+        "kyoto-gyoen": "13:30–14:40", "nijo-castle": "15:00–16:45", "pontocho": "18:00–19:00", "onodera-kyoto": "19:00–20:30" },
+  d4: { "monkey-park": "09:00–10:15", "togetsukyo": "10:15–10:45", "arabica-arashiyama": "10:45–11:15",
+        "bamboo-grove": "11:20–12:00", "kijurou": "12:15–13:30", "kinkakuji": "14:30–15:45", "bungo-gion": "18:30–20:30" },
+  d5: { "kiyomizudera": "07:00–08:45", "sannenzaka": "08:45–10:15", "nishiki-market": "10:45–12:30",
+        "maikoya": "13:30–15:00", "marutomi": "17:30–19:30" },
+  d6: { "fushimi-inari": "07:00–09:30", "fushimi-castle": "09:45–10:30", "gekkeikan": "10:45–11:45",
+        "shijo-dori": "13:00–15:00", "teamlab-biovortex": "15:30–17:30", "in-the-moon": "17:45–19:30" },
+  d7: { "hotel-flag": "11:30–12:00", "kaiyukan": "13:00–15:30", "yodobashi-umeda": "16:00–17:15",
+        "umeda-sky": "17:20–19:00", "sushi-atsuya": "20:00–21:30" },
+  d8: { "usj": "07:15–21:00" },
+  d9: { "osaka-castle": "08:45–10:30", "namba-yasaka": "11:00–11:30", "rikuros": "11:45–12:30",
+        "shinsaibashi": "13:00–15:00", "dotonbori": "18:00–21:00" },
+  d10: { "nara-park": "08:15–09:30", "todaiji": "09:30–10:45", "isuien": "11:00–12:00 · ⚠️ לוודא",
+         "kasuga-taisha": "12:00–13:00", "nakatanidou": "13:30–13:50", "kamaiki": "13:50–14:50" },
+  d11: { "osaka-station": "08:00–08:30", "odawara-station": "11:00–11:30", "openair-museum": "13:30–15:45",
+         "gora-park": "16:00–17:00", "hotel-suiun": "מ-17:15" },
+  d12: { "owakudani": "09:00–10:30", "togendai": "10:45–11:30", "hakone-shrine": "12:00–13:45",
+         "odawara-station": "16:30–17:15", "hotel-shiodome": "מ-19:00" },
+  d13: { "roppongi-hills": "10:00–11:30", "midtown-2121": "11:45–13:15", "teamlab-borderless": "15:00–17:00",
+         "tokyo-tower": "18:00–19:30", "toriyaki-ohana": "20:00–22:00" },
+  d14: { "ogawa-lab": "08:30–09:30", "reload": "11:00–12:00", "flippers-shimokita": "12:00–13:00",
+         "shirohige": "13:15–14:00", "shinjuku-gyoen": "⚠️ סגור ב-24.09", "cois-cafe": "15:00–15:45",
+         "uniqlo-shinjuku": "16:00–17:15", "godzilla": "17:30–18:00", "kabukicho-goldengai": "18:00–19:45", "shodai": "20:15–21:45" },
+  d15: { "tsukiji": "08:00–10:00", "x-coffee": "10:00–10:30", "uniqlo-ginza": "11:00–12:00",
+         "mitsukoshi-ginza": "12:00–12:45", "ginza-ramen": "13:00–14:15", "nissan-ginzasix": "14:15–15:00",
+         "ginza-sand": "15:00–15:30", "teamlab-planets": "16:30–18:30", "hakkoku": "19:30–21:30", "akihabara": "22:00–23:00" },
+  d16: { "airport-dep": "מונית 07:00 · בטרמינל 07:30" },
+  t1: { "arr-kbv": "⚠️ לוודא שעת נחיתה", "hotel-tubkaak": "מ-15:00" },
+  t2: { "hotel-banyan": "מ-15:00" },
+  t3: { "flight-kbv-usm": "בשדה 12:30–14:00", "ferry-samui-phangan": "16:00–17:00", "hotel-panviman": "מ-18:00" },
+  t4: { "ferry-phangan-samui": "09:15–11:05", "hotel-hansar": "מ-11:30" },
+  t5: { "flight-usm-bkk": "בשדה 07:00–08:45", "hotel-pathumwan": "מ-15:00", "bkk-airport": "איסוף 20:20" },
+};
